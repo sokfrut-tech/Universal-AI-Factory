@@ -1,32 +1,34 @@
-# Safe starter configuration for Hermes Agent.
-# Copy locally to ~/.hermes/config.yaml. Never store API keys or tokens here.
+# Hermes Agent — example configuration for the private factory core.
+# Copy to ~/.hermes/config.yaml; do not put credentials here.
+# Credentials belong only in ~/.hermes/.env or the supported Hermes auth flow.
+# This file intentionally contains no private token or API key.
 
 model:
-  provider: "anthropic"
-  default: "claude-sonnet-4-5"
+  # Auto-detect the provider from credentials configured by the owner.
+  provider: "auto"
 
-# Valid top-level gateway lifecycle section.
-gateway:
-  trust_env: false
-  platforms:
-    telegram:
-      extra:
-        drop_pending_on_cold_boot: true
+# Hermes gateway platform settings.
+# There is no gateway.telegram.enabled key in the upstream schema.
+# The Telegram adapter is activated by running `hermes gateway` with
+# TELEGRAM_BOT_TOKEN available in the process environment.
+platforms:
+  telegram:
+    reply_to_mode: "first"
+    # Access control is enforced with TELEGRAM_ALLOWED_USERS in ~/.hermes/.env.
+    # Use the owner's numeric Telegram user ID only; do not allow all users.
+    extra:
+      drop_pending_on_cold_boot: true
+      disable_link_previews: true
 
-# Restrict the Telegram test bot to file and planning tools only.
+# Restrict the Telegram test bot to non-shell tools.
+# The CLI remains the operator interface for setup and maintenance.
 platform_toolsets:
   cli: [hermes-cli]
-  telegram: [file, todo]
+  telegram: [web, file, todo]
 
-# Hermes has no top-level "permissions" section.
-security:
-  approval:
-    transport: builtin
-    transport_fallback: deny
-  protected_instruction_files: true
-
-# Set locally in ~/.hermes/.env using hermes gateway setup:
-# TELEGRAM_BOT_TOKEN=<enter locally; never commit>
-# TELEGRAM_ALLOWED_USERS=<owner numeric Telegram ID>
-# Use a separate BotFather test bot, never the customer-facing bot.
-# Start only when explicitly requested: hermes gateway
+# Local execution is intentionally not enabled for the remote Telegram bot.
+# Select the isolated Docker backend only after Docker is installed and tested.
+terminal:
+  backend: "docker"
+  docker_mount_cwd_to_workspace: false
+  timeout: 180
