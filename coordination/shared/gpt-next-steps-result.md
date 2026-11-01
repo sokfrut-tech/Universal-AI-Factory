@@ -1,38 +1,44 @@
-# Результат: Universal AI Factory / Hermes Agent / Jarvis PR #35
+# Результат выполнения gpt-next-steps
 
-Дата: 2026-11-01  
-Рабочая ветка: feature/factory-agent-core  
-Статус: подготовительная часть выполнена; реальный запуск Hermes и Telegram требует участия владельца.
+- Автор: ChatGPT
+- Дата: 2026-11-01
+- Репозиторий: sokfrut-tech/Universal-AI-Factory
+- Ветка: feature/factory-agent-core
+- Статус: частично выполнено; ничего не опубликовано и не слито в main.
 
-## Выполнено
+## Сделано
 
-1. Сверен config/hermes.example.yaml с официальным cli-config.yaml.example и официальным руководством Telegram.
-2. Удалены неподдерживаемые gateway.telegram.enabled и верхнеуровневый permissions. Использованы реальные разделы gateway, platform_toolsets, security.
-3. Telegram-профиль ограничен инструментами file и todo; токен и список разрешённых пользователей задаются только локально в ~/.hermes/.env.
-4. Выбран компьютер владельца Windows + WSL2 для первого тестового запуска. VPS пока не требуется.
-5. Созданы тестовые файлы inbox/outbox. Проверен ручной файловый маршрут; автономная работа Hermes не имитировалась.
-6. Проверен PR #35 в sokfrut-tech/Gemeni.
+1. Сверен актуальный `cli-config.yaml.example` из официального репозитория NousResearch/hermes-agent (main).
+2. В `config/hermes.example.yaml` удалены неподдерживаемые upstream-схемой `gateway.telegram.enabled` и `permissions.*`.
+3. Вместо них заданы документированные структуры `platforms.telegram`, `platform_toolsets` и `terminal`. Telegram ограничивается allowlist-переменной `TELEGRAM_ALLOWED_USERS`; бот должен запускаться отдельной командой `hermes gateway`.
+4. Выбрана целевая машина: отдельный VPS Ubuntu 24.04 LTS (2 vCPU / 4 GB RAM / 40 GB SSD как начальная оценка). Сервер не создан, установка не выполнялась.
+5. Подготовлен inbox smoke test, требующий самостоятельного ответа отдельного агента в outbox.
+6. Проверен Gemeni PR #35.
 
-## PR #35 — CI
+## Проверено
 
-- PR: https://github.com/sokfrut-tech/Gemeni/pull/35
-- Head: 0f72d62c6fb571501b51ba6b41b879156110b360
-- Check runs: 0
-- Commit status: pending, total_count 0
-- Workflow запускается на push в main и workflow_dispatch, но не на pull_request.
-- CI-сборка для PR #35 не запускалась. Это не доказывает, что сборка падает или проходит.
+- Upstream schema: https://github.com/NousResearch/hermes-agent/blob/main/cli-config.yaml.example
+- PR #35: https://github.com/sokfrut-tech/Gemeni/pull/35
+- PR head SHA: `0f72d62c6fb571501b51ba6b41b879156110b360`
+- Для head SHA GitHub API вернул 0 check-runs, пустые commit statuses и 0 workflow runs. CI не подтверждён; сборку считать успешной нельзя.
+- PR открыт, не слит.
 
-## Не проверено / требуется владелец
+## Не работает / не проверено
 
-- Установить Hermes на своём ПК и выполнить hermes doctor.
-- Создать отдельного тестового бота через @BotFather.
-- Ввести TELEGRAM_BOT_TOKEN и собственный числовой ID в ~/.hermes/.env локально; секреты никому не отправлять.
-- Запустить hermes gateway и проверить ответ разрешённому пользователю.
-- Вручную запустить GitHub Actions workflow Build Jarvis на ref feature/gemini-cloud-client (или после согласования добавить PR trigger) для фактической сборки PR #35.
+- Hermes Agent не установлен и не запущен.
+- Тестовый Telegram-бот не создан; токен отсутствует и не запрашивался.
+- Реальный inbox → outbox не выполнен. Нельзя подделывать ответ Claude; тест ждёт самостоятельного исполнения отдельным агентом.
+- Android-сборка PR #35 не проверена: GitHub checks отсутствуют, локальной сборки с Android SDK нет.
+- VPS и API credentials должны быть предоставлены/введены владельцем.
 
-## Безопасность и границы
+## Что требуется от владельца
 
-- Секреты не запрашивались, не читались и не записывались.
-- Не менялись файлы репозитория Gemeni.
-- Не выполнялись merge, deploy, публикация или сообщения клиентам.
-- Изменения внесены только в feature/factory-agent-core; main не затрагивался.
+- Создать отдельный VPS либо подтвердить другой хост.
+- Создать отдельного Telegram-бота и ввести токен локально на хосте.
+- Ввести собственный Telegram numeric ID в allowlist.
+- Самостоятельно ввести ключи выбранных AI-провайдеров в локальное хранилище Hermes.
+- Не передавать секреты в чат и не коммитить их.
+
+## Безопасность
+
+Секреты не добавлялись. Никаких клиентских ботов, сайтов или сервисов не запускалось. Никаких merge, deploy или публикаций не выполнялось.
