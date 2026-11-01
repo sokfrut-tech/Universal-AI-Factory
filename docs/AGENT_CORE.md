@@ -104,3 +104,13 @@ PR: https://github.com/sokfrut-tech/Gemeni/pull/35
 - Подготовлен inbox тест; реальный агент ещё не выполнил его.
 - PR #35 проверен через GitHub API: checks/statuses/workflow runs отсутствуют; CI результат неизвестен.
 - Не проверено: установка Hermes, запуск gateway, реальный inbox/outbox, Android build.
+
+
+## Ссылки на проверенную документацию Hermes
+
+- Схема CLI: https://github.com/NousResearch/hermes-agent/blob/main/cli-config.yaml.example
+- Переменные окружения: https://hermes-agent.nousresearch.com/docs/reference/environment-variables
+- Настройка Telegram и запуск gateway: https://hermes-agent.nousresearch.com/docs/user-guide/messaging/telegram
+- Безопасность и allowlist: https://hermes-agent.nousresearch.com/docs/user-guide/security
+
+В документации подтверждены `TELEGRAM_BOT_TOKEN` и `TELEGRAM_ALLOWED_USERS`; без allowlist по умолчанию доступ запрещён. Команда запуска после локальной настройки: `hermes gateway`.
