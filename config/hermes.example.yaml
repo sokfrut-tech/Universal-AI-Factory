@@ -1,38 +1,32 @@
-# Пример конфигурации ядра фабрик (Hermes Agent).
-# Скопируйте в локальный файл, например config/hermes.local.yaml, и заполните у себя.
-# Ключи в этот файл не записываются: используйте переменные окружения.
-# Файл hermes.local.yaml добавьте в .gitignore и не коммитьте.
-# ВНИМАНИЕ: блоки gateway и permissions — предложение фабрик, их имена не сверены
-# со схемой Hermes. Перед запуском сверьте с cli-config.yaml.example в репозитории Hermes.
+# Safe starter configuration for Hermes Agent.
+# Copy locally to ~/.hermes/config.yaml. Never store API keys or tokens here.
 
 model:
-  # Основная модель. Выберите одну из вариантов ниже и раскомментируйте.
-  provider: "anthropic"          # нужен ANTHROPIC_API_KEY
-  default: "claude-sonnet-4-5"   # укажите актуальное имя модели из документации провайдера
+  provider: "anthropic"
+  default: "claude-sonnet-4-5"
 
-  # provider: "openai"           # нужен OPENAI_API_KEY
-  # default: "gpt-4.1"
-
-  # provider: "gemini"           # нужен GOOGLE_API_KEY или GEMINI_API_KEY
-  # default: "gemini-2.5-pro"
-
-  # Бесплатный локальный вариант (Ollama):
-  # provider: "custom"
-  # base_url: "http://127.0.0.1:11434/v1"
-  # default: "qwen2.5:14b"       # модель, которую вы скачали локально
-
-# Каналы: используйте отдельный тестовый бот, не бот для клиентов.
+# Valid top-level gateway lifecycle section.
 gateway:
-  # Токен бота задаётся переменной окружения TELEGRAM_BOT_TOKEN.
-  # Не указывайте токен в этом файле.
-  telegram:
-    enabled: false               # включить после проверки
+  trust_env: false
+  platforms:
+    telegram:
+      extra:
+        drop_pending_on_cold_boot: true
 
-# Права агента: только рабочие папки и ветки, без записи в main.
-permissions:
-  write_branches_only: true
-  forbid_push_to_main: true
-  require_owner_approval_for:
-    - merge
-    - deploy
-    - client_messages
+# Restrict the Telegram test bot to file and planning tools only.
+platform_toolsets:
+  cli: [hermes-cli]
+  telegram: [file, todo]
+
+# Hermes has no top-level "permissions" section.
+security:
+  approval:
+    transport: builtin
+    transport_fallback: deny
+  protected_instruction_files: true
+
+# Set locally in ~/.hermes/.env using hermes gateway setup:
+# TELEGRAM_BOT_TOKEN=<enter locally; never commit>
+# TELEGRAM_ALLOWED_USERS=<owner numeric Telegram ID>
+# Use a separate BotFather test bot, never the customer-facing bot.
+# Start only when explicitly requested: hermes gateway
