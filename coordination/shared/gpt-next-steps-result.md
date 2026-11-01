@@ -20,7 +20,7 @@
 - Upstream schema: https://github.com/NousResearch/hermes-agent/blob/main/cli-config.yaml.example
 - PR #35: https://github.com/sokfrut-tech/Gemeni/pull/35
 - PR head SHA: `0f72d62c6fb571501b51ba6b41b879156110b360`
-- Для head SHA GitHub API вернул 0 check-runs, пустые commit statuses и 0 workflow runs. CI не подтверждён; сборку считать успешной нельзя.
+- Для head SHA GitHub API вернул 0 check-runs, пустые commit statuses и 0 workflow runs. Ветка PR содержит `.github/workflows/build.yml`, но workflow запускается только на `push` в `main` и `workflow_dispatch`, а не на `pull_request`. Поэтому PR #35 автоматически не собирался; ручной dispatch из доступного подключения выполнить нельзя. Сборку считать успешной нельзя.
 - PR открыт, не слит.
 
 ## Не работает / не проверено
@@ -28,7 +28,7 @@
 - Hermes Agent не установлен и не запущен.
 - Тестовый Telegram-бот не создан; токен отсутствует и не запрашивался.
 - Реальный inbox → outbox не выполнен. Нельзя подделывать ответ Claude; тест ждёт самостоятельного исполнения отдельным агентом.
-- Android-сборка PR #35 не проверена: GitHub checks отсутствуют, локальной сборки с Android SDK нет.
+- Android-сборка PR #35 не проверена: GitHub checks отсутствуют; найденная конфигурация CI не реагирует на pull_request, локальной сборки с Android SDK нет.
 - VPS и API credentials должны быть предоставлены/введены владельцем.
 
 ## Что требуется от владельца
