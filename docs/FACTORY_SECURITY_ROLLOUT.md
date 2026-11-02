@@ -18,8 +18,8 @@
 
 | Repository | PR | Change | Latest observed status |
 |---|---:|---|---|
-| `RussSearchOPPO` | [#2](https://github.com/sokfrut-tech/RussSearchOPPO/pull/2) | CodeQL Java/Kotlin with Gradle 8.9 setup and `build-mode: autobuild` | Earlier `build-mode: none` attempt failed. Root cause identified: Kotlin requires a build for CodeQL extraction. Updated PR now uses Gradle 8.9 + `autobuild`; Gitleaks passed, CodeQL initialization is running, Android APK and Hive preflight are running/passed respectively. |
-| `Gemeni` | [#50](https://github.com/sokfrut-tech/Gemeni/pull/50) | Add CodeQL Java/Kotlin with Gradle 8.9 + autobuild | Earlier `build-mode: none` attempt failed. Root cause identified: Kotlin requires a build for CodeQL extraction. Updated PR uses Gradle 8.9 + `autobuild`; Gitleaks passed, CodeQL setup is running. |
+| `RussSearchOPPO` | [#2](https://github.com/sokfrut-tech/RussSearchOPPO/pull/2) | CodeQL Java/Kotlin with Gradle 8.9 setup and `build-mode: autobuild` | Earlier `build-mode: none` attempt failed. Root cause identified: Kotlin requires a build for CodeQL extraction. Updated PR now uses Gradle 8.9 + `autobuild`; Gitleaks passed; CodeQL analysis is running; APK compilation and APK existence checks passed, artifact upload is running; Hive preflight passed. |
+| `Gemeni` | [#50](https://github.com/sokfrut-tech/Gemeni/pull/50) | Add CodeQL Java/Kotlin with Gradle 8.9 + autobuild | Earlier `build-mode: none` attempt failed. Root cause identified: Kotlin requires a build for CodeQL extraction. Updated PR uses Gradle 8.9 + `autobuild`; Gitleaks passed; Gradle setup and CodeQL initialization passed; CodeQL analysis is running. |
 | `voice-assistant` | [#14](https://github.com/sokfrut-tech/voice-assistant/pull/14) | Add CodeQL Java/Kotlin without Gradle autobuild | Gitleaks and CodeQL both passed; existing Security workflow passed; PR #14 merged. |
 
 Do not merge these follow-up PRs until their required checks finish successfully and the diff is reviewed.
