@@ -18,9 +18,9 @@
 
 | Repository | PR | Change | Latest observed status |
 |---|---:|---|---|
-| `RussSearchOPPO` | [#2](https://github.com/sokfrut-tech/RussSearchOPPO/pull/2) | CodeQL Java/Kotlin with `build-mode: none`, avoiding Gradle autobuild incompatibility | Gitleaks passed; CodeQL in progress; Android APK build passed; Hive preflight passed. |
-| `Gemeni` | [#50](https://github.com/sokfrut-tech/Gemeni/pull/50) | Add CodeQL Java/Kotlin without Gradle autobuild | Gitleaks passed; CodeQL in progress. |
-| `voice-assistant` | [#14](https://github.com/sokfrut-tech/voice-assistant/pull/14) | Add CodeQL Java/Kotlin without Gradle autobuild | Gitleaks passed; CodeQL in progress; existing Security workflow in progress at last check. |
+| `RussSearchOPPO` | [#2](https://github.com/sokfrut-tech/RussSearchOPPO/pull/2) | CodeQL Java/Kotlin with `build-mode: none`, avoiding Gradle autobuild incompatibility | Gitleaks passed; Android APK build passed; Hive preflight passed; CodeQL analyze step failed. Job logs are not retrievable through the connected GitHub interface yet; root cause is not confirmed. |
+| `Gemeni` | [#50](https://github.com/sokfrut-tech/Gemeni/pull/50) | Add CodeQL Java/Kotlin without Gradle autobuild | Gitleaks passed; CodeQL analyze step failed. Job logs are not retrievable through the connected GitHub interface yet; root cause is not confirmed. |
+| `voice-assistant` | [#14](https://github.com/sokfrut-tech/voice-assistant/pull/14) | Add CodeQL Java/Kotlin without Gradle autobuild | Gitleaks passed; CodeQL still running at last check; existing Security workflow also running. |
 
 Do not merge these follow-up PRs until their required checks finish successfully and the diff is reviewed.
 
