@@ -9,7 +9,7 @@
 |---|---|---|
 | `avtoy-korea-auto` | Merged PR #55 | Gitleaks and CodeQL JavaScript/TypeScript configured. Initial CodeQL run failed on Actions API permission; `actions: read` was added. Confirm a fresh post-merge run before calling it passed. |
 | `Gemeni` | Merged PR #48 | Gitleaks baseline merged. CodeQL Java/Kotlin is being added separately in PR #50. |
-| `voice-assistant` | Merged PR #13 | Gitleaks baseline merged. CodeQL Java/Kotlin is being added separately in PR #14. |
+| `voice-assistant` | Merged PR #13 and PR #14 | Gitleaks and CodeQL Java/Kotlin both passed in the PR checks; PR #14 merged on 2026-11-02. |
 | `happ-proxy-pool` | Merged PR #2 | Gitleaks and CodeQL Python configured. |
 | `russ-translation-models` | Merged PR #1 | Gitleaks and JSON manifest validation configured. CodeQL is not currently configured. |
 | `RussSearchOPPO` | Merged PR #1 | Gitleaks baseline merged. CodeQL Java/Kotlin is being added separately in PR #2. |
@@ -18,9 +18,9 @@
 
 | Repository | PR | Change | Latest observed status |
 |---|---:|---|---|
-| `RussSearchOPPO` | [#2](https://github.com/sokfrut-tech/RussSearchOPPO/pull/2) | CodeQL Java/Kotlin with `build-mode: none`, avoiding Gradle autobuild incompatibility | Gitleaks passed; Android APK build passed; Hive preflight passed; CodeQL analyze step failed. Job logs are not retrievable through the connected GitHub interface yet; root cause is not confirmed. |
-| `Gemeni` | [#50](https://github.com/sokfrut-tech/Gemeni/pull/50) | Add CodeQL Java/Kotlin without Gradle autobuild | Gitleaks passed; CodeQL analyze step failed. Job logs are not retrievable through the connected GitHub interface yet; root cause is not confirmed. |
-| `voice-assistant` | [#14](https://github.com/sokfrut-tech/voice-assistant/pull/14) | Add CodeQL Java/Kotlin without Gradle autobuild | Gitleaks passed; CodeQL still running at last check; existing Security workflow also running. |
+| `RussSearchOPPO` | [#2](https://github.com/sokfrut-tech/RussSearchOPPO/pull/2) | CodeQL Java/Kotlin with Gradle 8.9 setup and `build-mode: autobuild` | Earlier `build-mode: none` attempt failed. Root cause identified: Kotlin requires a build for CodeQL extraction. Updated PR now uses Gradle 8.9 + `autobuild`; Gitleaks passed, CodeQL initialization is running, Android APK and Hive preflight are running/passed respectively. |
+| `Gemeni` | [#50](https://github.com/sokfrut-tech/Gemeni/pull/50) | Add CodeQL Java/Kotlin with Gradle 8.9 + autobuild | Earlier `build-mode: none` attempt failed. Root cause identified: Kotlin requires a build for CodeQL extraction. Updated PR uses Gradle 8.9 + `autobuild`; Gitleaks passed, CodeQL setup is running. |
+| `voice-assistant` | [#14](https://github.com/sokfrut-tech/voice-assistant/pull/14) | Add CodeQL Java/Kotlin without Gradle autobuild | Gitleaks and CodeQL both passed; existing Security workflow passed; PR #14 merged. |
 
 Do not merge these follow-up PRs until their required checks finish successfully and the diff is reviewed.
 
