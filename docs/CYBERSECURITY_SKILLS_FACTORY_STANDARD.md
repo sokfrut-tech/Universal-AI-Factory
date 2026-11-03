@@ -95,3 +95,7 @@ Every report must distinguish:
 - runtime or production behavior not tested.
 
 A green workflow is not proof that the live site, Worker, Telegram webhook, Android device, credentials, DNS, WAF or cloud configuration is secure.
+
+## Factory toolchain integration
+
+See docs/SECURITY_TOOLCHAIN_CATALOG.md for the tool-to-role mapping and docs/SECURITY_LAB_RUNBOOK.md for workstation and evidence requirements. The shared reusable CI workflow provides Semgrep and Trivy. OWASP ZAP, Wapiti and Nuclei are available only through the authorized DAST workflow with HTTPS host allowlisting, explicit authorization and the security-lab environment. Wireshark, Sysmon, System Informer, Ghidra, IDA Free and Binary Ninja are lab tools; execution must be evidenced, not assumed.
