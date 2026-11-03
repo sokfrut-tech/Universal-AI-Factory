@@ -1,4 +1,4 @@
-Name: Verify Whisper Jarvis (RussSearchOPPO t2-work)
+name: Verify Whisper Jarvis (RussSearchOPPO t2-work)
 
 on:
   workflow_dispatch:
