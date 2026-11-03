@@ -1,81 +1,91 @@
-name: Claude Inbox Dispatcher
+name: Universal Inbox Dispatcher
 
 on:
   push:
     branches: [ main ]
     paths:
-      - 'coordination/claude/inbox/*.md'
+      - 'coordination/**'
   workflow_dispatch:
 
 permissions:
   contents: write
 
+concurrency:
+  group: universal-inbox-dispatcher-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  process-inbox:
+  acknowledge-inboxes:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - name: 1. Checkout Universal-AI-Factory
+      - name: Checkout factory
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: 2. Найти новые задачи в coordination/claude/inbox
-        id: read_inbox
+      - name: Find new inbox messages and create truthful receipts
+        shell: bash
         env:
+          EVENT_NAME: ${{ github.event_name }}
           BEFORE: ${{ github.event.before }}
           SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
-          if [ -z "${BEFORE}" ] || [ "${BEFORE}" = "0000000000000000000000000000000000000000" ]; then
-            RANGE_ARGS=("${SHA}~1" "${SHA}")
+
+          if [[ "${EVENT_NAME}" == "workflow_dispatch" ]]; then
+            mapfile -t CANDIDATES < <(find coordination -mindepth 3 -maxdepth 3 -type f -path 'coordination/*/inbox/*.md' -print | sort)
           else
-            RANGE_ARGS=("${BEFORE}" "${SHA}")
+            if [[ -z "${BEFORE}" || "${BEFORE}" == "0000000000000000000000000000000000000000" ]]; then
+              BASE="$(git rev-list --max-count=2 "${SHA}" | tail -n 1)"
+              RANGE="${BASE} ${SHA}"
+            else
+              RANGE="${BEFORE} ${SHA}"
+            fi
+            read -r BASE HEAD <<< "${RANGE}"
+            mapfile -t CANDIDATES < <(git diff --name-only --diff-filter=AM "${BASE}" "${HEAD}" -- 'coordination/**' | awk '/^coordination\/[^/]+\/inbox\/[^/]+\.md$/')
           fi
-          NEW_TASKS=$(git diff --name-only --diff-filter=A "${RANGE_ARGS[@]}" -- 'coordination/claude/inbox/*.md' || true)
-          if [ -z "$NEW_TASKS" ]; then
-            echo "Новых задач нет, выходим."
-            echo "has_task=false" >> "$GITHUB_OUTPUT"
+
+          created=0
+          for task_path in "${CANDIDATES[@]}"; do
+            [[ -f "${task_path}" ]] || continue
+            agent="$(cut -d/ -f2 <<< "${task_path}")"
+            task_name="$(basename "${task_path}")"
+            out_dir="coordination/${agent}/outbox"
+            out_file="${out_dir}/ACK_${task_name}"
+
+            mkdir -p "${out_dir}"
+            if [[ -e "${out_file}" ]]; then
+              echo "Receipt already exists; leaving it untouched: ${out_file}"
+              continue
+            fi
+
+            task_id="$(grep -m1 -E '^[[:space:]]*-[[:space:]]*(Task ID|Correlation ID):' "${task_path}" | sed -E 's/^[[:space:]]*-[[:space:]]*[^:]+:[[:space:]]*//' || true)"
+            {
+              echo "# Автоматическая квитанция о регистрации"
+              echo
+              echo "- Автор: Universal-AI-Factory Dispatcher"
+              echo "- Кому: ${agent}"
+              echo "- Время UTC: $(date -u '+%Y-%m-%d %H:%M:%S')"
+              echo "- Исходное сообщение: \`${task_path}\`"
+              echo "- Task ID: ${task_id:-не указан}"
+              echo "- Статус: received (файл обнаружен и зарегистрирован)"
+              echo
+              echo "> Это только техническая квитанция GitHub Actions. Она НЕ доказывает, что внешний агент прочитал сообщение, принял задачу или выполнил её."
+            } > "${out_file}"
+            echo "Created receipt: ${out_file}"
+            created=$((created + 1))
+          done
+
+          if (( created == 0 )); then
+            echo "No unacknowledged inbox messages found."
             exit 0
           fi
-          LATEST_TASK=$(echo "$NEW_TASKS" | tail -n 1)
-          echo "Обнаружена задача: $LATEST_TASK"
-          echo "has_task=true" >> "$GITHUB_OUTPUT"
-          echo "task_path=$LATEST_TASK" >> "$GITHUB_OUTPUT"
-          echo "task_name=$(basename "$LATEST_TASK")" >> "$GITHUB_OUTPUT"
 
-      - name: 3. Проверка целевого проекта (необязательно)
-        if: steps.read_inbox.outputs.has_task == 'true'
-        uses: actions/checkout@v4
-        with:
-          repository: sokfrut-tech/RussSearchOPPO
-          token: ${{ secrets.FACTORY_PAT || github.token }}
-          path: target_project
-        continue-on-error: true
-
-      - name: 4. Квитанция в outbox
-        if: steps.read_inbox.outputs.has_task == 'true'
-        env:
-          TASK_PATH: ${{ steps.read_inbox.outputs.task_path }}
-          TASK_NAME: ${{ steps.read_inbox.outputs.task_name }}
-        run: |
-          set -euo pipefail
-          mkdir -p coordination/claude/outbox
-          OUT_FILE="coordination/claude/outbox/ACK_${TASK_NAME}"
-          {
-            echo "# Задача принята фабрикой в обработку"
-            echo ""
-            echo "- Исходный файл: \`${TASK_PATH}\`"
-            echo "- Время приёма: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-            echo "- Статус: квитанция автоматическая. Исполнение задачи этим шагом НЕ подтверждается."
-            echo ""
-            echo "## Содержимое принятого ТЗ"
-            echo ""
-            cat "$TASK_PATH"
-          } > "$OUT_FILE"
           git config user.name "Universal-AI-Factory Dispatcher"
           git config user.email "factory@users.noreply.github.com"
-          git add coordination/claude/outbox/
-          if ! git diff --staged --quiet; then
-            git commit -m "chore(inbox): квитанция для ${TASK_NAME} [skip ci]"
+          git add coordination/*/outbox/ACK_*.md
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(coordination): acknowledge new agent inbox messages [skip ci]"
             git push
           fi
