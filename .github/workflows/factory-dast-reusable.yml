@@ -51,7 +51,7 @@ jobs:
               raise SystemExit("Unknown scanner profile")
           print(f"Approved target host: {host}")
           PY
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Prepare reports
         run: mkdir -p security-reports
       - name: OWASP ZAP passive baseline scan
@@ -74,7 +74,7 @@ jobs:
           docker run --rm --network host -v "$PWD/security-reports:/reports" projectdiscovery/nuclei:latest -u "$TARGET_URL" -tags misconfig,cve,exposure -severity medium,high,critical -rl 2 -c 2 -retries 0 -timeout 5 -jsonl -o /reports/nuclei-report.jsonl
       - name: Archive DAST reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: authorized-dast-${{ github.sha }}
           path: security-reports/
