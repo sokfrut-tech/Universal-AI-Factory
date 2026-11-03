@@ -1,6 +1,6 @@
 # Factory Security Rollout Ledger
 
-**Updated:** 2026-11-02  
+**Updated:** 2026-11-03  
 **Purpose:** Track repository onboarding to the factory cybersecurity baseline. Re-check live GitHub status before release decisions.
 
 ## Integrated repositories
@@ -39,7 +39,7 @@
 - The agent review artifacts state that LLMs were not configured; specialist outputs are deterministic evidence only. Do not represent them as independent LLM reviews.
 - PR [#51](https://github.com/sokfrut-tech/Gemeni/pull/51) adds Android API 35 emulator instrumentation for launcher UI, microphone permission/runtime state and accessibility settings. Its CI run is in progress. Emulator success still does not prove real OPPO/ColorOS behavior.
 
-| `Antigravity-Mobile` | Security audit requested from Claude and Gemini on 2026-11-03 (correlation `ANTIGRAVITY-MOBILE-SECURITY-2026-11-03`) after PR #3 merged. | **IN PROGRESS**: no project-specific Gitleaks/CodeQL/dependency security lane confirmed yet; Worker not deployed; await substantive agent reports and deterministic scans before PASS/release. |
+| `Antigravity-Mobile` | Security tooling PR [#7](https://github.com/sokfrut-tech/Antigravity-Mobile/pull/7) opened 2026-11-03. | **IN PROGRESS**: adds Gitleaks, Semgrep, Trivy and Kotlin CodeQL as a reusable gate wired into the existing APK PR workflow. Checks are pending; do not merge or mark PASS until the first PR run completes and findings are triaged. ZAP/Nuclei and desktop/runtime tools remain authorized-lab-only. |
 
 ## Not onboarded
 
