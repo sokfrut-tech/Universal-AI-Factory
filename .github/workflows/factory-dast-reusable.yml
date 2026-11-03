@@ -1,0 +1,82 @@
+name: Factory Authorized DAST
+
+on:
+  workflow_call:
+    inputs:
+      target_url:
+        description: HTTPS URL of an owned or explicitly authorized test asset
+        required: true
+        type: string
+      authorization:
+        description: Must exactly equal I_OWN_THIS_TARGET_OR_HAVE_WRITTEN_PERMISSION
+        required: true
+        type: string
+      profile:
+        description: Scanner profile
+        required: false
+        default: all
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  authorized-dast:
+    name: Authorized staging DAST
+    runs-on: ubuntu-latest
+    environment: security-lab
+    timeout-minutes: 35
+    steps:
+      - name: Validate authorization and exact host allowlist
+        env:
+          TARGET_URL: ${{ inputs.target_url }}
+          AUTHORIZATION: ${{ inputs.authorization }}
+          ALLOWED_HOSTS: ${{ vars.SECURITY_ALLOWED_HOSTS }}
+          PROFILE: ${{ inputs.profile }}
+        run: |
+          set -euo pipefail
+          test "$AUTHORIZATION" = "I_OWN_THIS_TARGET_OR_HAVE_WRITTEN_PERMISSION" || { echo "Explicit authorization confirmation missing"; exit 1; }
+          test -n "$ALLOWED_HOSTS" || { echo "Configure SECURITY_ALLOWED_HOSTS with exact approved hostnames"; exit 1; }
+          python - <<'PY'
+          import os
+          from urllib.parse import urlparse
+          parsed = urlparse(os.environ["TARGET_URL"])
+          if parsed.scheme != "https" or not parsed.hostname or parsed.username or parsed.password:
+              raise SystemExit("Only credential-free HTTPS target URLs are accepted")
+          allowed = {x.strip().lower() for x in os.environ["ALLOWED_HOSTS"].split(",") if x.strip()}
+          host = parsed.hostname.lower()
+          if host not in allowed:
+              raise SystemExit(f"Target host {host!r} is not in SECURITY_ALLOWED_HOSTS")
+          if os.environ["PROFILE"] not in {"zap", "wapiti", "nuclei", "all"}:
+              raise SystemExit("Unknown scanner profile")
+          print(f"Approved target host: {host}")
+          PY
+      - uses: actions/checkout@v4
+      - name: Prepare reports
+        run: mkdir -p security-reports
+      - name: OWASP ZAP passive baseline scan
+        if: inputs.profile == 'zap' || inputs.profile == 'all'
+        env:
+          TARGET_URL: ${{ inputs.target_url }}
+        run: |
+          docker run --rm --network host -v "$PWD/security-reports:/zap/wrk/:rw" ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t "$TARGET_URL" -m 3 -T 5 -J zap-report.json -r zap-report.html
+      - name: Wapiti web application scan
+        if: inputs.profile == 'wapiti' || inputs.profile == 'all'
+        env:
+          TARGET_URL: ${{ inputs.target_url }}
+        run: |
+          docker run --rm --network host -v "$PWD/security-reports:/reports" cyberwatch/wapiti:latest wapiti -u "$TARGET_URL" -f json -o /reports/wapiti-report.json --max-scan-time 600 --max-attack-time 5 --max-requests-per-second 2
+      - name: Nuclei controlled template scan
+        if: inputs.profile == 'nuclei' || inputs.profile == 'all'
+        env:
+          TARGET_URL: ${{ inputs.target_url }}
+        run: |
+          docker run --rm --network host -v "$PWD/security-reports:/reports" projectdiscovery/nuclei:latest -u "$TARGET_URL" -tags misconfig,cve,exposure -severity medium,high,critical -rl 2 -c 2 -retries 0 -timeout 5 -jsonl -o /reports/nuclei-report.jsonl
+      - name: Archive DAST reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: authorized-dast-${{ github.sha }}
+          path: security-reports/
+          if-no-files-found: warn
+          retention-days: 14
