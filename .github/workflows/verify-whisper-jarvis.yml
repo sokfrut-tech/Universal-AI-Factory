@@ -19,9 +19,14 @@ jobs:
         with:
           path: factory
 
-      - name: 2. Клонирование RussSearchOPPO через HTTPS (без токена)
-        run: |
-          git clone https://github.com/sokfrut-tech/RussSearchOPPO.git --branch t2-work russsearch
+      - name: 2. Checkout RussSearchOPPO (ветка t2-work)
+        uses: actions/checkout@v4
+        with:
+          repository: sokfrut-tech/RussSearchOPPO
+          ref: t2-work
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: russsearch
+          fetch-depth: 0
 
       - name: 3. Аудит безопасности (Gitleaks) и проверка кода C++/JNI
         id: audit
