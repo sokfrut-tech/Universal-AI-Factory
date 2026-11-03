@@ -88,3 +88,15 @@ Initial workflow run `41695425276` exposed an incorrect Gitleaks CLI flag (tool 
 
 ## 6. Preliminary decision
 **BLOCK for public deployment / release.** The Worker is not deployed, rate limiting is not evidenced, and the new secret/CodeQL scan jobs have not all completed. This is a preliminary self-review, not a final factory security PASS. Reassess after fresh PR #4 checks, SARIF inspection, and substantive independent reviewer reports.
+
+## 7. Fresh scan evidence (2026-11-03 18:40Z)
+
+On PR #4 head `a9a36718066517365c0ba84d690a741a3d1b4cae`, workflow run [41695960923](https://github.com/sokfrut-tech/Antigravity-Mobile/actions/runs/41695960923):
+
+- **Gitleaks v8.24.2: PASS, 0 findings** in the generated SARIF (0 results). The full-history scan and SARIF artifact upload both succeeded. Artifact ID: `13262505451`; artifact digest: `sha256:cb26ef71196396431a48bc63f0d46379a73ff20daf2f27478d522a245ef46444`.
+- **npm audit: PASS at high severity threshold, 0 vulnerabilities reported** for the Worker dependency resolution generated during this run. This does not substitute for a committed lockfile.
+- **Gradle dependency graph: PASS** — `:app:dependencies --configuration debugRuntimeClasspath` completed successfully. This is dependency resolution/inventory, not a full Gradle CVE audit.
+- **CodeQL JavaScript/TypeScript and Java/Kotlin: IN PROGRESS** at time of this update. SARIF export artifact-path handling was corrected in PR head `a9a367...`; await the fresh run's artifacts and inspect finding counts before claiming PASS.
+- The earlier run `41695425276` was cancelled after the first Gitleaks invocation failed due to an unsupported CLI flag. That was a workflow invocation defect, not evidence of a detected secret. The corrected run above succeeded.
+
+No secret values were emitted in the report or logs reviewed.
