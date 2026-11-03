@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 1. Checkout Universal-AI-Factory
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           path: factory
           fetch-depth: 0
@@ -53,7 +53,7 @@ jobs:
           echo "task_file=$TASK_FILE" >> $GITHUB_OUTPUT
 
       - name: 3. Checkout целевого репозитория
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: sokfrut-tech/${{ github.event.inputs.target_repo || 'avtoy-korea-auto' }}
           token: ${{ secrets.FACTORY_PAT || github.token }}
