@@ -24,3 +24,7 @@ Do not blindly copy Android, Worker, Node, Python or other project checks into u
 ## Future-project rule
 
 A new project is not ready for production until its security lane is implemented, exercised on a test change, and included in the release gate. If a scanner or integration is unavailable, mark it BLOCKED or NOT CONFIGURED rather than pretending it ran.
+
+- [ ] Add reusable Semgrep + Trivy workflow from Universal-AI-Factory/.github/workflows/factory-security-reusable.yml and retain stack-specific CodeQL.
+- [ ] Add a manual DAST entry point only for authorized staging targets; configure the security-lab environment and exact-host SECURITY_ALLOWED_HOSTS variable first.
+- [ ] Select the appropriate desktop lab profile from docs/SECURITY_TOOLCHAIN_CATALOG.md; do not claim tools ran unless evidence is attached.

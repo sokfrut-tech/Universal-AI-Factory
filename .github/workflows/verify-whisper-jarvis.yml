@@ -15,12 +15,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 1. Checkout Universal-AI-Factory
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           path: factory
 
       - name: 2. Checkout RussSearchOPPO (ветка t2-work)
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: sokfrut-tech/RussSearchOPPO
           ref: t2-work
