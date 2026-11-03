@@ -39,6 +39,8 @@
 - The agent review artifacts state that LLMs were not configured; specialist outputs are deterministic evidence only. Do not represent them as independent LLM reviews.
 - PR [#51](https://github.com/sokfrut-tech/Gemeni/pull/51) adds Android API 35 emulator instrumentation for launcher UI, microphone permission/runtime state and accessibility settings. Its CI run is in progress. Emulator success still does not prove real OPPO/ColorOS behavior.
 
+| `Antigravity-Mobile` | Security audit requested from Claude and Gemini on 2026-11-03 (correlation `ANTIGRAVITY-MOBILE-SECURITY-2026-11-03`) after PR #3 merged. | **IN PROGRESS**: no project-specific Gitleaks/CodeQL/dependency security lane confirmed yet; Worker not deployed; await substantive agent reports and deterministic scans before PASS/release. |
+
 ## Not onboarded
 
 - `breeno-apks` — empty repository at last inventory; no workflow can be integrated until project files exist.
