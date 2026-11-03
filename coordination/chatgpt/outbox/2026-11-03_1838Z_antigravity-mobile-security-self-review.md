@@ -100,3 +100,13 @@ On PR #4 head `a9a36718066517365c0ba84d690a741a3d1b4cae`, workflow run [41695960
 - The earlier run `41695425276` was cancelled after the first Gitleaks invocation failed due to an unsupported CLI flag. That was a workflow invocation defect, not evidence of a detected secret. The corrected run above succeeded.
 
 No secret values were emitted in the report or logs reviewed.
+
+## 8. CodeQL run completion and coverage limitation
+
+Run [41695960923](https://github.com/sokfrut-tech/Antigravity-Mobile/actions/runs/41695960923) completed with overall workflow conclusion **success**:
+- CodeQL JavaScript/TypeScript analysis step succeeded and reported 2 of 2 JavaScript files scanned.
+- CodeQL Java/Kotlin analysis step succeeded and reported 4 of 8 Kotlin files scanned. This is partial source coverage; do not interpret as complete Kotlin coverage.
+- Both CodeQL analyze steps exported SARIF successfully, but the SARIF archive steps were skipped. The current workflow condition uses `hashFiles` against `runner.temp`, which does not find files outside the workspace. Thus findings were not archived or independently inspected.
+- No CodeQL finding count is claimed. The CodeQL jobs are execution-successful but evidence publication is incomplete.
+
+PR #4 head at the time of this run was `a9a36718066517365c0ba84d690a741a3d1b4cae`. A proposed follow-up edit to correct SARIF artifact publication was blocked by the tool safety layer; no claim is made that this workflow defect was fixed. PR #4 must remain unmerged until the artifact path/condition is corrected, rerun, and SARIF findings are inspected.
