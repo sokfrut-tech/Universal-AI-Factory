@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 1. Checkout Universal-AI-Factory
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
 
@@ -45,7 +45,7 @@ jobs:
 
       - name: 3. Проверка целевого проекта (необязательно)
         if: steps.read_inbox.outputs.has_task == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: sokfrut-tech/RussSearchOPPO
           token: ${{ secrets.FACTORY_PAT || github.token }}
