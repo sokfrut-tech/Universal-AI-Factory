@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  acknowledge-inboxes:
+  register-inboxes:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -52,7 +52,7 @@ jobs:
             agent="$(cut -d/ -f2 <<< "${task_path}")"
             task_name="$(basename "${task_path}")"
             out_dir="coordination/${agent}/outbox"
-            out_file="${out_dir}/ACK_${task_name}"
+            out_file="${out_dir}/FACTORY_RECEIPT_${task_name}"
 
             mkdir -p "${out_dir}"
             if [[ -e "${out_file}" ]]; then
@@ -69,7 +69,7 @@ jobs:
               echo "- Время UTC: $(date -u '+%Y-%m-%d %H:%M:%S')"
               echo "- Исходное сообщение: \`${task_path}\`"
               echo "- Task ID: ${task_id:-не указан}"
-              echo "- Статус: received (файл обнаружен и зарегистрирован)"
+              echo "- Статус: registered_by_ci (файл обнаружен и зарегистрирован; агентом не прочитан)"
               echo
               echo "> Это только техническая квитанция GitHub Actions. Она НЕ доказывает, что внешний агент прочитал сообщение, принял задачу или выполнил её."
             } > "${out_file}"
@@ -84,8 +84,8 @@ jobs:
 
           git config user.name "Universal-AI-Factory Dispatcher"
           git config user.email "factory@users.noreply.github.com"
-          git add coordination/*/outbox/ACK_*.md
+          git add coordination/*/outbox/FACTORY_RECEIPT_*.md
           if ! git diff --cached --quiet; then
-            git commit -m "chore(coordination): acknowledge new agent inbox messages [skip ci]"
+            git commit -m "chore(coordination): register new agent inbox messages [skip ci]"
             git push
           fi
