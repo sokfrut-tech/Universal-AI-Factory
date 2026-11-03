@@ -51,6 +51,29 @@
 - Desktop lab tools (Wireshark, Sysmon, System Informer / legacy Process Hacker, Ghidra, IDA Free, Binary Ninja) are documented as **NOT CONFIGURED / NOT RUN** until a dedicated analyst VM is provisioned and versioned evidence is attached.
 - Reusable workflows are not a PASS by themselves. Each project must call the reusable static workflow, execute it on a PR, triage findings and record the run.
 
+
+## Factory-wide security toolchain implementation (2026-11-03)
+
+- PR [#10](https://github.com/sokfrut-tech/Universal-AI-Factory/pull/10) adds the canonical catalog, lab runbook, reusable Semgrep + Trivy workflow, authorized DAST workflow, updated baseline/bootstrap, and a security workflow for the factory repository itself.
+- Shared CI workflow is pinned by callers to immutable commit revisions. Trivy action was corrected to a verified immutable release commit after the first run exposed that the old 0.28.0 reference was not resolvable.
+- Semgrep gate and SARIF export are separate steps because the current Semgrep SARIF path can report nosemgrep-suppressed findings. The gate is the exit-code source; SARIF is an evidence artifact.
+- DAST is manual only. It requires HTTPS, exact hostname allowlisting via SECURITY_ALLOWED_HOSTS, the explicit authorization confirmation, and a reviewed security-lab GitHub environment. No production or third-party scan has been launched.
+- Desktop tools remain NOT CONFIGURED / NOT RUN until a dedicated isolated analyst VM is provisioned: Wireshark, Sysmon, System Informer (legacy Process Hacker), Ghidra, IDA Free and Binary Ninja.
+
+### Project onboarding PRs
+
+| Repository | PR | First observed result / follow-up |
+|---|---:|---|
+| avtoy-korea-auto | [#57](https://github.com/sokfrut-tech/avtoy-korea-auto/pull/57) | Initial Gitleaks and Trivy passed; Semgrep identified 18 mutable GitHub Action references. All identified action references were pinned to immutable commits; latest rerun queued. |
+| RussSearchOPPO | [#3](https://github.com/sokfrut-tech/RussSearchOPPO/pull/3) | Initial Gitleaks, CodeQL and Trivy passed; Semgrep identified 25 mutable action references plus the expected launcher activity export. Actions pinned and launcher finding annotated; latest rerun in progress. |
+| voice-assistant | [#15](https://github.com/sokfrut-tech/voice-assistant/pull/15) | Initial Gitleaks and Trivy passed; Semgrep identified 13 mutable action references, missing Dependabot cooldowns and launcher activity export. Actions pinned, 7-day cooldown added and launcher finding annotated; latest rerun queued. |
+| Gemeni | [#53](https://github.com/sokfrut-tech/Gemeni/pull/53) | Initial Gitleaks and Trivy passed; Semgrep identified 43 mutable action references, six dynamic urllib endpoint uses, one privileged workflow_run checkout of incoming code, and the launcher activity. Actions pinned; privileged workflow_run now checks out trusted default-branch code only, drops contents write and does not push from the privileged job. Dynamic endpoint findings remain for review. |
+| russ-translation-models | [#2](https://github.com/sokfrut-tech/russ-translation-models/pull/2) | Gitleaks, Trivy and JSON manifest validation passed; Semgrep identified three mutable action references. They were pinned; latest rerun queued. |
+| happ-proxy-pool | [#3](https://github.com/sokfrut-tech/happ-proxy-pool/pull/3) | Initial Gitleaks and Trivy passed; Semgrep identified seven mutable action references and one dynamic urllib URL use. Action references pinned; dynamic URL finding remains for review. |
+| Antigravity-Mobile | [#7](https://github.com/sokfrut-tech/Antigravity-Mobile/pull/7) | APK build, Factory API checks, Gitleaks, CodeQL and Trivy passed. Semgrep's two remaining results are launcher activity export and AES-GCM nonce detection; both are annotated with the actual invariants (launcher-only entry point; Android Keystore randomized IV). Latest rerun queued. |
+
+**Important:** project PRs are not merged. The findings above are the first-run evidence, not a claim that all follow-up scans have passed. Merge only after the latest run is green or each remaining finding has a documented, owner-approved disposition. Do not count an annotated finding as fixed until the fresh scan confirms suppression.
+
 ## Not onboarded
 
 - `breeno-apks` — empty repository at last inventory; no workflow can be integrated until project files exist.
