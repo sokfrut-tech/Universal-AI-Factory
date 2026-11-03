@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       target_repo:
-        description: 'Целевой репозиторий (например: avtoy-korea-auto)'
+        description: 'Целевой репозиторий'
         required: true
         default: 'avtoy-korea-auto'
       task_file:
-        description: 'Путь к файлу ТЗ от Claude (или оставь пустым для автопоиска последнего .md)'
+        description: 'Относительный путь к файлу задания .md в фабрике; пусто — найти последнее задание'
         required: false
         default: ''
       action_mode:
@@ -39,76 +39,114 @@ jobs:
           path: factory
           fetch-depth: 0
 
-      - name: 2. Поиск и чтение задания от Claude
-        id: find_task
+      - name: 2. Validate target repository input
+        id: validate_target
+        env:
+          TARGET_REPO_INPUT: ${{ inputs.target_repo }}
         run: |
-          cd factory
-          if [ -n "${{ github.event.inputs.task_file }}" ] && [ -f "${{ github.event.inputs.task_file }}" ]; then
-            TASK_FILE="${{ github.event.inputs.task_file }}"
-          else
-            # Ищем самый свежий .md файл (кроме README.md и старых отчетов)
-            TASK_FILE=$(find . -maxdepth 3 -name "*.md" ! -name "README.md" ! -name "FACTORY_STATUS.md" -printf "%T@ %p\n" | sort -n | tail -1 | cut -d' ' -f2-)
-          fi
-          echo "Найдено задание: $TASK_FILE"
-          echo "task_file=$TASK_FILE" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          case "$TARGET_REPO_INPUT" in
+            avtoy-korea-auto|RussSearchOPPO|voice-assistant|Gemeni|russ-translation-models|happ-proxy-pool|Antigravity-Mobile|Universal-AI-Factory)
+              printf 'target_repo=%s\n' "$TARGET_REPO_INPUT" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "::error::Target repository is not in the factory allowlist."
+              exit 1
+              ;;
+          esac
 
-      - name: 3. Checkout целевого репозитория
+      - name: 3. Find and validate task file
+        id: find_task
+        working-directory: factory
+        env:
+          TASK_FILE_INPUT: ${{ inputs.task_file }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          from pathlib import Path
+
+          root = Path.cwd().resolve()
+          requested = os.environ.get("TASK_FILE_INPUT", "").strip()
+          if requested:
+              candidate = (root / requested).resolve()
+              if root not in candidate.parents or not candidate.is_file() or candidate.suffix.lower() != ".md":
+                  raise SystemExit("task_file must be an existing Markdown file inside the factory repository")
+              selected = candidate
+          else:
+              candidates = [
+                  p for p in root.glob("**/*.md")
+                  if p.is_file()
+                  and p.name not in {"README.md", "FACTORY_STATUS.md"}
+                  and ".git" not in p.parts
+              ]
+              selected = max(candidates, key=lambda p: p.stat().st_mtime) if candidates else None
+
+          relative = selected.relative_to(root).as_posix() if selected else ""
+          if any(ch in relative for ch in "\r\n"):
+              raise SystemExit("Invalid task file path")
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"task_file={relative}\n")
+          print(f"Selected task file: {relative or '(none)'}")
+          PY
+
+      - name: 4. Checkout allowlisted target repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          repository: sokfrut-tech/${{ github.event.inputs.target_repo || 'avtoy-korea-auto' }}
+          repository: sokfrut-tech/${{ steps.validate_target.outputs.target_repo }}
           token: ${{ secrets.FACTORY_PAT || github.token }}
           path: target_repo
           fetch-depth: 0
+          persist-credentials: false
 
-      - name: 4. Проверка ТЗ, веток и PR в целевом репозитории
+      - name: 5. Audit task and target repository
         id: audit
         env:
           GH_TOKEN: ${{ secrets.FACTORY_PAT || github.token }}
+          TARGET_REPO: ${{ steps.validate_target.outputs.target_repo }}
+          TASK_FILE: ${{ steps.find_task.outputs.task_file }}
         run: |
-          REPORT="factory/FACTORY_STATUS.md"
-          TARGET="${{ github.event.inputs.target_repo || 'avtoy-korea-auto' }}"
-          TASK="${{ steps.find_task.outputs.task_file }}"
+          set -euo pipefail
+          REPORT="$GITHUB_WORKSPACE/factory/FACTORY_STATUS.md"
+          {
+            echo "# Universal AI Factory report"
+            echo "**Date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo "**Target repository:** sokfrut-tech/$TARGET_REPO"
+            echo "**Task file:** ${TASK_FILE:-none}"
+            echo
+            if [ -n "$TASK_FILE" ] && [ -f "$GITHUB_WORKSPACE/factory/$TASK_FILE" ]; then
+              echo "## Accepted task content"
+              echo "--- TASK BEGIN ---"
+              cat "$GITHUB_WORKSPACE/factory/$TASK_FILE"
+              echo "--- TASK END ---"
+            fi
+          } > "$REPORT"
 
-          echo "# 🏭 Отчет Universal-AI-Factory" > $REPORT
-          echo "**Дата запуска:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $REPORT
-          echo "**Целевой репозиторий:** \`sokfrut-tech/$TARGET\`" >> $REPORT
-          echo "**Проверенный файл задания:** \`$TASK\`" >> $REPORT
-          echo "" >> $REPORT
+          cd "$GITHUB_WORKSPACE/target_repo"
+          {
+            echo "## Remote branches"
+            echo '--- BRANCH LIST ---'
+            git branch -r
+            echo '--- END BRANCH LIST ---'
+            echo
+            echo "## Project checks"
+            if [ -f "worker.js" ]; then
+              TG_COUNT=$(grep -c -i "telegram" worker.js || true)
+              echo "- Telegram references in worker.js: $TG_COUNT"
+            fi
+            if [ -f "wrangler.toml" ]; then
+              echo "- wrangler.toml: present"
+            fi
+          } >> "$REPORT"
 
-          if [ -n "$TASK" ] && [ -f "factory/$TASK" ]; then
-            echo "## 📋 Содержимое актуального задания Claude" >> $REPORT
-            echo '```markdown' >> $REPORT
-            cat "factory/$TASK" >> $REPORT
-            echo '```' >> $REPORT
-          fi
-
-          cd target_repo
-          echo "## 🌿 Активные ветки в $TARGET" >> ../$REPORT
-          echo '```text' >> ../$REPORT
-          git branch -r >> ../$REPORT
-          echo '```' >> ../$REPORT
-
-          echo "## 🔍 Проверка критических компонентов (avtoy-korea-auto)" >> ../$REPORT
-          if [ -f "worker.js" ]; then
-            TG_COUNT=$(grep -c -i "telegram" worker.js || true)
-            SPORTAGE_COUNT=$(grep -c -i "sportage" worker.js || true)
-            LOGO_COUNT=$(grep -c -i "logo" worker.js || true)
-            echo "- Упоминаний логики Telegram в \`worker.js\`: **$TG_COUNT** (целостность сохранена)" >> ../$REPORT
-            echo "- Ссылок на Sportage: **$SPORTAGE_COUNT**" >> ../$REPORT
-            echo "- Ссылок на Logo: **$LOGO_COUNT**" >> ../$REPORT
-          fi
-
-          if [ -f "wrangler.toml" ]; then
-            echo "- Конфигурация \`wrangler.toml\`:" >> ../$REPORT
-            echo '```toml' >> ../$REPORT
-            cat wrangler.toml >> ../$REPORT
-            echo '```' >> ../$REPORT
-          fi
-
-      - name: 5. Сохранение полного дампа отчета в фабрику
+      - name: 6. Save audit report to factory
         run: |
+          set -euo pipefail
           cd factory
           git config user.name "Universal-AI-Factory Bot"
           git config user.email "factory-bot@users.noreply.github.com"
           git add FACTORY_STATUS.md
-          git diff --staged --quiet || (git commit -m "chore(factory): auto-audit report [skip ci]" && git push)
+          if ! git diff --staged --quiet; then
+            git commit -m "chore(factory): auto-audit report [skip ci]"
+            git push origin "HEAD:$GITHUB_REF_NAME"
+          fi
