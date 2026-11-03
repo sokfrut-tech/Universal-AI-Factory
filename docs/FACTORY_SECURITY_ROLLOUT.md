@@ -1,6 +1,6 @@
 # Factory Security Rollout Ledger
 
-**Updated:** 2026-11-02  
+**Updated:** 2026-11-03  
 **Purpose:** Track repository onboarding to the factory cybersecurity baseline. Re-check live GitHub status before release decisions.
 
 ## Integrated repositories
@@ -40,6 +40,16 @@
 - PR [#51](https://github.com/sokfrut-tech/Gemeni/pull/51) adds Android API 35 emulator instrumentation for launcher UI, microphone permission/runtime state and accessibility settings. Its CI run is in progress. Emulator success still does not prove real OPPO/ColorOS behavior.
 
 | `Antigravity-Mobile` | Security audit requested from Claude and Gemini on 2026-11-03 (correlation `ANTIGRAVITY-MOBILE-SECURITY-2026-11-03`) after PR #3 merged. | **IN PROGRESS**: no project-specific Gitleaks/CodeQL/dependency security lane confirmed yet; Worker not deployed; await substantive agent reports and deterministic scans before PASS/release. |
+
+
+## Factory-wide toolchain rollout (2026-11-03)
+
+- Added shared reusable CI workflow: `.github/workflows/factory-security-reusable.yml` (Semgrep SAST + Trivy filesystem/dependency/misconfiguration/secret checks; SARIF artifacts).
+- Added reusable authorized DAST workflow: `.github/workflows/factory-dast-reusable.yml` (OWASP ZAP passive baseline, Wapiti and Nuclei; HTTPS-only, exact-host allowlist, explicit authorization phrase, security-lab environment).
+- Added `docs/SECURITY_TOOLCHAIN_CATALOG.md` and `docs/SECURITY_LAB_RUNBOOK.md` mapping all screenshot tools to CI or isolated lab roles.
+- Updated the factory security standard and new-project bootstrap to require the shared toolchain.
+- Desktop lab tools (Wireshark, Sysmon, System Informer / legacy Process Hacker, Ghidra, IDA Free, Binary Ninja) are documented as **NOT CONFIGURED / NOT RUN** until a dedicated analyst VM is provisioned and versioned evidence is attached.
+- Reusable workflows are not a PASS by themselves. Each project must call the reusable static workflow, execute it on a PR, triage findings and record the run.
 
 ## Not onboarded
 
