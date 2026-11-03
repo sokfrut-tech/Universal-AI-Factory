@@ -74,6 +74,22 @@
 
 **Important:** project PRs are not merged. The findings above are the first-run evidence, not a claim that all follow-up scans have passed. Merge only after the latest run is green or each remaining finding has a documented, owner-approved disposition. Do not count an annotated finding as fixed until the fresh scan confirms suppression.
 
+
+### Latest verified CI outcomes (2026-11-03)
+
+| Repository / PR | Run evidence | Current interpretation |
+|---|---|---|
+| Universal-AI-Factory / #10 | [41705928259](https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/41705928259) | Gitleaks, Semgrep and Trivy passed on the central factory PR after pinning workflow actions and fixing shell-input interpolation. |
+| avtoy-korea-auto / #57 | [41706682505](https://github.com/sokfrut-tech/avtoy-korea-auto/actions/runs/41706682505) | Gitleaks, Semgrep and Trivy passed; CodeQL is still running with local SARIF artifact output because GitHub Code Scanning is disabled for this repository. Worker tests and factory review passed; PR-triggered deploy workflow did not satisfy its main-branch deployment condition. |
+| RussSearchOPPO / #3 | [41705538426](https://github.com/sokfrut-tech/RussSearchOPPO/actions/runs/41705538426), APK [41705537382](https://github.com/sokfrut-tech/RussSearchOPPO/actions/runs/41705537382), Hive [41705537360](https://github.com/sokfrut-tech/RussSearchOPPO/actions/runs/41705537360) | Gitleaks, Semgrep, Trivy and CodeQL passed; APK build and Hive preflight passed. |
+| voice-assistant / #15 | Security [41706345495](https://github.com/sokfrut-tech/voice-assistant/actions/runs/41706345495), CodeQL [41706345071](https://github.com/sokfrut-tech/voice-assistant/actions/runs/41706345071) | Gitleaks, Semgrep, Trivy and Java CodeQL passed after changing the analysis build target from a nonexistent Kotlin task to the actual Java compile task. |
+| Gemeni / #53 | [41706798734](https://github.com/sokfrut-tech/Gemeni/actions/runs/41706798734) | Fresh run in progress after pinning actions, removing the privileged workflow_run PR checkout, and validating configured HTTP(S) model endpoints. Do not mark PASS until this run finishes. |
+| russ-translation-models / #2 | [41705581385](https://github.com/sokfrut-tech/russ-translation-models/actions/runs/41705581385) | Gitleaks, Semgrep, Trivy and model manifest validation passed. CodeQL is NOT APPLICABLE to this data-only repository at present. |
+| happ-proxy-pool / #3 | [41706803823](https://github.com/sokfrut-tech/happ-proxy-pool/actions/runs/41706803823) | Gitleaks, Semgrep, Trivy and Python CodeQL passed after validating the fixed HTTPS source allowlist. |
+| Antigravity-Mobile / #7 | Security [41706087791](https://github.com/sokfrut-tech/Antigravity-Mobile/actions/runs/41706087791), APK [41706087577](https://github.com/sokfrut-tech/Antigravity-Mobile/actions/runs/41706087577), API [41706087472](https://github.com/sokfrut-tech/Antigravity-Mobile/actions/runs/41706087472) | Gitleaks, Semgrep, Trivy, Kotlin/Java CodeQL, APK build and Factory API checks passed. |
+
+All project PRs remain open and unmerged. Passing checks above apply to the exact PR commits/runs shown; later commits require fresh runs. Desktop lab tools and DAST remain NOT RUN until a lab host, approved staging host allowlist and environment reviewers are configured.
+
 ## Not onboarded
 
 - `breeno-apks` — empty repository at last inventory; no workflow can be integrated until project files exist.
