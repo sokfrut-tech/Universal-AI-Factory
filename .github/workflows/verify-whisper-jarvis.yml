@@ -24,7 +24,7 @@ jobs:
         with:
           repository: sokfrut-tech/RussSearchOPPO
           ref: t2-work
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.FACTORY_PAT }}
           path: russsearch
           fetch-depth: 0
 
