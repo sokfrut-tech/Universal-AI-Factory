@@ -77,5 +77,6 @@ jobs:
           git add coordination/claude/outbox/
           if ! git diff --staged --quiet; then
             git commit -m "chore(inbox): квитанция для ${TASK_NAME} [skip ci]"
+            git pull --rebase origin main
             git push
           fi
