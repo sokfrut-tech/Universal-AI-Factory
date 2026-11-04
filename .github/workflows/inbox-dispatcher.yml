@@ -1,82 +1,22 @@
-name: Claude Inbox Dispatcher
+name: Claude Inbox Dispatcher (disabled until real provider exists)
+
+# This workflow intentionally does not dispatch tasks.
+# The previous implementation only generated ACK receipts and pushed them
+# back to main; it did not invoke Claude and must not imply execution.
+# Real provider dispatch will be added separately with explicit credentials,
+# least-privilege permissions, bounded inputs, and verifiable result artifacts.
 
 on:
-  push:
-    branches: [ main ]
-    paths:
-      - 'coordination/claude/inbox/*.md'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  process-inbox:
+  disabled:
     runs-on: ubuntu-latest
     steps:
-      - name: 1. Checkout Universal-AI-Factory
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: 2. Найти новые задачи в coordination/claude/inbox
-        id: read_inbox
-        env:
-          BEFORE: ${{ github.event.before }}
-          SHA: ${{ github.sha }}
+      - name: Explain disabled state
         run: |
-          set -euo pipefail
-          if [ -z "${BEFORE}" ] || [ "${BEFORE}" = "0000000000000000000000000000000000000000" ]; then
-            RANGE_ARGS=("${SHA}~1" "${SHA}")
-          else
-            RANGE_ARGS=("${BEFORE}" "${SHA}")
-          fi
-          NEW_TASKS=$(git diff --name-only --diff-filter=A "${RANGE_ARGS[@]}" -- 'coordination/claude/inbox/*.md' || true)
-          if [ -z "$NEW_TASKS" ]; then
-            echo "Новых задач нет, выходим."
-            echo "has_task=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          LATEST_TASK=$(echo "$NEW_TASKS" | tail -n 1)
-          echo "Обнаружена задача: $LATEST_TASK"
-          echo "has_task=true" >> "$GITHUB_OUTPUT"
-          echo "task_path=$LATEST_TASK" >> "$GITHUB_OUTPUT"
-          echo "task_name=$(basename "$LATEST_TASK")" >> "$GITHUB_OUTPUT"
-
-      - name: 3. Проверка целевого проекта (необязательно)
-        if: steps.read_inbox.outputs.has_task == 'true'
-        uses: actions/checkout@v4
-        with:
-          repository: sokfrut-tech/RussSearchOPPO
-          token: ${{ secrets.FACTORY_PAT || github.token }}
-          path: target_project
-        continue-on-error: true
-
-      - name: 4. Квитанция в outbox
-        if: steps.read_inbox.outputs.has_task == 'true'
-        env:
-          TASK_PATH: ${{ steps.read_inbox.outputs.task_path }}
-          TASK_NAME: ${{ steps.read_inbox.outputs.task_name }}
-        run: |
-          set -euo pipefail
-          mkdir -p coordination/claude/outbox
-          OUT_FILE="coordination/claude/outbox/ACK_${TASK_NAME}"
-          {
-            echo "# Задача принята фабрикой в обработку"
-            echo ""
-            echo "- Исходный файл: \`${TASK_PATH}\`"
-            echo "- Время приёма: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-            echo "- Статус: квитанция автоматическая. Исполнение задачи этим шагом НЕ подтверждается."
-            echo ""
-            echo "## Содержимое принятого ТЗ"
-            echo ""
-            cat "$TASK_PATH"
-          } > "$OUT_FILE"
-          git config user.name "Universal-AI-Factory Dispatcher"
-          git config user.email "factory@users.noreply.github.com"
-          git add coordination/claude/outbox/
-          if ! git diff --staged --quiet; then
-            git commit -m "chore(inbox): квитанция для ${TASK_NAME} [skip ci]"
-            git pull --rebase origin main
-            git push
-          fi
+          echo "::notice::Claude dispatch is disabled: no verified provider adapter is configured."
+          echo "No task was read, no provider was called, and no repository was modified."

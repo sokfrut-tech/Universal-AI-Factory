@@ -1,0 +1,32 @@
+name: Factory Runner Security Tests
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/factory-runner.yml"
+      - ".github/workflows/test-factory-runner-security.yml"
+      - "scripts/test_factory_runner_security.py"
+      - "scripts/test_factory_runner_yaml.rb"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/factory-runner.yml"
+      - ".github/workflows/test-factory-runner-security.yml"
+      - "scripts/test_factory_runner_security.py"
+      - "scripts/test_factory_runner_yaml.rb"
+
+permissions:
+  contents: read
+
+jobs:
+  security-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Run runner security regression checks
+        run: python3 scripts/test_factory_runner_security.py
+      - name: Parse runner YAML and verify effective structure
+        run: ruby scripts/test_factory_runner_yaml.rb
