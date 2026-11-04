@@ -40,8 +40,7 @@ Allowed recovery paths:
 - `done`, `rejected`, and `cancelled` are terminal.
 
 A task must not jump from `received` directly to `done`. A retry after a terminal failure requires an explicit re-open transition and a new attempt number.
-An `outcome_unknown` run is non-terminal and must remain reserved until reconciled; it must never be retried automatically. Reuse of the same idempotency key is required for any safe replay, and a changed payload with that key must be rejected.
-An `outcome_unknown` run is non-terminal and must remain reserved until reconciled; it must never be retried automatically. Reuse of the same idempotency key is required for any safe replay, and a changed payload with that key must be rejected.
+An `outcome_unknown` run is non-terminal and must remain reserved until reconciled; it must never be retried automatically. A safe replay reuses the same idempotency key, and a changed payload with that key must be rejected.
 
 ## Required invariants
 
@@ -65,7 +64,7 @@ A real adapter must implement:
 - a substantive response artifact and immutable status event;
 - tests for missing credentials, duplicate delivery, timeout, provider rejection, malformed response, and successful completion.
 
-Live provider transport must additionally pass a central guard requiring both adapter enablement and an explicit `ALLOW_LIVE_PROVIDERS=true` setting. The setting must default to false; tests must prove that an enabled adapter still does not call transport while the guard is false.
+The adapter currently accepts an `allow_live_providers` configuration boolean, defaulting to false, and tests that a false value prevents transport invocation. **This is not yet a centralized runtime Guard Layer:** no shared environment/configuration loader currently proves that every provider path is gated by `ALLOW_LIVE_PROVIDERS=true`. That wiring must be implemented and reviewed before any live provider transport is connected. The flag must default to false.
 
 The D1 event triggers provide append-only protection against ordinary application-level UPDATE/DELETE. They are not cryptographic tamper evidence against a privileged database administrator or a migration that removes the triggers; do not describe them as a hash chain.
 
@@ -94,5 +93,6 @@ No adapter is considered active until a controlled test proves an actual provide
 2. Implement provider adapters behind disabled-by-default configuration.
 3. Run mock-provider tests; keep real credentials out of CI logs.
 4. Configure narrowly scoped secrets in repository settings.
-5. Run a controlled, non-production smoke test and verify provider request ID plus substantive outbox report.
-6. Only then enable inbox dispatch for that provider.
+5. Implement and review the centralized `ALLOW_LIVE_PROVIDERS` guard before connecting live transports.
+6. Run a controlled, non-production smoke test and verify provider request ID plus substantive outbox report.
+7. Only then enable inbox dispatch for that provider.
