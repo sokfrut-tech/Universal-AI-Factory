@@ -56,3 +56,7 @@ Create a feature branch from current main, open a PR but do not merge it. Report
 - what is and is not tested.
 
 No changes to main, no Google Play publishing, no secrets in Git. Acknowledge this task only after reading the image evidence; a generic dispatcher ACK is not completion.
+
+## Important clarification after visual inspection
+
+`122.png` is a square 4x2 collage of complete phone-screen mockups, not a standalone wallpaper. Do NOT place the entire collage behind the app UI. Treat it as the visual specification for the eight screen compositions. Recreate the UI in Compose and use/crop only appropriate artwork regions as backgrounds where technically and visually suitable; avoid embedding mockup text/buttons inside the actual app. The artwork is low-resolution reference material, so preserve readability and do not upscale tiny screenshot fragments as if they were high-quality wallpaper. If clean source artwork is unavailable, create layered dark wasteland surfaces/gradients and use the supplied art selectively rather than pretending the collage itself is a background.
