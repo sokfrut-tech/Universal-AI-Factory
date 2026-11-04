@@ -5,6 +5,7 @@ import re
 
 workflow = Path(".github/workflows/factory-runner.yml").read_text(encoding="utf-8")
 inbox = Path(".github/workflows/inbox-dispatcher.yml").read_text(encoding="utf-8")
+whisper = Path(".github/workflows/verify-whisper-jarvis.yml").read_text(encoding="utf-8")
 
 required = [
     "permissions:\n  contents: read",
@@ -45,6 +46,14 @@ assert "git push" not in inbox
 assert "actions/checkout@" not in inbox
 assert "did not invoke Claude" in inbox
 assert "No task was read" in inbox
+
+# Legacy Whisper workflow must not keep write credentials or false audit claims.
+assert "permissions:\\n  contents: read" in whisper
+assert "contents: write" not in whisper
+assert "secrets." not in whisper
+assert "git push" not in whisper
+assert "Gitleaks failures" in whisper
+assert "no verification is claimed" in whisper
 
 task_pattern = re.compile(
     r"^coordination/(claude|gemini)/inbox/[A-Za-z0-9._-]+\.md$"
