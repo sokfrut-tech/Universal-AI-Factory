@@ -1,10 +1,6 @@
 import unittest
 
-from factory_runner.patch_validator import (
-    PatchValidationError,
-    validate_patch,
-)
-
+from factory_runner.patch_validator import PatchValidationError, validate_patch
 
 BASE = "a" * 40
 TARGET = "sokfrut-tech/Universal-AI-Factory"
@@ -55,8 +51,7 @@ class PatchValidatorTests(unittest.TestCase):
             "@@ -0,0 +1 @@\n"
             "+hello\n"
         )
-        report = self.validate(patch)
-        self.assertEqual(report.files[0].change_type, "add")
+        self.assertEqual(self.validate(patch).files[0].change_type, "add")
 
     def test_valid_delete(self):
         patch = (
@@ -67,8 +62,7 @@ class PatchValidatorTests(unittest.TestCase):
             "@@ -1 +0,0 @@\n"
             "-bye\n"
         )
-        report = self.validate(patch)
-        self.assertEqual(report.files[0].change_type, "delete")
+        self.assertEqual(self.validate(patch).files[0].change_type, "delete")
 
     def test_rejects_traversal(self):
         self.assert_rejected(patch_for("../escape.txt"))
@@ -91,7 +85,10 @@ class PatchValidatorTests(unittest.TestCase):
         self.assert_rejected(patch)
 
     def test_rejects_submodule_mode(self):
-        patch = patch_for().replace("100644", "160000", 1)
+        patch = patch_for().replace(
+            "index 1111111..2222222 100644",
+            "index 1111111..2222222 160000",
+        )
         self.assert_rejected(patch)
 
     def test_rejects_binary(self):
