@@ -29,7 +29,7 @@ def validate_event(event):
     if event["provider"] not in {"claude", "gemini"}:
         raise ValueError("unknown provider")
     if not re.fullmatch(
-        r"coordination/(claude|gemini)/inbox/[A-Za-z0-9._-]+\\.md",
+        r"coordination/(claude|gemini)/inbox/[A-Za-z0-9._-]+[.]md",
         event["source_message"],
     ):
         raise ValueError("source message must be a direct inbox markdown child")
