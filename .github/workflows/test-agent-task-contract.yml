@@ -6,6 +6,8 @@ on:
       - "coordination/shared/TASK_LIFECYCLE_AND_PROVIDER_CONTRACT.md"
       - "coordination/shared/task-status.schema.json"
       - "scripts/test_task_status_contract.py"
+      - "scripts/provider_adapter.py"
+      - "scripts/test_provider_adapter.py"
       - ".github/workflows/test-agent-task-contract.yml"
   push:
     branches: [main]
@@ -28,3 +30,5 @@ jobs:
           persist-credentials: false
       - name: Validate task lifecycle invariants
         run: python3 scripts/test_task_status_contract.py
+      - name: Test disabled-by-default provider adapter
+        run: python3 -m unittest discover -s scripts -p 'test_provider_adapter.py' -v
