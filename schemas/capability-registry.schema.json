@@ -112,6 +112,9 @@
           },
           "write_scope": {
             "type": "string"
+          },
+          "adapter_evidence": {
+            "type": "string"
           }
         },
         "additionalProperties": false
