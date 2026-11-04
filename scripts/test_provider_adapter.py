@@ -116,7 +116,7 @@ class ProviderAdapterTests(unittest.TestCase):
             MockTransport(response=ProviderResponse(status="done", summary="done",
                                                     provider_request_id="mock-123"))
         ).dispatch(request())
-        self.assertEqual(result.status, "failed")
+        self.assertEqual(result.status, "outcome_unknown")
         self.assertEqual(result.failure_reason, "invalid_transport_status")
         self.assertEqual(result.status, "outcome_unknown")
 
