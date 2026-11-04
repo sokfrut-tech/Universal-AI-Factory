@@ -1,4 +1,6 @@
+import os
 import unittest
+from unittest.mock import patch
 
 from provider_adapter import (
     ProviderAdapter,
@@ -37,31 +39,48 @@ def request():
 class ProviderAdapterTests(unittest.TestCase):
     def adapter(self, transport):
         return ProviderAdapter(
-            ProviderConfig("claude", True, True, "secret://PROVIDER_API_KEY", True),
+            ProviderConfig("claude", True, True, "secret://PROVIDER_API_KEY"),
             transport,
         )
 
+    def setUp(self):
+        self.live_guard = patch.dict(os.environ, {"ALLOW_LIVE_PROVIDERS": "true"})
+        self.live_guard.start()
+        self.addCleanup(self.live_guard.stop)
+
     def test_disabled_by_default_and_does_not_call_transport(self):
         transport = MockTransport()
-        adapter = ProviderAdapter(ProviderConfig(provider="claude", enabled=True, allow_live_providers=False), transport)
+        adapter = ProviderAdapter(ProviderConfig(provider="claude", enabled=False), transport)
         result = adapter.dispatch(request())
         self.assertEqual(result.status, "blocked")
         self.assertEqual(transport.calls, [])
 
-    def test_live_guard_blocks_even_when_adapter_enabled(self):
+    def test_central_environment_guard_blocks_even_when_adapter_enabled(self):
         transport = MockTransport()
         adapter = ProviderAdapter(
-            ProviderConfig("claude", True, True, "secret://PROVIDER_API_KEY", False),
+            ProviderConfig("claude", True, True, "secret://PROVIDER_API_KEY"),
             transport,
         )
-        result = adapter.dispatch(request())
+        with patch.dict(os.environ, {"ALLOW_LIVE_PROVIDERS": "false"}):
+            result = adapter.dispatch(request())
+        self.assertEqual(result.status, "blocked")
+        self.assertEqual(transport.calls, [])
+
+    def test_missing_environment_guard_blocks(self):
+        transport = MockTransport()
+        adapter = ProviderAdapter(
+            ProviderConfig("claude", True, True, "secret://PROVIDER_API_KEY"),
+            transport,
+        )
+        with patch.dict(os.environ, {}, clear=True):
+            result = adapter.dispatch(request())
         self.assertEqual(result.status, "blocked")
         self.assertEqual(transport.calls, [])
 
     def test_missing_credential_blocks_without_call(self):
         transport = MockTransport()
         adapter = ProviderAdapter(
-            ProviderConfig("gemini", True, False, "secret://GEMINI_API_KEY", True),
+            ProviderConfig("gemini", True, False, "secret://GEMINI_API_KEY"),
             transport,
         )
         self.assertEqual(adapter.dispatch(request()).status, "blocked")
@@ -69,7 +88,7 @@ class ProviderAdapterTests(unittest.TestCase):
 
     def test_missing_transport_blocks(self):
         adapter = ProviderAdapter(
-            ProviderConfig("claude", True, True, "secret://ANTHROPIC_API_KEY", True)
+            ProviderConfig("claude", True, True, "secret://ANTHROPIC_API_KEY")
         )
         self.assertEqual(adapter.dispatch(request()).status, "blocked")
 
