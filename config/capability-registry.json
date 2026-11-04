@@ -2,10 +2,10 @@
   "schema_version": "1.0.0",
   "updated_at": "2026-11-04",
   "access_states": [
-    "operator_only",
     "adapter_pending",
     "agent_enabled",
-    "blocked"
+    "blocked",
+    "operator_only"
   ],
   "default_policy": {
     "default_access": "operator_only",
