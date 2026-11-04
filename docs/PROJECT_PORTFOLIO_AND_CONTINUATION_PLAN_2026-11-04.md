@@ -129,3 +129,44 @@ ArmorCodex hosted policy store was updated to version 2 with merge-mode rules re
 - Shared exchange protocol: [AGENT_EXCHANGE_PROTOCOL.md](../coordination/shared/AGENT_EXCHANGE_PROTOCOL.md)
 
 **Status:** portfolio plan written; individual project briefs and agent handoffs are being added. Open PRs remain open; no production changes or merges are authorized by this document.
+
+
+## 9. Continuation brief PRs created in this session
+
+All are draft documentation PRs; none has been merged. Their current mergeability must be refreshed before review; the first create response reported `mergeable=false` for these new branches, so inspect base conflicts/merge state rather than assuming ready.
+
+| Repository | Continuation PR | Branch |
+|---|---:|---|
+| Gemeni | [#54](https://github.com/sokfrut-tech/Gemeni/pull/54) | `factory/continuation-brief-2026-11-04` |
+| RussSearchOPPO | [#4](https://github.com/sokfrut-tech/RussSearchOPPO/pull/4) | `factory/continuation-brief-2026-11-04` |
+| avtoy-korea-auto | [#58](https://github.com/sokfrut-tech/avtoy-korea-auto/pull/58) | `factory/continuation-brief-2026-11-04` |
+| voice-assistant | [#16](https://github.com/sokfrut-tech/voice-assistant/pull/16) | `factory/continuation-brief-2026-11-04` |
+| russ-translation-models | [#3](https://github.com/sokfrut-tech/russ-translation-models/pull/3) | `factory/continuation-brief-2026-11-04` |
+| happ-proxy-pool | [#4](https://github.com/sokfrut-tech/happ-proxy-pool/pull/4) | `factory/continuation-brief-2026-11-04` |
+| Antigravity-Mobile | [#17](https://github.com/sokfrut-tech/Antigravity-Mobile/pull/17) | `feat/agent-command-center-shell-2026-11-04` |
+
+The Factory portfolio and continuation handbook are included in existing Factory PR #15. The Factory project-specific continuation brief is also in that branch.
+
+## 10. Optional agent handoffs placed in Factory inbox
+
+- Claude: `coordination/claude/inbox/2026-11-04_factory-provider-contract-review.md` — read-only P0 provider/ledger/dispatcher contract review.
+- Gemini: `coordination/gemini/inbox/2026-11-04_jarvis-runtime-qa-review.md` — read-only Jarvis runtime/Android QA.
+- Claude: `coordination/claude/inbox/2026-11-04_avtoy-korea-telegram-review.md` — read-only AVTOY Telegram/moderation review.
+- Antigravity-specific optional Claude/Gemini review requests are in the inbox paths listed in the Antigravity roadmap.
+
+These messages are repository handoff requests only. No delivery, acceptance or substantive agent response is asserted. ChatGPT remains responsible for continuing implementation if no agent response arrives.
+
+## 11. Repositories with no initial commit
+
+GitHub returned `Git Repository is empty` for `sleep-button` and `breeno-apks`, so a branch and in-repository continuation file could not be created. Their requirements are not inferred. The portfolio records them as P3 pending recovery of source files or an initial README/commit. Once a first commit exists, create the standard continuation brief and security bootstrap.
+
+## 12. Hosted safety policy update
+
+ArmorCodex hosted policy version 2 was created in merge mode, preserving existing rules and adding:
+- require approval for GitHub PR merge;
+- require approval for GitHub auto-merge;
+- require approval for AppDeploy deployment;
+- deny GitHub force-push;
+- require approval for GitHub branch deletion.
+
+Important: this hosted policy store is advisory unless a connected local enforcement hook consumes it. GitHub permissions, branch protection and CI remain the authoritative repository controls.
