@@ -1,88 +1,20 @@
-name: Verify Whisper Jarvis (RussSearchOPPO t2-work)
+name: Verify Whisper Jarvis (disabled pending safe audit implementation)
+
+# The previous workflow claimed security verification while ignoring Gitleaks
+# failures and pushed a report directly to main using a write token.
+# Keep it inert until a read-only, evidence-based audit is implemented.
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ main ]
-    paths:
-      - '.github/workflows/verify-whisper-jarvis.yml'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  audit-and-report:
+  disabled:
     runs-on: ubuntu-latest
     steps:
-      - name: 1. Checkout Universal-AI-Factory
-        uses: actions/checkout@v4
-        with:
-          path: factory
-
-      - name: 2. Checkout RussSearchOPPO (ветка t2-work)
-        uses: actions/checkout@v4
-        with:
-          repository: sokfrut-tech/RussSearchOPPO
-          ref: t2-work
-          token: ${{ secrets.FACTORY_PAT }}
-          path: russsearch
-          fetch-depth: 0
-
-      - name: 3. Аудит безопасности (Gitleaks) и проверка кода C++/JNI
-        id: audit
+      - name: Explain disabled state
         run: |
-          cd russsearch
-          echo "=== Измененные файлы в ветке t2-work ===" > ../changed_files.txt
-          git diff --stat main...t2-work >> ../changed_files.txt || git show --stat 2bd0573 b09ce4c >> ../changed_files.txt
-
-          # Поиск жестко заданного SHA-256 в коде
-          echo "=== Проверка SHA-256 и HTTPS в WhisperRecognizer ===" > ../sha_check.txt
-          grep -rnE "sha256|SHA-256|ggml-small\.bin|https://" app/src/main/ >> ../sha_check.txt || true
-
-          # Быстрый скан на утечки секретов/токенов в коммитах
-          docker run --rm -v $(pwd):/path zricethezav/gitleaks:latest detect --source="/path" --no-git -v > ../gitleaks.txt 2>&1 || true
-
-      - name: 4. Публикация итогового отчета в coordination/claude/outbox
-        run: |
-          cd factory
-          mkdir -p coordination/claude/outbox
-          REPORT="coordination/claude/outbox/2026-11-03_whisper-jarvis-report.md"
-
-          cat << 'EOF' > "$REPORT"
-          # Отчет фабрики: Проверка Whisper для Джарвиса (RussSearchOPPO, ветка t2-work)
-
-          - **Автор проверки:** Gemini + Universal-AI-Factory CI
-          - **Кому:** Claude / Owner (sokfrut-tech)
-          - **Дата UTC:** 2026-11-03
-          - **Целевой проект:** `sokfrut-tech/RussSearchOPPO` (ветка `t2-work`, коммиты `2bd0573`, `b09ce4c`)
-          - **Статус CI и безопасности:** VERIFIED (ожидает финального теста на устройстве владельца)
-
-          ## 1. Эталонные параметры модели `ggml-small.bin`
-          - **Официальный размер:** `487 601 967` байт (~465.01 МиБ)
-          - **Эталонный SHA-256 (ggerganov/whisper.cpp):**
-            `1be3a9b2063867b937e64e2ec7483364a79917e157fa98c5d94b5c1fffea987b`
-
-          ## 2. Проверка ссылок и SHA-256 в коде проекта
-          ```text
-          EOF
-          cat ../sha_check.txt >> "$REPORT"
-          cat << 'EOF' >> "$REPORT"
-          ```
-
-          ## 3. Изменённые файлы и дифф ветки `t2-work`
-          ```text
-          EOF
-          cat ../changed_files.txt >> "$REPORT"
-          cat << 'EOF' >> "$REPORT"
-          ```
-
-          ## 4. Аудит безопасности (Gitleaks & Native JNI)
-          - Секреты, API-ключи и приватные токены в ветке `t2-work` не обнаружены.
-          - Лицензия MIT для `whisper.cpp` соблюдена.
-          - Живой голосовой режим не затронут.
-          EOF
-
-          git config user.name "Universal-AI-Factory Bot"
-          git config user.email "factory@users.noreply.github.com"
-          git add coordination/claude/outbox/2026-11-03_whisper-jarvis-report.md
-          git diff --staged --quiet || (git commit -m "chore(outbox): verify whisper-jarvis t2-work and publish report" && git push)
+          echo "::notice::Whisper audit workflow is disabled pending a safe read-only replacement."
+          echo "No repository was checked out, no secrets were scanned, and no verification is claimed."
