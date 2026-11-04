@@ -43,7 +43,7 @@ assert "contents: write" not in inbox
 assert "secrets." not in inbox
 assert "git push" not in inbox
 assert "actions/checkout@" not in inbox
-assert "does not invoke Claude" in inbox
+assert "did not invoke Claude" in inbox
 assert "No task was read" in inbox
 
 task_pattern = re.compile(
