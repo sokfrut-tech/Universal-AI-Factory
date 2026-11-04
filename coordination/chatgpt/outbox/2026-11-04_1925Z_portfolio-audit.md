@@ -113,3 +113,40 @@
 - No PR was merged, no branch force-pushed or deleted, no production Cloudflare/Telegram setting was changed, no paid provider was invoked, and no Play publication was performed during this audit.
 - Treat all PR and workflow states as time-stamped evidence; refresh exact heads before any merge or release decision.
 - Next checkpoint must record new commit SHAs, exact workflow run URLs, artifacts, tests, agent responses and unresolved blockers.
+
+
+## P0 continuation update — 2026-11-04 19:34 UTC
+
+### Antigravity Mobile PR #19 — integration hardening
+
+Current PR head: `f32ec45775084637aec8a79d67a8a0ef61b4dbae` (open Draft; not merged/deployed).
+
+Changes added to the existing integration branch:
+- Replaced Claude default model `claude-sonnet-5-5` with documented active model `claude-sonnet-5`; provider test now omits an explicit model and asserts the selected default.
+- Corrected the Fallout command-center overview: it no longer claims the already-deployed Factory API is undeployed. It now instructs the user to configure and verify the connection.
+- Added a global fail-closed `ALLOW_LIVE_PROVIDERS` Worker variable, default `false` in `wrangler.toml`. Even with provider keys configured and per-task confirmation, the Worker sends no provider request until this exact flag is explicitly enabled. This has not been enabled in production.
+- Added a D1 integration test that verifies dispatch is blocked with no run record and zero provider calls when the global flag is absent; the test then enables it only in the isolated test environment and verifies the existing per-task cost confirmation gate.
+- Updated API docs to distinguish the global switch from repository secrets and per-task consent.
+
+Official model evidence: Google lists Gemini 3.8 Flash as a stable model; Anthropic lists Claude Sonnet 5 as active; OpenAI's Responses API reference lists `gpt-6.1-sol`. Sources: https://ai.google.dev/gemini-api/docs/models ; https://docs.anthropic.com/en/docs/about-claude/model-deprecations ; https://developers.openai.com/api/reference/resources/responses/methods/create
+
+Fresh CI for exact PR head:
+- Factory API run [41897846007](https://github.com/sokfrut-tech/Antigravity-Mobile/actions/runs/41897846007): npm install, check, unit tests, SQLite ledger invariants, local D1 migrations and Wrangler dry-run all passed; job still completing post steps at observation time.
+- Android build/emulator run [41897846860](https://github.com/sokfrut-tech/Antigravity-Mobile/actions/runs/41897846860): build and emulator tests still running at observation time.
+- Security run [41897846886](https://github.com/sokfrut-tech/Antigravity-Mobile/actions/runs/41897846886): Gitleaks and Trivy completed successfully; Semgrep and CodeQL still running at observation time.
+
+### Integration boundary review
+
+- Review comment posted on Antigravity PR #19: provider invocation returns a text response for the task brief; it does not yet checkout/edit the target GitHub repository, run target-project tests, or invoke an independent reviewer. Keep task status at review/awaiting verification, not done.
+- Review comment posted on Universal-AI-Factory PR #11: the PR provides a contract, disabled-by-default adapter and mock transport tests, but no concrete HTTP transport. Its title/description must not be interpreted as live provider dispatch.
+- PR #11 exact-head contract tests [41874229960](https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/41874229960) passed; PR #14 runner security tests [41835758930](https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/41835758930) passed.
+- No provider API was called; no paid usage was triggered; no deployment or merge was performed.
+
+### Next P0 work
+
+1. Wait for the exact-head PR #19 Android/emulator and security checks; inspect reports, not just workflow conclusion.
+2. Reconcile the mobile D1 ledger with the shared Factory task contract and map states explicitly (including `outcome_unknown`, review, evidence and terminal criteria).
+3. Implement a scoped GitHub repository adapter/worker: checkout only allowlisted repo + branch, create a task branch, produce patch, run repo-specific checks, publish PR; require approval for writes/merge/deploy.
+4. Add independent reviewer stage; a provider's own text response is not independent verification.
+5. Keep live-provider global flag false until the owner explicitly authorizes paid API use and configures a bounded spend policy.
+6. Do not merge PR #19 or #11 solely because CI is green; review base conflicts and the complete integrated architecture first.
