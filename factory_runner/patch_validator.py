@@ -1,8 +1,6 @@
 """Strict, side-effect-free validation for bounded unified Git patches.
 
-This module never applies patches, invokes subprocesses, accesses the network, or reads
-workspace files. It validates patch metadata and path safety before a later isolated
-runner is allowed to consider applying anything.
+Validation only: no workspace reads, patch application, subprocesses or network access.
 """
 from __future__ import annotations
 
@@ -10,7 +8,6 @@ from dataclasses import dataclass
 import hashlib
 import re
 from typing import Iterable
-
 
 MAX_PATCH_BYTES = 1_000_000
 DEFAULT_ALLOWED_TARGETS = frozenset({
@@ -69,12 +66,43 @@ def _safe_path(path: str) -> str:
         raise PatchValidationError("control characters in path")
     if ":" in path:
         raise PatchValidationError("drive/stream syntax is forbidden")
-    parts = path.split("/")
-    if any(part in ("", ".", "..") for part in parts):
+    if any(part in ("", ".", "..") for part in path.split("/")):
         raise PatchValidationError("non-normalized or traversing path")
     if len(path.encode("utf-8")) > 240:
         raise PatchValidationError("path is too long")
     return path
+
+
+def _consume_hunk(lines: list[str], start: int) -> int:
+    match = _HUNK_RE.fullmatch(lines[start])
+    if not match:
+        raise PatchValidationError("malformed hunk header")
+    old_expected = int(match.group(2) or "1")
+    new_expected = int(match.group(4) or "1")
+    old_seen = new_seen = 0
+    index = start + 1
+    while index < len(lines):
+        line = lines[index]
+        if line.startswith("@@ ") or line.startswith("diff --git "):
+            break
+        if line.startswith("\\ No newline at end of file"):
+            index += 1
+            continue
+        if line.startswith(" "):
+            old_seen += 1
+            new_seen += 1
+        elif line.startswith("-"):
+            old_seen += 1
+        elif line.startswith("+"):
+            new_seen += 1
+        else:
+            raise PatchValidationError("invalid hunk body line")
+        if old_seen > old_expected or new_seen > new_expected:
+            raise PatchValidationError("hunk body exceeds declared line counts")
+        index += 1
+    if old_seen != old_expected or new_seen != new_expected:
+        raise PatchValidationError("hunk body does not match declared line counts")
+    return index
 
 
 def validate_patch(
@@ -96,7 +124,6 @@ def validate_patch(
         raise PatchValidationError("base_sha must be a full 40- or 64-character hex SHA")
     if not isinstance(patch, str):
         raise PatchValidationError("patch must be text")
-
     encoded = patch.encode("utf-8")
     if not encoded or not encoded.strip():
         raise PatchValidationError("patch is empty")
@@ -112,16 +139,13 @@ def validate_patch(
     seen: set[str] = set()
     index = 0
     while index < len(lines):
-        line = lines[index]
-        if not line:
+        if not lines[index]:
             index += 1
             continue
-        match = _DIFF_RE.fullmatch(line)
+        match = _DIFF_RE.fullmatch(lines[index])
         if not match:
             raise PatchValidationError("expected a diff --git header")
-        old_header, new_header = match.groups()
-        old_path = _safe_path(old_header)
-        new_path = _safe_path(new_header)
+        old_path, new_path = map(_safe_path, match.groups())
         if old_path != new_path:
             raise PatchValidationError("renames and copies are not supported")
         if old_path in seen:
@@ -143,14 +167,12 @@ def validate_patch(
                     raise PatchValidationError("unsupported file mode")
                 change_type = "add" if current.startswith("new file") else "delete"
             elif current.startswith("old mode ") or current.startswith("new mode "):
-                mode = current.rsplit(" ", 1)[-1]
-                if mode not in ("100644", "100755"):
+                if current.rsplit(" ", 1)[-1] not in ("100644", "100755"):
                     raise PatchValidationError("unsupported file mode")
             elif current.startswith("--- "):
                 value = current[4:]
                 if value == "/dev/null":
-                    old_path = None
-                    change_type = "add"
+                    old_path, change_type = None, "add"
                 elif value.startswith("a/"):
                     old_path = _safe_path(value[2:])
                 else:
@@ -159,28 +181,26 @@ def validate_patch(
             elif current.startswith("+++ "):
                 value = current[4:]
                 if value == "/dev/null":
-                    new_path = None
-                    change_type = "delete"
+                    new_path, change_type = None, "delete"
                 elif value.startswith("b/"):
                     new_path = _safe_path(value[2:])
                 else:
                     raise PatchValidationError("malformed new-file header")
                 saw_new = True
             elif current.startswith("@@ "):
-                if not _HUNK_RE.fullmatch(current):
-                    raise PatchValidationError("malformed hunk header")
+                index = _consume_hunk(lines, index)
                 saw_hunk = True
+                continue
             elif current.startswith("index "):
                 fields = current.split()
                 if len(fields) == 3 and fields[-1] in ("120000", "160000"):
                     raise PatchValidationError("symlinks and submodules are forbidden")
             elif current.startswith(("similarity index ", "dissimilarity index ")):
                 pass
-            elif current.startswith((" ", "+", "-", "\\ No newline")):
-                if not saw_hunk:
-                    raise PatchValidationError("diff content appears before a hunk header")
-            elif current.startswith("GIT binary patch"):
+            elif current.startswith(("GIT binary patch",)):
                 raise PatchValidationError("binary patches are unsupported")
+            elif current.startswith((" ", "+", "-", "\\ No newline")):
+                raise PatchValidationError("diff content appears outside a hunk")
             else:
                 raise PatchValidationError("unexpected or unsupported diff metadata")
             index += 1
@@ -195,7 +215,6 @@ def validate_patch(
 
     if not changes:
         raise PatchValidationError("patch contains no file changes")
-
     return PatchReport(
         task_id=task_id,
         correlation_id=correlation_id,
