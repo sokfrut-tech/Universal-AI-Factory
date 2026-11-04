@@ -264,3 +264,8 @@ Do not report "release ready", "agent connected", "tests passed" or "done" witho
 - Factory PR #11 contract tests on head `0d2a20ae9b48e6e8bb1a22df0111d0c6cbae7456` passed in run `41874229960`, but the PR still does not prove live provider dispatch. Factory PR #14 security regression tests on head `96805cf316630bf3d9f86541beb13aac5089383e` passed in run `41835758930`; the manual audit remains dependent on its scoped read-only token and is not a provider dispatcher.
 - Mobile PR #15 documented Factory API checks `41866862485` and Android/emulator workflow `41866862654` as successful on head `944d1cce33d9a4ee892b85d0a361a9b27a97695d`. This evidence is for that exact ledger branch head only; it does not validate the newer PR #17 head or live provider calls.
 - Continue direct ChatGPT implementation while Claude/Gemini review requests are pending. Do not merge draft PRs, deploy the Worker, apply remote D1 migrations, enable provider calls or publish to Google Play.
+
+
+### Security lane clarification
+
+A focused inspection of Antigravity Mobile PR #7 found a project-specific Factory Security Gate on its head `66520370eb950dbc80a14b56c88a6a7992b7bd75`. Workflow run `41706087791` completed successfully, including Gitleaks, Semgrep, Trivy and Kotlin/Java CodeQL jobs. The PR remains open/unmerged and its evidence is tied to that exact older head. Its manual DAST workflow was not part of this run; ZAP/Nuclei and desktop reverse-engineering tools remain opt-in lab-only. Therefore the current main/new feature head must still receive the security workflow after the security onboarding is reconciled.
