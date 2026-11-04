@@ -24,3 +24,9 @@ Do not blindly copy Android, Worker, Node, Python or other project checks into u
 ## Future-project rule
 
 A new project is not ready for production until its security lane is implemented, exercised on a test change, and included in the release gate. If a scanner or integration is unavailable, mark it BLOCKED or NOT CONFIGURED rather than pretending it ran.
+
+## Tooling bootstrap
+
+- [ ] Read `docs/TOOL_INTEGRATION_REGISTRY.md` and select only the tools needed for this project's stack.
+- [ ] Verify each connector with a real smoke test; if unavailable, use the documented fallback and label it accurately.
+- [ ] Do not add credentials to source control or bypass provider/organization approval gates.
