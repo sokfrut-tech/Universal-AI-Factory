@@ -37,13 +37,23 @@ def request():
 class ProviderAdapterTests(unittest.TestCase):
     def adapter(self, transport):
         return ProviderAdapter(
-            ProviderConfig("claude", True, True, "secret://PROVIDER_API_KEY"),
+            ProviderConfig("claude", True, True, "secret://PROVIDER_API_KEY", True),
             transport,
         )
 
     def test_disabled_by_default_and_does_not_call_transport(self):
         transport = MockTransport()
-        adapter = ProviderAdapter(ProviderConfig(provider="claude"), transport)
+        adapter = ProviderAdapter(ProviderConfig(provider="claude", enabled=True, allow_live_providers=False), transport)
+        result = adapter.dispatch(request())
+        self.assertEqual(result.status, "blocked")
+        self.assertEqual(transport.calls, [])
+
+    def test_live_guard_blocks_even_when_adapter_enabled(self):
+        transport = MockTransport()
+        adapter = ProviderAdapter(
+            ProviderConfig("claude", True, True, "secret://PROVIDER_API_KEY", False),
+            transport,
+        )
         result = adapter.dispatch(request())
         self.assertEqual(result.status, "blocked")
         self.assertEqual(transport.calls, [])
@@ -51,7 +61,7 @@ class ProviderAdapterTests(unittest.TestCase):
     def test_missing_credential_blocks_without_call(self):
         transport = MockTransport()
         adapter = ProviderAdapter(
-            ProviderConfig("gemini", True, False, "secret://GEMINI_API_KEY"),
+            ProviderConfig("gemini", True, False, "secret://GEMINI_API_KEY", True),
             transport,
         )
         self.assertEqual(adapter.dispatch(request()).status, "blocked")
@@ -59,7 +69,7 @@ class ProviderAdapterTests(unittest.TestCase):
 
     def test_missing_transport_blocks(self):
         adapter = ProviderAdapter(
-            ProviderConfig("claude", True, True, "secret://ANTHROPIC_API_KEY")
+            ProviderConfig("claude", True, True, "secret://ANTHROPIC_API_KEY", True)
         )
         self.assertEqual(adapter.dispatch(request()).status, "blocked")
 
@@ -74,6 +84,8 @@ class ProviderAdapterTests(unittest.TestCase):
         result = self.adapter(
             MockTransport(error=TimeoutError("secret-value-must-not-leak"))
         ).dispatch(request())
+        self.assertEqual(result.status, "outcome_unknown")
+        self.assertEqual(result.outcome_kind, "timeout")
         self.assertEqual(result.failure_reason, "transport_timeout")
         self.assertNotIn("secret-value", result.summary)
 
@@ -81,7 +93,8 @@ class ProviderAdapterTests(unittest.TestCase):
         result = self.adapter(
             MockTransport(error=RuntimeError("private-token-123"))
         ).dispatch(request())
-        self.assertEqual(result.status, "failed")
+        self.assertEqual(result.status, "outcome_unknown")
+        self.assertEqual(result.outcome_kind, "ambiguous_response")
         self.assertNotIn("private-token-123", result.summary)
         self.assertNotIn("private-token-123", result.failure_reason)
 
