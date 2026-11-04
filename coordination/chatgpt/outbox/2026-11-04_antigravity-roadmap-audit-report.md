@@ -108,3 +108,8 @@ Fresh Android workflow run 41878129740 was queued when this report was written. 
 7. Only after CI and independent review gates, prepare a debug/release candidate APK with exact commit provenance and SHA-256.
 
 No production action or merge was performed.
+
+
+## Security workflow clarification
+
+Antigravity Mobile PR #7 contains a project-specific Factory Security Gate. On its exact head `66520370eb950dbc80a14b56c88a6a7992b7bd75`, run `41706087791` completed successfully for Gitleaks, Semgrep, Trivy and Kotlin/Java CodeQL. PR #7 remains open/unmerged, and the result does not cover the newer PR #17 head. Manual DAST was not run. The security lane must be reconciled and rerun on the final integration head.
