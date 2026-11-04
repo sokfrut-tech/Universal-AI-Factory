@@ -205,3 +205,11 @@ Fresh CI for exact PR head:
 2. Reconcile AVTOY #56 workflow correction with #57 shared toolchain and #58 documentation; run fresh checks on one combined head before considering merge.
 3. For Antigravity, next meaningful feature is scoped GitHub adapter + independent reviewer + explicit task state mapping; keep repository writes, merge, deploy and paid provider use gated.
 4. Continue other repositories from their continuation briefs, preserving exact-head evidence and recording blockers. Do not merge or deploy solely because CI is green.
+
+
+## Jarvis visual implementation — 2026-11-04 19:54 UTC
+
+- User supplied reference images for a holographic orbital sphere (amber/cyan intersecting rings, particle trails and luminous core). Compared open-source projects: `hasibjaan/jarvis` (low-cost state/audio-reactive orb), `Dodaios/Dodaios` (centralized tool safety gateway, risk tiers and exact-call approvals), `isair/jarvis` (local-first speech/privacy; desktop-only, no mobile app), plus `aviarytech/jarvis` (voice-first harness concept).
+- Opened draft PR [Gemeni #55](https://github.com/sokfrut-tech/Gemeni/pull/55), head `7dc7430dd2808e0bbefad2714b2be0ae77b8927c`, based on Jarvis emulator-smoke branch. It upgrades `alphavideo_gl_engine.cpp` from simple halo to three tilted GLES2 orbital planes, moving light points, radial filaments and breathing luminous core; adds shader compile/link logcat diagnostics. Also adds `docs/JARVIS_ORB_VISUAL_REFERENCE.md` with design rationale, source comparisons and follow-up requirements.
+- PR #55 is Draft, not merged. CI runs had not yet appeared at checkpoint time. No claim of compile/runtime pass. Actual UI still passes only a listening boolean; full state mapping and measured mic/TTS amplitude are follow-up. No screenshot proof of non-black frames or physical OPPO test yet.
+- Do not copy external source/assets; adapt documented ideas. Keep offline ASR/TTS default; ElevenLabs is optional and requires user's own key and explicit opt-in. No API keys or paid requests.
