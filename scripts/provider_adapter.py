@@ -2,10 +2,11 @@
 
 This module deliberately contains no HTTP client and performs no network calls.
 A real provider transport must be supplied explicitly by a separately reviewed
-integration. The default configuration is disabled.
+integration. The default configuration is disabled. Completion is owned by the
+factory orchestrator, which must attach and validate evidence before marking done.
 """
 from dataclasses import dataclass
-from typing import Callable, Optional, Protocol
+from typing import Optional, Protocol
 
 
 @dataclass(frozen=True)
@@ -41,6 +42,9 @@ class ProviderConfig:
 
 
 class ProviderAdapter:
+    _TRANSPORT_STATUSES = {"dispatched", "running", "review", "partial", "blocked", "failed"}
+    _STATUSES_REQUIRING_REQUEST_ID = {"dispatched", "running", "review"}
+
     def __init__(
         self,
         config: ProviderConfig,
@@ -86,13 +90,19 @@ class ProviderAdapter:
                 failure_reason=f"transport_error:{type(exc).__name__}",
             )
 
-        if response.status not in {"dispatched", "running", "review", "done", "partial", "blocked", "failed"}:
+        if not isinstance(response, ProviderResponse):
+            return ProviderResponse(
+                status="failed",
+                summary="Provider transport returned a malformed response.",
+                failure_reason="invalid_transport_response",
+            )
+        if response.status not in self._TRANSPORT_STATUSES:
             return ProviderResponse(
                 status="failed",
                 summary="Provider returned an unsupported status.",
                 failure_reason="invalid_transport_status",
             )
-        if response.status == "done" and not response.provider_request_id:
+        if response.status in self._STATUSES_REQUIRING_REQUEST_ID and not response.provider_request_id:
             return ProviderResponse(
                 status="failed",
                 summary="Provider response lacked a request reference.",
