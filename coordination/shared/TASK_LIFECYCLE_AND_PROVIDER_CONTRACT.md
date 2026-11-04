@@ -96,3 +96,16 @@ No adapter is considered active until a controlled test proves an actual provide
 5. Require every future provider entry point to use the shared guard and pass a negative-path test.
 6. Run a controlled, non-production smoke test and verify provider request ID plus substantive outbox report.
 7. Only then enable inbox dispatch for that provider.
+
+
+## Adapter-to-ledger mapping implementation
+
+The Factory adapter now has a pure mapping layer in `scripts/provider_ledger_client.py`. It builds one API-compatible compare-and-set transition payload from a `ProviderResponse` and the caller's expected ledger status:
+
+- adapter `dispatched` while ledger is `dispatching` becomes ledger `accepted` and requires the provider request ID;
+- adapter `running` / `review` advances only from the corresponding allowed ledger state;
+- ambiguous transport results become `outcome_unknown` with a recognized outcome kind;
+- a `failed` result is emitted only when its failure evidence and current ledger state match the API transition contract;
+- blocked, malformed, or unsupported combinations fail closed.
+
+This module constructs payloads only. It performs no HTTP request, credential lookup, database operation, or provider dispatch. The orchestrator must still persist the payload through the authenticated ledger endpoint using the expected-status compare-and-set. The mapping tests do not constitute a live or end-to-end API integration test.
