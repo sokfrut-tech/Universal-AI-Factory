@@ -41,3 +41,24 @@ Coordinate all owner repositories with durable plans, provider-neutral task orch
 
 ## Resume
 Read portfolio plan and exchange protocol, refresh all open PRs and workflow runs, then take the next unblocked action. Do not wait for Claude/Gemini; their substantive reviews are optional and must be recorded honestly.
+
+
+## Refreshed checkpoint — 2026-11-04 19:25 UTC
+
+- Provider task contract PR #11 remains open Draft and mergeable. Exact-head Agent Task Contract Tests run [41874229960](https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/41874229960) passed. This is contract-test evidence, not proof of live Claude/Gemini authentication or execution.
+- Manual runner hardening PR #14 remains open Draft and mergeable.
+- Portfolio/roadmap PR #15 remains open Draft and currently reports mergeable=false; inspect its base conflict before review/merge.
+- Inbox dispatcher PR #6 remains open and mergeable=false. Automatic ACK is receipt only and must never be mapped to provider acceptance/completion.
+- Antigravity Mobile's first integrated provider-dispatch candidate is PR #19, open Draft. Its Android/emulator, Factory API and security checks passed on exact head; provider credentials/live model calls remain unverified and may incur cost.
+- Antigravity main-branch API bootstrap deployed successfully (Actions run 41895896111); provider dispatch is not yet on main. Do not conflate deployment of the bootstrap with a live connected factory.
+- Claude outbox contains recent automatic ACKs only; Gemini outbox has an empty protocol ACK. No substantive correlated implementation response for the current work was verified. ChatGPT continues directly.
+- Full refreshed inventory and per-project run evidence: [portfolio audit](../coordination/chatgpt/outbox/2026-11-04_1925Z_portfolio-audit.md).
+
+## Next actions
+
+1. Review PR #11 adapter lifecycle and contract; reconcile it with Antigravity PR #19 run ledger semantics.
+2. Inspect PR #14 manual runner's least-privilege policy and approval boundaries.
+3. Resolve #15/#6 conflicts on dedicated branches without overwriting agent work; do not force-push.
+4. Add/verify deterministic tests for duplicate dispatch, timeout/ambiguous outcomes, correlation mismatch, retries, append-only events and event ordering.
+5. Keep provider health, configured credentials, accepted task, active run, completed response and independent review as distinct states.
+6. Require owner approval before merge, deployment, secret changes, remote migration or paid provider invocation.
