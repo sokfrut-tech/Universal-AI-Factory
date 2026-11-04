@@ -5,7 +5,7 @@
 - Project: sokfrut-tech/Antigravity-Mobile
 - PR: https://github.com/sokfrut-tech/Antigravity-Mobile/pull/18
 - Branch: feat/antigravity-integrated-agent-runtime-2026-11-04
-- Expected head at request: f5cea00d60894f3636525a4815906830f6890f13
+- Expected current head: c4a6646a20c5446c57dbe96e4dc00a91bb5cba4d. Always verify the live PR head before review.
 - Task ID: ANTIGRAVITY-PROVIDER-SECURITY-REVIEW-20261104
 - Correlation ID: antigravity-provider-review-20261104
 - Priority: P0
