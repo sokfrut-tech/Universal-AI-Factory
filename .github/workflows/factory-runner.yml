@@ -1,114 +1,113 @@
-name: Universal AI Factory Runner
+name: Universal AI Factory Audit (Hardened)
 
 on:
   workflow_dispatch:
     inputs:
       target_repo:
-        description: 'Целевой репозиторий (например: avtoy-korea-auto)'
-        required: true
-        default: 'avtoy-korea-auto'
-      task_file:
-        description: 'Путь к файлу ТЗ от Claude (или оставь пустым для автопоиска последнего .md)'
-        required: false
-        default: ''
-      action_mode:
-        description: 'Режим работы'
+        description: Approved target repository
         required: true
         type: choice
         options:
-          - audit_and_report
-          - merge_pr_43_and_verify
-          - sync_task_to_target
-  push:
-    branches: [ main ]
-    paths:
-      - 'tasks/**'
-      - 'specs/**'
-      - '*.md'
+          - sokfrut-tech/Antigravity-Mobile
+          - sokfrut-tech/Gemeni
+          - sokfrut-tech/RussSearchOPPO
+          - sokfrut-tech/avtoy-korea-auto
+          - sokfrut-tech/Universal-AI-Factory
+      task_file:
+        description: Explicit inbox task path (coordination/<agent>/inbox/<file>.md)
+        required: true
+        type: string
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  run-factory:
+  audit:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - name: 1. Checkout Universal-AI-Factory
-        uses: actions/checkout@v4
+      - name: Checkout factory
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           path: factory
-          fetch-depth: 0
+          persist-credentials: false
 
-      - name: 2. Поиск и чтение задания от Claude
-        id: find_task
-        run: |
-          cd factory
-          if [ -n "${{ github.event.inputs.task_file }}" ] && [ -f "${{ github.event.inputs.task_file }}" ]; then
-            TASK_FILE="${{ github.event.inputs.task_file }}"
-          else
-            # Ищем самый свежий .md файл (кроме README.md и старых отчетов)
-            TASK_FILE=$(find . -maxdepth 3 -name "*.md" ! -name "README.md" ! -name "FACTORY_STATUS.md" -printf "%T@ %p\n" | sort -n | tail -1 | cut -d' ' -f2-)
-          fi
-          echo "Найдено задание: $TASK_FILE"
-          echo "task_file=$TASK_FILE" >> $GITHUB_OUTPUT
-
-      - name: 3. Checkout целевого репозитория
-        uses: actions/checkout@v4
-        with:
-          repository: sokfrut-tech/${{ github.event.inputs.target_repo || 'avtoy-korea-auto' }}
-          token: ${{ secrets.FACTORY_PAT || github.token }}
-          path: target_repo
-          fetch-depth: 0
-
-      - name: 4. Проверка ТЗ, веток и PR в целевом репозитории
-        id: audit
+      - name: Validate explicit inputs and hash task metadata
+        id: validate
         env:
-          GH_TOKEN: ${{ secrets.FACTORY_PAT || github.token }}
+          TARGET_REPO: ${{ inputs.target_repo }}
+          TASK_FILE: ${{ inputs.task_file }}
         run: |
-          REPORT="factory/FACTORY_STATUS.md"
-          TARGET="${{ github.event.inputs.target_repo || 'avtoy-korea-auto' }}"
-          TASK="${{ steps.find_task.outputs.task_file }}"
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, os, pathlib, re
+          target = os.environ["TARGET_REPO"]
+          allowed = {
+              "sokfrut-tech/Antigravity-Mobile",
+              "sokfrut-tech/Gemeni",
+              "sokfrut-tech/RussSearchOPPO",
+              "sokfrut-tech/avtoy-korea-auto",
+              "sokfrut-tech/Universal-AI-Factory",
+          }
+          if target not in allowed:
+              raise SystemExit("target repository is not allowlisted")
+          raw = os.environ["TASK_FILE"]
+          if not raw or "\x00" in raw or "\\" in raw or raw.startswith("/"):
+              raise SystemExit("invalid task path")
+          rel = pathlib.PurePosixPath(raw)
+          if any(part in ("", ".", "..") for part in rel.parts):
+              raise SystemExit("task path is not normalized")
+          if len(rel.parts) != 4 or rel.parts[0] != "coordination" or rel.parts[2] != "inbox" or rel.parts[1] not in {"claude", "gemini", "gpt"} or rel.suffix != ".md":
+              raise SystemExit("task must be a Markdown file directly inside an approved agent inbox")
+          root = pathlib.Path("factory").resolve()
+          task = (root / pathlib.Path(*rel.parts)).resolve(strict=True)
+          if root not in task.parents or not task.is_file() or task.is_symlink():
+              raise SystemExit("task path is not a regular file within factory checkout")
+          data = task.read_bytes()
+          if not data or len(data) > 256_000:
+              raise SystemExit("task file is empty or exceeds 256 KB")
+          digest = hashlib.sha256(data).hexdigest()
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as out:
+              out.write(f"target_repo={target}\n")
+              out.write(f"task_path={raw}\n")
+              out.write(f"task_bytes={len(data)}\n")
+              out.write(f"task_sha256={digest}\n")
+          PY
 
-          echo "# 🏭 Отчет Universal-AI-Factory" > $REPORT
-          echo "**Дата запуска:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $REPORT
-          echo "**Целевой репозиторий:** \`sokfrut-tech/$TARGET\`" >> $REPORT
-          echo "**Проверенный файл задания:** \`$TASK\`" >> $REPORT
-          echo "" >> $REPORT
+      - name: Checkout approved public target (read-only)
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: ${{ steps.validate.outputs.target_repo }}
+          path: target_repo
+          fetch-depth: 1
+          persist-credentials: false
 
-          if [ -n "$TASK" ] && [ -f "factory/$TASK" ]; then
-            echo "## 📋 Содержимое актуального задания Claude" >> $REPORT
-            echo '```markdown' >> $REPORT
-            cat "factory/$TASK" >> $REPORT
-            echo '```' >> $REPORT
-          fi
-
-          cd target_repo
-          echo "## 🌿 Активные ветки в $TARGET" >> ../$REPORT
-          echo '```text' >> ../$REPORT
-          git branch -r >> ../$REPORT
-          echo '```' >> ../$REPORT
-
-          echo "## 🔍 Проверка критических компонентов (avtoy-korea-auto)" >> ../$REPORT
-          if [ -f "worker.js" ]; then
-            TG_COUNT=$(grep -c -i "telegram" worker.js || true)
-            SPORTAGE_COUNT=$(grep -c -i "sportage" worker.js || true)
-            LOGO_COUNT=$(grep -c -i "logo" worker.js || true)
-            echo "- Упоминаний логики Telegram в \`worker.js\`: **$TG_COUNT** (целостность сохранена)" >> ../$REPORT
-            echo "- Ссылок на Sportage: **$SPORTAGE_COUNT**" >> ../$REPORT
-            echo "- Ссылок на Logo: **$LOGO_COUNT**" >> ../$REPORT
-          fi
-
-          if [ -f "wrangler.toml" ]; then
-            echo "- Конфигурация \`wrangler.toml\`:" >> ../$REPORT
-            echo '```toml' >> ../$REPORT
-            cat wrangler.toml >> ../$REPORT
-            echo '```' >> ../$REPORT
-          fi
-
-      - name: 5. Сохранение полного дампа отчета в фабрику
+      - name: Create metadata-only audit report
+        env:
+          TARGET_REPO: ${{ steps.validate.outputs.target_repo }}
+          TASK_PATH: ${{ steps.validate.outputs.task_path }}
+          TASK_BYTES: ${{ steps.validate.outputs.task_bytes }}
+          TASK_SHA256: ${{ steps.validate.outputs.task_sha256 }}
         run: |
-          cd factory
-          git config user.name "Universal-AI-Factory Bot"
-          git config user.email "factory-bot@users.noreply.github.com"
-          git add FACTORY_STATUS.md
-          git diff --staged --quiet || (git commit -m "chore(factory): auto-audit report [skip ci]" && git push)
+          set -euo pipefail
+          mkdir -p audit-output
+          {
+            echo "# Universal AI Factory — read-only audit"
+            echo
+            echo "- Target repository: `$TARGET_REPO`"
+            echo "- Target commit: `$(git -C target_repo rev-parse HEAD)`"
+            echo "- Task file: `$TASK_PATH`"
+            echo "- Task size: `$TASK_BYTES` bytes"
+            echo "- Task SHA-256: `$TASK_SHA256`"
+            echo "- Mode: metadata-only; task contents are not copied to logs or report"
+            echo "- Permissions: contents: read; no PAT or write token"
+            echo "- Execution: no patch application, project commands, PR creation, merge or deployment"
+          } > audit-output/FACTORY_AUDIT.md
+
+      - name: Upload audit report
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: factory-audit-report
+          path: audit-output/FACTORY_AUDIT.md
+          if-no-files-found: error
+          retention-days: 14
