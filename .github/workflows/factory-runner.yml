@@ -39,11 +39,12 @@ jobs:
       - name: Test runner security boundaries
         run: python factory/scripts/test_factory_runner_security.py
 
-      - name: Validate dispatch inputs
+      - name: Validate dispatch inputs and target-read credential
         id: validate
         env:
           TARGET_REPO: ${{ inputs.target_repo }}
           TASK_FILE: ${{ inputs.task_file }}
+          TARGETS_READ_TOKEN: ${{ secrets.FACTORY_TARGETS_READ_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail
@@ -51,6 +52,10 @@ jobs:
             avtoy-korea-auto|RussSearchOPPO|Antigravity-Mobile|happ-proxy-pool) ;;
             *) echo "::error::Target repository is not allowlisted"; exit 1 ;;
           esac
+          if [[ -z "$TARGETS_READ_TOKEN" ]]; then
+            echo "::error::Missing FACTORY_TARGETS_READ_TOKEN. Configure a fine-grained read-only token scoped only to the allowlisted target repositories."
+            exit 1
+          fi
           if [[ -n "$TASK_FILE" ]]; then
             if [[ ! "$TASK_FILE" =~ ^coordination/(claude|gemini)/inbox/[A-Za-z0-9._-]+\.md$ ]]; then
               echo "::error::Task must be a Markdown file directly inside the Claude/Gemini inbox"
@@ -68,10 +73,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: sokfrut-tech/${{ steps.validate.outputs.target_repo }}
-          token: ${{ github.token }}
+          token: ${{ secrets.FACTORY_TARGETS_READ_TOKEN }}
           path: target_repo
           persist-credentials: false
-          fetch-depth: 1
+          fetch-depth: 0
 
       - name: Produce factual audit report
         env:
@@ -93,9 +98,10 @@ jobs:
             echo
             echo "## Repository inventory"
             echo "- Tracked files: $(git -C target_repo ls-files | wc -l | tr -d ' ')"
-            echo "- Branch refs visible in checkout: $(git -C target_repo branch -r | wc -l | tr -d ' ')"
+            echo "- Remote branch refs fetched: $(git -C target_repo for-each-ref --format='%(refname)' refs/remotes/origin | wc -l | tr -d ' ')"
             echo
             echo "## Scope and limitations"
+            echo "- Target checkout fetches all branch history and remote branch refs."
             echo "- This workflow performs read-only repository inventory only."
             echo "- It does not invoke Claude/Gemini or claim task execution."
             echo "- It does not run project tests, dependency scans, deployment checks, or runtime verification."
