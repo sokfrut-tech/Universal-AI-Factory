@@ -25,6 +25,7 @@ class ProviderResponse:
     blocked_reason: Optional[str] = None
     failure_reason: Optional[str] = None
     outcome_kind: Optional[str] = None
+    failure_kind: Optional[str] = None
 
 
 class ProviderTransport(Protocol):
@@ -96,20 +97,30 @@ class ProviderAdapter:
 
         if not isinstance(response, ProviderResponse):
             return ProviderResponse(
-                status="failed",
-                summary="Provider transport returned a malformed response.",
+                status="outcome_unknown",
+                summary="Provider transport returned a malformed response; remote execution status is unknown.",
                 failure_reason="invalid_transport_response",
+                outcome_kind="ambiguous_response",
             )
         if response.status not in self._TRANSPORT_STATUSES:
             return ProviderResponse(
-                status="failed",
-                summary="Provider returned an unsupported status.",
+                status="outcome_unknown",
+                summary="Provider returned an unsupported response; remote execution status is unknown.",
                 failure_reason="invalid_transport_status",
+                outcome_kind="ambiguous_response",
             )
         if response.status in self._STATUSES_REQUIRING_REQUEST_ID and not response.provider_request_id:
             return ProviderResponse(
-                status="failed",
-                summary="Provider response lacked a request reference.",
+                status="outcome_unknown",
+                summary="Provider response lacked a request reference; remote execution status is unknown.",
                 failure_reason="missing_provider_request_id",
+                outcome_kind="ambiguous_response",
+            )
+        if response.status == "failed" and response.failure_kind not in {"definite_rejection", "execution_failed"}:
+            return ProviderResponse(
+                status="outcome_unknown",
+                summary="Provider failure was not accompanied by definitive failure evidence.",
+                failure_reason="unverified_provider_failure",
+                outcome_kind="ambiguous_response",
             )
         return response
