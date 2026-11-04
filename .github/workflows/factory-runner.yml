@@ -40,7 +40,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import hashlib, os, pathlib, re
+          import hashlib, os, pathlib, stat
           target = os.environ["TARGET_REPO"]
           allowed = {
               "sokfrut-tech/Antigravity-Mobile",
@@ -60,8 +60,13 @@ jobs:
           if len(rel.parts) != 4 or rel.parts[0] != "coordination" or rel.parts[2] != "inbox" or rel.parts[1] not in {"claude", "gemini", "gpt"} or rel.suffix != ".md":
               raise SystemExit("task must be a Markdown file directly inside an approved agent inbox")
           root = pathlib.Path("factory").resolve()
-          task = (root / pathlib.Path(*rel.parts)).resolve(strict=True)
-          if root not in task.parents or not task.is_file() or task.is_symlink():
+          candidate = root
+          for part in rel.parts:
+              candidate = candidate / part
+              if candidate.is_symlink():
+                  raise SystemExit("symlinks are forbidden in task path")
+          task = candidate.resolve(strict=True)
+          if root not in task.parents or not stat.S_ISREG(task.stat().st_mode):
               raise SystemExit("task path is not a regular file within factory checkout")
           data = task.read_bytes()
           if not data or len(data) > 256_000:
