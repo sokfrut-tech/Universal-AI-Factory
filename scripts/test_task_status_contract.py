@@ -63,6 +63,11 @@ def validate_event(event):
         raise ValueError("failed requires failure_reason")
 
 
+def validate_transition(previous, current):
+    if previous not in ALLOWED_TRANSITIONS or current not in ALLOWED_TRANSITIONS[previous]:
+        raise ValueError(f"invalid task transition: {previous} -> {current}")
+
+
 def event(status="received", **overrides):
     value = {
         "schema_version": "1.0",
