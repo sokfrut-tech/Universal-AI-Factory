@@ -4,14 +4,16 @@ on:
   pull_request:
     paths:
       - ".github/workflows/factory-runner.yml"
-      - "scripts/test_factory_runner_security.py"
       - ".github/workflows/test-factory-runner-security.yml"
+      - "scripts/test_factory_runner_security.py"
+      - "scripts/test_factory_runner_yaml.rb"
   push:
     branches: [main]
     paths:
       - ".github/workflows/factory-runner.yml"
-      - "scripts/test_factory_runner_security.py"
       - ".github/workflows/test-factory-runner-security.yml"
+      - "scripts/test_factory_runner_security.py"
+      - "scripts/test_factory_runner_yaml.rb"
 
 permissions:
   contents: read
@@ -26,3 +28,5 @@ jobs:
           persist-credentials: false
       - name: Run runner security regression checks
         run: python3 scripts/test_factory_runner_security.py
+      - name: Parse runner YAML and verify effective structure
+        run: ruby scripts/test_factory_runner_yaml.rb
