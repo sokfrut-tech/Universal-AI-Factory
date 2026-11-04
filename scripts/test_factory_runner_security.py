@@ -48,11 +48,11 @@ assert "did not invoke Claude" in inbox
 assert "No task was read" in inbox
 
 # Legacy Whisper workflow must not keep write credentials or false audit claims.
-assert "permissions:\\n  contents: read" in whisper
+assert "permissions:\n  contents: read" in whisper
 assert "contents: write" not in whisper
 assert "secrets." not in whisper
 assert "git push" not in whisper
-assert "Gitleaks failures" in whisper
+assert "Gitleaks failures" not in whisper
 assert "no verification is claimed" in whisper
 
 task_pattern = re.compile(
