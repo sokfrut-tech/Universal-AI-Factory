@@ -41,6 +41,7 @@ Allowed recovery paths:
 
 A task must not jump from `received` directly to `done`. A retry after a terminal failure requires an explicit re-open transition and a new attempt number.
 An `outcome_unknown` run is non-terminal and must remain reserved until reconciled; it must never be retried automatically. Reuse of the same idempotency key is required for any safe replay, and a changed payload with that key must be rejected.
+An `outcome_unknown` run is non-terminal and must remain reserved until reconciled; it must never be retried automatically. Reuse of the same idempotency key is required for any safe replay, and a changed payload with that key must be rejected.
 
 ## Required invariants
 
@@ -60,7 +61,7 @@ A real adapter must implement:
 - configuration-presence diagnostics that report only configured/missing;
 - bounded request timeout, bounded retry policy, and cancellation;
 - stable correlation and idempotency handling;
-- sanitized provider error mapping: definite rejection/execution failure to `failed`; timeout, connection loss, or ambiguous transport exception to `outcome_unknown`;
+- sanitized provider error mapping: definite rejection/execution failure with explicit evidence to `failed`; timeout, connection loss, malformed post-dispatch response, or ambiguous transport exception to `outcome_unknown`;
 - a substantive response artifact and immutable status event;
 - tests for missing credentials, duplicate delivery, timeout, provider rejection, malformed response, and successful completion.
 
