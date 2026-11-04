@@ -170,3 +170,17 @@ ArmorCodex hosted policy version 2 was created in merge mode, preserving existin
 - require approval for GitHub branch deletion.
 
 Important: this hosted policy store is advisory unless a connected local enforcement hook consumes it. GitHub permissions, branch protection and CI remain the authoritative repository controls.
+
+
+## 13. Documentation PR CI runs (last observed queued)
+
+The following workflows were triggered by the continuation-brief commits. At the last poll they were **queued**, not passed:
+- Antigravity-Mobile PR #17: run [41878907486](https://github.com/sokfrut-tech/Antigravity-Mobile/actions/runs/41878907486)
+- Gemeni PR #54: [41879058638](https://github.com/sokfrut-tech/Gemeni/actions/runs/41879058638)
+- RussSearchOPPO PR #4: [41879065510](https://github.com/sokfrut-tech/RussSearchOPPO/actions/runs/41879065510), [41879065591](https://github.com/sokfrut-tech/RussSearchOPPO/actions/runs/41879065591)
+- AVTOY KOREA PR #58: [41879072049](https://github.com/sokfrut-tech/avtoy-korea-auto/actions/runs/41879072049), [41879072117](https://github.com/sokfrut-tech/avtoy-korea-auto/actions/runs/41879072117), [41879072174](https://github.com/sokfrut-tech/avtoy-korea-auto/actions/runs/41879072174)
+- voice-assistant PR #16: [41879076678](https://github.com/sokfrut-tech/voice-assistant/actions/runs/41879076678), [41879076663](https://github.com/sokfrut-tech/voice-assistant/actions/runs/41879076663)
+- russ-translation-models PR #3: [41879081765](https://github.com/sokfrut-tech/russ-translation-models/actions/runs/41879081765)
+- happ-proxy-pool PR #4: [41879094564](https://github.com/sokfrut-tech/happ-proxy-pool/actions/runs/41879094564)
+
+Refresh these exact runs and inspect logs/artifacts before changing any status to PASS.
