@@ -6,20 +6,27 @@ on:
     branches: [ main ]
     paths:
       - '.github/workflows/verify-whisper-jarvis.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/verify-whisper-jarvis.yml'
 
 permissions:
   contents: write
+  actions: read
 
 jobs:
   audit-and-report:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
-      - name: 1. Checkout Universal-AI-Factory
+      - name: Checkout Universal-AI-Factory
         uses: actions/checkout@v4
         with:
           path: factory
+          fetch-depth: 0
 
-      - name: 2. Checkout RussSearchOPPO (ветка t2-work)
+      - name: Checkout RussSearchOPPO t2-work
         uses: actions/checkout@v4
         with:
           repository: sokfrut-tech/RussSearchOPPO
@@ -28,61 +35,89 @@ jobs:
           path: russsearch
           fetch-depth: 0
 
-      - name: 3. Аудит безопасности (Gitleaks) и проверка кода C++/JNI
-        id: audit
+      - name: Scan full t2-work Git history with Gitleaks (fail closed)
+        id: gitleaks
+        shell: bash
         run: |
-          cd russsearch
-          echo "=== Измененные файлы в ветке t2-work ===" > ../changed_files.txt
-          git diff --stat main...t2-work >> ../changed_files.txt || git show --stat 2bd0573 b09ce4c >> ../changed_files.txt
+          set -euo pipefail
+          mkdir -p "${RUNNER_TEMP}/gitleaks"
+          docker run --rm \
+            -v "${GITHUB_WORKSPACE}/russsearch:/path:ro" \
+            -v "${RUNNER_TEMP}/gitleaks:/reports" \
+            zricethezav/gitleaks:v8.24.3 \
+            detect --source=/path --redact --exit-code=1 \
+            --report-format=sarif --report-path=/reports/gitleaks.sarif --log-level=info
 
-          # Поиск жестко заданного SHA-256 в коде
-          echo "=== Проверка SHA-256 и HTTPS в WhisperRecognizer ===" > ../sha_check.txt
-          grep -rnE "sha256|SHA-256|ggml-small\.bin|https://" app/src/main/ >> ../sha_check.txt || true
-
-          # Быстрый скан на утечки секретов/токенов в коммитах
-          docker run --rm -v $(pwd):/path zricethezav/gitleaks:latest detect --source="/path" --no-git -v > ../gitleaks.txt 2>&1 || true
-
-      - name: 4. Публикация итогового отчета в coordination/claude/outbox
+      - name: Verify successful APK build for exact t2-work HEAD
+        id: apk
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.FACTORY_PAT }}
         run: |
+          set -euo pipefail
+          TARGET_SHA="$(git -C russsearch rev-parse HEAD)"
+          RUN_ID="$(gh api "repos/sokfrut-tech/RussSearchOPPO/actions/runs?branch=t2-work&per_page=100" \
+            --jq ".workflow_runs[] | select(.head_sha == \"${TARGET_SHA}\" and .path == \".github/workflows/android-build.yml\" and .conclusion == \"success\") | .id" | head -n 1)"
+          if [[ -z "${RUN_ID}" ]]; then
+            echo "No successful APK build found for exact t2-work commit ${TARGET_SHA}" >&2
+            exit 1
+          fi
+          ARTIFACTS="$(gh api "repos/sokfrut-tech/RussSearchOPPO/actions/runs/${RUN_ID}/artifacts" \
+            --jq '.artifacts[] | select(.expired == false and (.name | startswith("RussSearchOPPO-debug-apk-"))) | [.name, .digest, (.size_in_bytes|tostring)] | @tsv')"
+          if [[ -z "${ARTIFACTS}" ]]; then
+            echo "Successful build run ${RUN_ID} has no unexpired APK artifact" >&2
+            exit 1
+          fi
+          {
+            echo "TARGET_SHA=${TARGET_SHA}"
+            echo "APK_RUN_ID=${RUN_ID}"
+            echo "APK_ARTIFACTS<<EOF"
+            echo "${ARTIFACTS}"
+            echo "EOF"
+          } >> "${GITHUB_ENV}"
+          echo "Verified APK build run: ${RUN_ID}"
+          echo "${ARTIFACTS}"
+
+      - name: Upload Gitleaks SARIF
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitleaks-whisper-t2-work-${{ github.run_id }}
+          path: ${{ runner.temp }}/gitleaks/gitleaks.sarif
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Publish evidence-based report
+        if: success() && github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
           cd factory
           mkdir -p coordination/claude/outbox
           REPORT="coordination/claude/outbox/2026-11-03_whisper-jarvis-report.md"
+          cat > "${REPORT}" <<EOF
+          # Whisper / Jarvis verification report
 
-          cat << 'EOF' > "$REPORT"
-          # Отчет фабрики: Проверка Whisper для Джарвиса (RussSearchOPPO, ветка t2-work)
+          - Author: Universal-AI-Factory CI
+          - Date UTC: $(date -u '+%Y-%m-%d %H:%M:%S')
+          - Target: sokfrut-tech/RussSearchOPPO, branch t2-work
+          - Target commit: ${TARGET_SHA}
+          - Gitleaks: PASS — full Git history scan completed with no findings (workflow would fail on findings)
+          - APK CI: PASS — successful Android APK build exists for this exact commit
+          - APK workflow run: ${APK_RUN_ID}
 
-          - **Автор проверки:** Gemini + Universal-AI-Factory CI
-          - **Кому:** Claude / Owner (sokfrut-tech)
-          - **Дата UTC:** 2026-11-03
-          - **Целевой проект:** `sokfrut-tech/RussSearchOPPO` (ветка `t2-work`, коммиты `2bd0573`, `b09ce4c`)
-          - **Статус CI и безопасности:** VERIFIED (ожидает финального теста на устройстве владельца)
+          ## APK artifacts
+          ${APK_ARTIFACTS}
 
-          ## 1. Эталонные параметры модели `ggml-small.bin`
-          - **Официальный размер:** `487 601 967` байт (~465.01 МиБ)
-          - **Эталонный SHA-256 (ggerganov/whisper.cpp):**
-            `1be3a9b2063867b937e64e2ec7483364a79917e157fa98c5d94b5c1fffea987b`
-
-          ## 2. Проверка ссылок и SHA-256 в коде проекта
-          ```text
+          ## Scope and limitations
+          - This report verifies CI security scanning and APK packaging only.
+          - It does not prove runtime behavior on a physical OPPO device.
+          - It does not validate microphone permissions, language detection quality, or downloaded model integrity on-device.
           EOF
-          cat ../sha_check.txt >> "$REPORT"
-          cat << 'EOF' >> "$REPORT"
-          ```
-
-          ## 3. Изменённые файлы и дифф ветки `t2-work`
-          ```text
-          EOF
-          cat ../changed_files.txt >> "$REPORT"
-          cat << 'EOF' >> "$REPORT"
-          ```
-
-          ## 4. Аудит безопасности (Gitleaks & Native JNI)
-          - Секреты, API-ключи и приватные токены в ветке `t2-work` не обнаружены.
-          - Лицензия MIT для `whisper.cpp` соблюдена.
-          - Живой голосовой режим не затронут.
-          EOF
-
           git config user.name "Universal-AI-Factory Bot"
           git config user.email "factory@users.noreply.github.com"
-          git add coordination/claude/outbox/2026-11-03_whisper-jarvis-report.md
-          git diff --staged --quiet || (git commit -m "chore(outbox): verify whisper-jarvis t2-work and publish report" && git push)
+          git add "${REPORT}"
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(outbox): publish evidence-based Whisper verification"
+            git push
+          fi
