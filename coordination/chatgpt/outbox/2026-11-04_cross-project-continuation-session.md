@@ -33,3 +33,12 @@
 
 ## Resume instructions
 Read the canonical portfolio plan, this report and the relevant project's continuation brief. Refresh current PRs/CI and latest agent outbox messages. Continue the first unblocked action. Do not ask the owner to repeat the requirements recorded in these documents.
+
+
+## Final repository-structure verification
+- Verified changed-file lists for Factory PR #15 and Mobile PR #17; both include their portfolio/continuation docs and relevant handoff files.
+- Verified each project documentation PR contains only `docs/FACTORY_CONTINUATION_BRIEF.md`.
+- Re-fetched mergeability after GitHub recalculation: Gemeni #54, RussSearchOPPO #4, AVTOY Korea #58, voice-assistant #16, russ-translation-models #3 and happ-proxy-pool #4 now report `mergeable=true`. They remain draft/open pending review and CI.
+- Factory PR #15 and Mobile PR #17 report `mergeable=true`, remain draft/open.
+- Rechecked all listed CI jobs; all were still queued at the last poll. No new pass is claimed.
+- Initialized documentation-only README and continuation brief on the default branches of initially empty `sleep-button` and `breeno-apks`; no product scope was invented.
