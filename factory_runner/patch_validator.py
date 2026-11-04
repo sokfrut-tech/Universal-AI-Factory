@@ -129,8 +129,7 @@ def validate_patch(
         seen.add(old_path)
         index += 1
 
-        saw_old = saw_new = False
-        saw_hunk = False
+        saw_old = saw_new = saw_hunk = False
         change_type = "modify"
         while index < len(lines) and not lines[index].startswith("diff --git "):
             current = lines[index]
@@ -171,7 +170,11 @@ def validate_patch(
                 if not _HUNK_RE.fullmatch(current):
                     raise PatchValidationError("malformed hunk header")
                 saw_hunk = True
-            elif current.startswith(("index ", "similarity index ", "dissimilarity index ")):
+            elif current.startswith("index "):
+                fields = current.split()
+                if len(fields) == 3 and fields[-1] in ("120000", "160000"):
+                    raise PatchValidationError("symlinks and submodules are forbidden")
+            elif current.startswith(("similarity index ", "dissimilarity index ")):
                 pass
             elif current.startswith((" ", "+", "-", "\\ No newline")):
                 if not saw_hunk:
