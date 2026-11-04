@@ -36,6 +36,9 @@ jobs:
           persist-credentials: false
           fetch-depth: 1
 
+      - name: Test runner security boundaries
+        run: python factory/scripts/test_factory_runner_security.py
+
       - name: Validate dispatch inputs
         id: validate
         env:
