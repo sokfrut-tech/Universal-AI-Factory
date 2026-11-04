@@ -91,14 +91,14 @@ jobs:
             echo "# Universal AI Factory — read-only audit"
             echo
             echo "- Result: **inventory_only**"
-            echo "- Target: `sokfrut-tech/$TARGET_REPO`"
-            echo "- Commit: `$(git -C target_repo rev-parse HEAD)`"
-            echo "- Timestamp: `$(date -u '+%Y-%m-%d %H:%M:%S UTC')`"
+            printf '%s\n' "- Target: sokfrut-tech/$TARGET_REPO"
+            printf '%s\n' "- Commit: $(git -C target_repo rev-parse HEAD)"
+            printf '%s\n' "- Timestamp: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
             echo "- Task file: ${TASK_FILE:-"(not selected; no task auto-discovery)"}"
             echo
             echo "## Repository inventory"
-            echo "- Tracked files: $(git -C target_repo ls-files | wc -l | tr -d ' ')"
-            echo "- Remote branch refs fetched: $(git -C target_repo for-each-ref --format='%(refname)' refs/remotes/origin | wc -l | tr -d ' ')"
+            printf '%s\n' "- Tracked files: $(git -C target_repo ls-files | wc -l | tr -d ' ')"
+            printf '%s\n' "- Remote branch refs fetched: $(git -C target_repo for-each-ref --format='%(refname)' refs/remotes/origin | wc -l | tr -d ' ')"
             echo
             echo "## Scope and limitations"
             echo "- Target checkout fetches all branch history and remote branch refs."
