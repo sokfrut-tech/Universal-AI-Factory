@@ -35,12 +35,15 @@ def request():
 
 
 class ProviderAdapterTests(unittest.TestCase):
-    def test_disabled_by_default_and_does_not_call_transport(self):
-        transport = MockTransport()
-        adapter = ProviderAdapter(
-            ProviderConfig(provider="claude"),
+    def adapter(self, transport):
+        return ProviderAdapter(
+            ProviderConfig("claude", True, True, "secret://PROVIDER_API_KEY"),
             transport,
         )
+
+    def test_disabled_by_default_and_does_not_call_transport(self):
+        transport = MockTransport()
+        adapter = ProviderAdapter(ProviderConfig(provider="claude"), transport)
         result = adapter.dispatch(request())
         self.assertEqual(result.status, "blocked")
         self.assertEqual(transport.calls, [])
@@ -48,12 +51,7 @@ class ProviderAdapterTests(unittest.TestCase):
     def test_missing_credential_blocks_without_call(self):
         transport = MockTransport()
         adapter = ProviderAdapter(
-            ProviderConfig(
-                provider="gemini",
-                enabled=True,
-                credential_configured=False,
-                secret_reference="secret://GEMINI_API_KEY",
-            ),
+            ProviderConfig("gemini", True, False, "secret://GEMINI_API_KEY"),
             transport,
         )
         self.assertEqual(adapter.dispatch(request()).status, "blocked")
@@ -61,65 +59,57 @@ class ProviderAdapterTests(unittest.TestCase):
 
     def test_missing_transport_blocks(self):
         adapter = ProviderAdapter(
-            ProviderConfig(
-                provider="claude",
-                enabled=True,
-                credential_configured=True,
-                secret_reference="secret://ANTHROPIC_API_KEY",
-            )
+            ProviderConfig("claude", True, True, "secret://ANTHROPIC_API_KEY")
         )
         self.assertEqual(adapter.dispatch(request()).status, "blocked")
 
     def test_enabled_adapter_passes_reference_and_idempotent_request(self):
         transport = MockTransport()
-        adapter = ProviderAdapter(
-            ProviderConfig(
-                provider="claude",
-                enabled=True,
-                credential_configured=True,
-                secret_reference="secret://ANTHROPIC_API_KEY",
-            ),
-            transport,
-        )
-        result = adapter.dispatch(request())
+        result = self.adapter(transport).dispatch(request())
         self.assertEqual(result.status, "running")
-        self.assertEqual(transport.calls[0][1], "secret://ANTHROPIC_API_KEY")
+        self.assertEqual(transport.calls[0][1], "secret://PROVIDER_API_KEY")
         self.assertEqual(transport.calls[0][0].idempotency_key, "idem-12345678")
 
     def test_timeout_is_sanitized(self):
-        adapter = ProviderAdapter(
-            ProviderConfig("gemini", True, True, "secret://GEMINI_API_KEY"),
-            MockTransport(error=TimeoutError("secret-value-must-not-leak")),
-        )
-        result = adapter.dispatch(request())
+        result = self.adapter(
+            MockTransport(error=TimeoutError("secret-value-must-not-leak"))
+        ).dispatch(request())
         self.assertEqual(result.failure_reason, "transport_timeout")
         self.assertNotIn("secret-value", result.summary)
 
     def test_exception_message_is_not_exposed(self):
-        adapter = ProviderAdapter(
-            ProviderConfig("claude", True, True, "secret://ANTHROPIC_API_KEY"),
-            MockTransport(error=RuntimeError("private-token-123")),
-        )
-        result = adapter.dispatch(request())
+        result = self.adapter(
+            MockTransport(error=RuntimeError("private-token-123"))
+        ).dispatch(request())
         self.assertEqual(result.status, "failed")
         self.assertNotIn("private-token-123", result.summary)
         self.assertNotIn("private-token-123", result.failure_reason)
 
-    def test_done_without_provider_request_id_is_rejected(self):
-        adapter = ProviderAdapter(
-            ProviderConfig("claude", True, True, "secret://ANTHROPIC_API_KEY"),
-            MockTransport(response=ProviderResponse(status="done", summary="done")),
-        )
-        result = adapter.dispatch(request())
-        self.assertEqual(result.failure_reason, "missing_provider_request_id")
+    def test_done_is_rejected_until_orchestrator_validates_evidence(self):
+        result = self.adapter(
+            MockTransport(response=ProviderResponse(status="done", summary="done",
+                                                    provider_request_id="mock-123"))
+        ).dispatch(request())
+        self.assertEqual(result.status, "failed")
+        self.assertEqual(result.failure_reason, "invalid_transport_status")
+
+    def test_dispatch_running_and_review_require_provider_request_id(self):
+        for status in ("dispatched", "running", "review"):
+            with self.subTest(status=status):
+                result = self.adapter(
+                    MockTransport(response=ProviderResponse(status=status, summary="ok"))
+                ).dispatch(request())
+                self.assertEqual(result.failure_reason, "missing_provider_request_id")
 
     def test_unknown_transport_status_is_rejected(self):
-        adapter = ProviderAdapter(
-            ProviderConfig("gemini", True, True, "secret://GEMINI_API_KEY"),
-            MockTransport(response=ProviderResponse(status="received", summary="ack")),
-        )
-        result = adapter.dispatch(request())
+        result = self.adapter(
+            MockTransport(response=ProviderResponse(status="received", summary="ack"))
+        ).dispatch(request())
         self.assertEqual(result.failure_reason, "invalid_transport_status")
+
+    def test_malformed_transport_response_is_rejected(self):
+        result = self.adapter(MockTransport(response={"status": "running"})).dispatch(request())
+        self.assertEqual(result.failure_reason, "invalid_transport_response")
 
     def test_unknown_provider_is_rejected(self):
         with self.assertRaises(ValueError):
