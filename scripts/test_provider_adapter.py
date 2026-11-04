@@ -98,6 +98,19 @@ class ProviderAdapterTests(unittest.TestCase):
         self.assertNotIn("private-token-123", result.summary)
         self.assertNotIn("private-token-123", result.failure_reason)
 
+    def test_failed_provider_status_requires_definitive_failure_evidence(self):
+        ambiguous = self.adapter(MockTransport(response=ProviderResponse(
+            status="failed", summary="Provider reported failure"
+        ))).dispatch(request())
+        self.assertEqual(ambiguous.status, "outcome_unknown")
+        self.assertEqual(ambiguous.failure_reason, "unverified_provider_failure")
+
+        definite = self.adapter(MockTransport(response=ProviderResponse(
+            status="failed", summary="Provider rejected request",
+            failure_reason="invalid_request", failure_kind="definite_rejection"
+        ))).dispatch(request())
+        self.assertEqual(definite.status, "failed")
+
     def test_done_is_rejected_until_orchestrator_validates_evidence(self):
         result = self.adapter(
             MockTransport(response=ProviderResponse(status="done", summary="done",
@@ -105,6 +118,7 @@ class ProviderAdapterTests(unittest.TestCase):
         ).dispatch(request())
         self.assertEqual(result.status, "failed")
         self.assertEqual(result.failure_reason, "invalid_transport_status")
+        self.assertEqual(result.status, "outcome_unknown")
 
     def test_dispatch_running_and_review_require_provider_request_id(self):
         for status in ("dispatched", "running", "review"):
@@ -113,6 +127,7 @@ class ProviderAdapterTests(unittest.TestCase):
                     MockTransport(response=ProviderResponse(status=status, summary="ok"))
                 ).dispatch(request())
                 self.assertEqual(result.failure_reason, "missing_provider_request_id")
+                self.assertEqual(result.status, "outcome_unknown")
 
     def test_unknown_transport_status_is_rejected(self):
         result = self.adapter(
@@ -123,6 +138,7 @@ class ProviderAdapterTests(unittest.TestCase):
     def test_malformed_transport_response_is_rejected(self):
         result = self.adapter(MockTransport(response={"status": "running"})).dispatch(request())
         self.assertEqual(result.failure_reason, "invalid_transport_response")
+        self.assertEqual(result.status, "outcome_unknown")
 
     def test_unknown_provider_is_rejected(self):
         with self.assertRaises(ValueError):
