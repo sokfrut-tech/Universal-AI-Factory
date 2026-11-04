@@ -18,7 +18,8 @@
 | `done` | All acceptance criteria passed | At least one evidence item and all checks marked `pass` |
 | `partial` | Some work completed, but acceptance is incomplete | Evidence plus explicit `not_verified` list |
 | `blocked` | Work cannot proceed | `blocked_reason` and next action in the report |
-| `failed` | An attempted execution failed | `failure_reason`; sanitized diagnostics |
+| `failed` | Execution is known to have failed or provider definitely rejected it | `failure_reason`; sanitized diagnostics |
+| `outcome_unknown` | Request may have reached or executed at provider, but confirmation was lost | Ambiguous outcome kind; reconciliation required; never auto-retry |
 | `rejected` | Task was declined as invalid/out of scope | Reason and responsible reviewer |
 | `cancelled` | Task was intentionally stopped | Reason and cancellation actor |
 
@@ -32,13 +33,14 @@ Allowed recovery paths:
 - `received → blocked | rejected | cancelled`
 - `accepted → blocked | cancelled`
 - `queued → blocked | cancelled`
-- `dispatched → failed | blocked`
-- `running → partial | failed | blocked`
+- `dispatched → failed | blocked | outcome_unknown`
+- `running → partial | failed | blocked | outcome_unknown`
 - `review → running | partial | blocked` (revision requested)
 - `partial | blocked | failed → accepted` (explicitly re-opened)
 - `done`, `rejected`, and `cancelled` are terminal.
 
 A task must not jump from `received` directly to `done`. A retry after a terminal failure requires an explicit re-open transition and a new attempt number.
+An `outcome_unknown` run is non-terminal and must remain reserved until reconciled; it must never be retried automatically. Reuse of the same idempotency key is required for any safe replay, and a changed payload with that key must be rejected.
 
 ## Required invariants
 
@@ -58,9 +60,13 @@ A real adapter must implement:
 - configuration-presence diagnostics that report only configured/missing;
 - bounded request timeout, bounded retry policy, and cancellation;
 - stable correlation and idempotency handling;
-- sanitized provider error mapping to `blocked` or `failed`;
+- sanitized provider error mapping: definite rejection/execution failure to `failed`; timeout, connection loss, or ambiguous transport exception to `outcome_unknown`;
 - a substantive response artifact and immutable status event;
 - tests for missing credentials, duplicate delivery, timeout, provider rejection, malformed response, and successful completion.
+
+Live provider transport must additionally pass a central guard requiring both adapter enablement and an explicit `ALLOW_LIVE_PROVIDERS=true` setting. The setting must default to false; tests must prove that an enabled adapter still does not call transport while the guard is false.
+
+The D1 event triggers provide append-only protection against ordinary application-level UPDATE/DELETE. They are not cryptographic tamper evidence against a privileged database administrator or a migration that removes the triggers; do not describe them as a hash chain.
 
 No adapter is considered active until a controlled test proves an actual provider request and a substantive correlated response. A green static CI run does not prove that.
 
