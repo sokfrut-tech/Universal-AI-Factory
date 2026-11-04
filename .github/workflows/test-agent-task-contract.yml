@@ -11,6 +11,8 @@ on:
       - "scripts/provider_ledger_bridge.py"
       - "scripts/test_provider_adapter.py"
       - "scripts/test_provider_ledger_bridge.py"
+      - "scripts/provider_ledger_client.py"
+      - "scripts/test_provider_ledger_client.py"
       - ".github/workflows/test-agent-task-contract.yml"
   push:
     branches: [main]
