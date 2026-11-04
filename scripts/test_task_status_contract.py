@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Dependency-free regression tests for the factory task status contract."""
 import json
+import re
 import unittest
 from datetime import datetime
 from pathlib import Path
@@ -27,10 +28,11 @@ def validate_event(event):
         raise ValueError("unknown status")
     if event["provider"] not in {"claude", "gemini"}:
         raise ValueError("unknown provider")
-    if not event["source_message"].startswith(
-        ("coordination/claude/inbox/", "coordination/gemini/inbox/")
-    ) or not event["source_message"].endswith(".md"):
-        raise ValueError("source message must point to an agent inbox markdown file")
+    if not re.fullmatch(
+        r"coordination/(claude|gemini)/inbox/[A-Za-z0-9._-]+\\.md",
+        event["source_message"],
+    ):
+        raise ValueError("source message must be a direct inbox markdown child")
     if not isinstance(event["attempt"], int) or event["attempt"] < 1:
         raise ValueError("attempt must be a positive integer")
     datetime.fromisoformat(event["updated_at"].replace("Z", "+00:00"))
@@ -67,7 +69,7 @@ def event(status="received", **overrides):
 
 class TaskStatusContractTests(unittest.TestCase):
     def test_schema_declares_expected_statuses_and_required_fields(self):
-        self.assertEqual(SCHEMA["properties"]["status"]["enum"], sorted(VALID_STATUSES) if False else SCHEMA["properties"]["status"]["enum"])
+        self.assertEqual(set(SCHEMA["properties"]["status"]["enum"]), VALID_STATUSES)
         self.assertTrue(VALID_STATUSES.issubset(set(SCHEMA["properties"]["status"]["enum"])))
         self.assertTrue({"task_id", "correlation_id", "source_message", "status"} <= set(SCHEMA["required"]))
 
