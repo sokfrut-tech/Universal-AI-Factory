@@ -64,7 +64,7 @@ A real adapter must implement:
 - a substantive response artifact and immutable status event;
 - tests for missing credentials, duplicate delivery, timeout, provider rejection, malformed response, and successful completion.
 
-The adapter currently accepts an `allow_live_providers` configuration boolean, defaulting to false, and tests that a false value prevents transport invocation. **This is not yet a centralized runtime Guard Layer:** no shared environment/configuration loader currently proves that every provider path is gated by `ALLOW_LIVE_PROVIDERS=true`. That wiring must be implemented and reviewed before any live provider transport is connected. The flag must default to false.
+The shared `scripts/provider_guard.py` module is the central fail-closed guard for adapter dispatch. It requires both adapter enablement and the exact environment value `ALLOW_LIVE_PROVIDERS=true`; missing, false, or differently-cased values deny dispatch. `provider_adapter.py` calls this guard immediately before credential and transport checks. Tests prove that enabled adapters do not call transport when the environment flag is missing or false. Because no live provider transports or alternate runtime dispatch paths are connected yet, each future provider entry point must call this same guard and receive its own negative-path test before activation.
 
 The D1 event triggers provide append-only protection against ordinary application-level UPDATE/DELETE. They are not cryptographic tamper evidence against a privileged database administrator or a migration that removes the triggers; do not describe them as a hash chain.
 
@@ -90,9 +90,9 @@ No adapter is considered active until a controlled test proves an actual provide
 ## Rollout
 
 1. Validate the schema and transition invariants in CI.
-2. Implement provider adapters behind disabled-by-default configuration.
-3. Run mock-provider tests; keep real credentials out of CI logs.
+2. Keep provider adapters behind the centralized fail-closed guard.
+3. Run mock-provider and adapter-to-ledger contract tests; keep real credentials out of CI logs.
 4. Configure narrowly scoped secrets in repository settings.
-5. Implement and review the centralized `ALLOW_LIVE_PROVIDERS` guard before connecting live transports.
+5. Require every future provider entry point to use the shared guard and pass a negative-path test.
 6. Run a controlled, non-production smoke test and verify provider request ID plus substantive outbox report.
 7. Only then enable inbox dispatch for that provider.
