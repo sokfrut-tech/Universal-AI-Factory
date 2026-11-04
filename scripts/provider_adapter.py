@@ -8,6 +8,8 @@ factory orchestrator, which must attach and validate evidence before marking don
 from dataclasses import dataclass
 from typing import Optional, Protocol
 
+from provider_guard import live_provider_dispatch_allowed
+
 
 @dataclass(frozen=True)
 class ProviderRequest:
@@ -41,7 +43,6 @@ class ProviderConfig:
     enabled: bool = False
     credential_configured: bool = False
     secret_reference: Optional[str] = None
-    allow_live_providers: bool = False
 
 
 class ProviderAdapter:
@@ -59,7 +60,7 @@ class ProviderAdapter:
         self._transport = transport
 
     def dispatch(self, request: ProviderRequest) -> ProviderResponse:
-        if not self._config.enabled or not self._config.allow_live_providers:
+        if not live_provider_dispatch_allowed(self._config.enabled):
             return ProviderResponse(
                 status="blocked",
                 summary="No provider request was sent.",
