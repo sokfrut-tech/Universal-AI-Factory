@@ -7,7 +7,7 @@ workflow = Path(".github/workflows/factory-runner.yml").read_text(encoding="utf-
 inbox = Path(".github/workflows/inbox-dispatcher.yml").read_text(encoding="utf-8")
 
 required = [
-    "permissions:\\n  contents: read",
+    "permissions:\n  contents: read",
     "type: choice",
     "avtoy-korea-auto",
     "RussSearchOPPO",
@@ -33,11 +33,11 @@ for forbidden in (
 ):
     assert forbidden not in workflow, f"unsafe legacy behavior remains: {forbidden}"
 
-assert "\\npush:\\n" not in workflow, "push trigger must not run the manual audit"
+assert "\npush:\n" not in workflow, "push trigger must not run the manual audit"
 
-# The old inbox workflow created ACK-only receipts and pushed them to main.
+# The old inbox workflow generated ACK-only receipts and pushed them to main.
 # Until a real provider adapter exists, it must remain explicitly inert.
-assert "permissions:\\n  contents: read" in inbox
+assert "permissions:\n  contents: read" in inbox
 assert "workflow_dispatch:" in inbox
 assert "contents: write" not in inbox
 assert "secrets." not in inbox
@@ -47,7 +47,7 @@ assert "does not invoke Claude" in inbox
 assert "No task was read" in inbox
 
 task_pattern = re.compile(
-    r"^coordination/(claude|gemini)/inbox/[A-Za-z0-9._-]+\\.md$"
+    r"^coordination/(claude|gemini)/inbox/[A-Za-z0-9._-]+\.md$"
 )
 valid = [
     "coordination/claude/inbox/task-1.md",
