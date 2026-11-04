@@ -150,3 +150,31 @@ Fresh CI for exact PR head:
 4. Add independent reviewer stage; a provider's own text response is not independent verification.
 5. Keep live-provider global flag false until the owner explicitly authorizes paid API use and configures a bounded spend policy.
 6. Do not merge PR #19 or #11 solely because CI is green; review base conflicts and the complete integrated architecture first.
+
+## Cross-project continuation update — 2026-11-04 19:36 UTC
+
+### Antigravity Mobile PR #19
+- Latest branch head: f32ec45775084637aec8a79d67a8a0ef61b4dbae; PR remains open Draft.
+- Exact-head Factory API checks run [41897846007](https://github.com/sokfrut-tech/Antigravity-Mobile/actions/runs/41897846007) completed successfully after rerun.
+- Exact-head Android build/unit run inside [41897846860](https://github.com/sokfrut-tech/Antigravity-Mobile/actions/runs/41897846860) completed successfully and uploaded the debug APK artifact.
+- Exact-head Trivy, Semgrep, Gitleaks and CodeQL jobs in [41897846860](https://github.com/sokfrut-tech/Antigravity-Mobile/actions/runs/41897846860) completed successfully.
+- Android emulator Compose UI job in [41897846860](https://github.com/sokfrut-tech/Antigravity-Mobile/actions/runs/41897846860) was still in progress at 19:36 UTC; do not claim full emulator pass until it finishes.
+- Global live provider switch remains false; no live/paid provider request was made. PR #19 remains unmerged and undeployed.
+
+### Jarvis / Gemeni PR #51
+- Exact-head run [41530520998](https://github.com/sokfrut-tech/Gemeni/actions/runs/41530520998) failed before executing any UI test: log says 0 tests finished and AndroidTestApkInstallerPlugin failed to install the debug APK on emulator-5554 with ShellCommandUnresponsiveException.
+- This is an emulator/ADB installation failure, not a product screenshot or evidence of the app rendering black.
+- The PR's corrected decoder SHA-256 is confirmed by the official Hugging Face model file metadata and original LFS pointer: https://huggingface.co/csukuangfj/sherpa-onnx-streaming-zipformer-small-ru-vosk-2025-08-16/blob/main/decoder.onnx
+- Updated docs/CONTINUATION_STATE.md on the PR branch with the verified model hash, exact CI failure and next diagnostics. Posted a review comment asking for install preflight and real UI assertions.
+- Physical OPPO remains NOT TESTED; no APK is claimed to fix the black-screen report.
+
+### AVTOY KOREA
+- Main commit 8b505475d2745bb7d24d5675b32ee0f85266b81f has a successful Cloudflare deploy [41521125734](https://github.com/sokfrut-tech/avtoy-korea-auto/actions/runs/41521125734) and Worker tests [41521081679](https://github.com/sokfrut-tech/avtoy-korea-auto/actions/runs/41521081679).
+- Main security run [41521080933](https://github.com/sokfrut-tech/avtoy-korea-auto/actions/runs/41521080933) failed only on unavailable GitHub Code Scanning SARIF upload. PR #56 exact-head security/Worker/review checks passed [41696829149](https://github.com/sokfrut-tech/avtoy-korea-auto/actions/runs/41696829149), [41696829152](https://github.com/sokfrut-tech/avtoy-korea-auto/actions/runs/41696829152), [41696829214](https://github.com/sokfrut-tech/avtoy-korea-auto/actions/runs/41696829214).
+- Updated AVTOY continuation brief in PR #58 with these facts and explicit NOT_VERIFIED status for live site response and Telegram webhook registration. No production secrets, KV, webhook or deployment settings changed.
+
+### Actions still required
+1. Wait for and inspect Antigravity emulator UI result and artifact.
+2. Stabilize Jarvis emulator APK installation before treating its UI test as evidence; then install on real OPPO.
+3. Use a secure Cloudflare/Telegram diagnostic path for AVTOY live health and webhook state; never request bot tokens in chat.
+4. Continue remaining repositories only from their own briefs and exact-head CI; keep merges/deployments behind explicit approval.
