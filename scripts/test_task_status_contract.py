@@ -13,16 +13,17 @@ ALLOWED_TRANSITIONS = {
     "received": {"accepted", "blocked", "rejected", "cancelled"},
     "accepted": {"queued", "blocked", "cancelled"},
     "queued": {"dispatched", "blocked", "cancelled"},
-    "dispatched": {"running", "failed", "blocked"},
-    "running": {"review", "partial", "failed", "blocked"},
+    "dispatched": {"running", "failed", "blocked", "outcome_unknown"},
+    "running": {"review", "partial", "failed", "blocked", "outcome_unknown"},
     "review": {"done", "partial", "running", "blocked"},
     "partial": {"accepted", "cancelled"},
     "blocked": {"accepted", "cancelled"},
     "failed": {"accepted", "cancelled"},
+    "outcome_unknown": set(),
 }
 VALID_STATUSES = {
     "received", "accepted", "queued", "dispatched", "running", "review",
-    "done", "partial", "blocked", "failed", "rejected", "cancelled",
+    "done", "partial", "blocked", "failed", "outcome_unknown", "rejected", "cancelled",
 }
 
 
@@ -130,6 +131,13 @@ class TaskStatusContractTests(unittest.TestCase):
     def test_blocked_requires_reason(self):
         with self.assertRaises(ValueError):
             validate_event(event("blocked"))
+
+    def test_outcome_unknown_is_allowed_but_not_automatically_retriable(self):
+        validate_event(event("outcome_unknown"))
+        with self.assertRaises(ValueError):
+            validate_transition("outcome_unknown", "queued")
+        with self.assertRaises(ValueError):
+            validate_transition("outcome_unknown", "dispatched")
 
     def test_failed_requires_reason(self):
         with self.assertRaises(ValueError):
