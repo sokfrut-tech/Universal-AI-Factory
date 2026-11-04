@@ -21,7 +21,7 @@ jobs:
           python - <<'PY'
           from PIL import Image
           import base64, io, pathlib
-          src = pathlib.Path("shared-assets/reference-images/a1c26558cc356f59dcc775543ade83f1d306697dd1509f3fdeaf397333ee685e.png")
+          src = pathlib.Path("shared-assets/reference-images/122.png")
           im = Image.open(src).convert("RGB")
           im.thumbnail((1400, 1400))
           out = io.BytesIO()
@@ -49,7 +49,7 @@ jobs:
             "branch":"tools/export-reference-image-2026-11-04"
           }).encode()
           req = urllib.request.Request(
-            "https://api.github.com/repos/sokfrut-tech/Universal-AI-Factory/contents/shared-assets/reference-images/.transfer/reference-image.jpg.b64",
+            "https://api.github.com/repos/sokfrut-tech/Universal-AI-Factory/contents/shared-assets/reference-images/.transfer/122-reference.jpg.b64",
             data=payload, headers={
               "Authorization":"Bearer "+os.environ["GH_TOKEN"],
               "Accept":"application/vnd.github+json",
