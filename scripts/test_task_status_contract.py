@@ -8,6 +8,18 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = json.loads((ROOT / "coordination/shared/task-status.schema.json").read_text())
+ALLOWED_TRANSITIONS = {
+    "new": {"received", "rejected", "cancelled"},
+    "received": {"accepted", "blocked", "rejected", "cancelled"},
+    "accepted": {"queued", "blocked", "cancelled"},
+    "queued": {"dispatched", "blocked", "cancelled"},
+    "dispatched": {"running", "failed", "blocked"},
+    "running": {"review", "partial", "failed", "blocked"},
+    "review": {"done", "partial", "running", "blocked"},
+    "partial": {"accepted", "cancelled"},
+    "blocked": {"accepted", "cancelled"},
+    "failed": {"accepted", "cancelled"},
+}
 VALID_STATUSES = {
     "received", "accepted", "queued", "dispatched", "running", "review",
     "done", "partial", "blocked", "failed", "rejected", "cancelled",
@@ -72,6 +84,17 @@ class TaskStatusContractTests(unittest.TestCase):
         self.assertEqual(set(SCHEMA["properties"]["status"]["enum"]), VALID_STATUSES)
         self.assertTrue(VALID_STATUSES.issubset(set(SCHEMA["properties"]["status"]["enum"])))
         self.assertTrue({"task_id", "correlation_id", "source_message", "status"} <= set(SCHEMA["required"]))
+
+    def test_valid_transition_to_dispatched(self):
+        validate_transition("queued", "dispatched")
+
+    def test_received_cannot_jump_directly_to_done(self):
+        with self.assertRaises(ValueError):
+            validate_transition("received", "done")
+
+    def test_done_is_terminal(self):
+        with self.assertRaises(ValueError):
+            validate_transition("done", "running")
 
     def test_received_ack_is_not_completion(self):
         validate_event(event("received"))
