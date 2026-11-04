@@ -22,6 +22,24 @@
 | `rejected` | Task was declined as invalid/out of scope | Reason and responsible reviewer |
 | `cancelled` | Task was intentionally stopped | Reason and cancellation actor |
 
+## Allowed transitions
+
+The normal path is:
+
+`new → received → accepted → queued → dispatched → running → review → done`
+
+Allowed recovery paths:
+- `received → blocked | rejected | cancelled`
+- `accepted → blocked | cancelled`
+- `queued → blocked | cancelled`
+- `dispatched → failed | blocked`
+- `running → partial | failed | blocked`
+- `review → running | partial | blocked` (revision requested)
+- `partial | blocked | failed → accepted` (explicitly re-opened)
+- `done`, `rejected`, and `cancelled` are terminal.
+
+A task must not jump from `received` directly to `done`. A retry after a terminal failure requires an explicit re-open transition and a new attempt number.
+
 ## Required invariants
 
 1. **ACK is not execution.** `received` means only that the message was read. It must never be presented as `dispatched`, `running`, or `done`.
