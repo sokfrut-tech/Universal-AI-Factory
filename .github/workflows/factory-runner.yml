@@ -39,6 +39,9 @@ jobs:
       - name: Test runner security boundaries
         run: python factory/scripts/test_factory_runner_security.py
 
+      - name: Parse workflow YAML and verify effective structure
+        run: ruby factory/scripts/test_factory_runner_yaml.rb
+
       - name: Validate dispatch inputs and target-read credential
         id: validate
         env:
