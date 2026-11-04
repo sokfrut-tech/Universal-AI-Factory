@@ -24,6 +24,7 @@ class ProviderResponse:
     provider_request_id: Optional[str] = None
     blocked_reason: Optional[str] = None
     failure_reason: Optional[str] = None
+    outcome_kind: Optional[str] = None
 
 
 class ProviderTransport(Protocol):
@@ -39,10 +40,11 @@ class ProviderConfig:
     enabled: bool = False
     credential_configured: bool = False
     secret_reference: Optional[str] = None
+    allow_live_providers: bool = False
 
 
 class ProviderAdapter:
-    _TRANSPORT_STATUSES = {"dispatched", "running", "review", "partial", "blocked", "failed"}
+    _TRANSPORT_STATUSES = {"dispatched", "running", "review", "partial", "blocked", "failed", "outcome_unknown"}
     _STATUSES_REQUIRING_REQUEST_ID = {"dispatched", "running", "review"}
 
     def __init__(
@@ -56,11 +58,11 @@ class ProviderAdapter:
         self._transport = transport
 
     def dispatch(self, request: ProviderRequest) -> ProviderResponse:
-        if not self._config.enabled:
+        if not self._config.enabled or not self._config.allow_live_providers:
             return ProviderResponse(
                 status="blocked",
                 summary="No provider request was sent.",
-                blocked_reason="Provider dispatch is disabled by configuration.",
+                blocked_reason="Provider dispatch is disabled by configuration or ALLOW_LIVE_PROVIDERS is not enabled.",
             )
         if not self._config.credential_configured or not self._config.secret_reference:
             return ProviderResponse(
@@ -79,15 +81,17 @@ class ProviderAdapter:
             response = self._transport.invoke(request, self._config.secret_reference)
         except TimeoutError:
             return ProviderResponse(
-                status="failed",
-                summary="Provider request timed out.",
+                status="outcome_unknown",
+                summary="Provider request timed out; remote execution status is unknown.",
                 failure_reason="transport_timeout",
+                outcome_kind="timeout",
             )
-        except Exception as exc:  # Never copy exception text; it may contain secrets.
+        except Exception:  # A transport error may happen after the provider accepted the request.
             return ProviderResponse(
-                status="failed",
-                summary="Provider transport failed.",
-                failure_reason=f"transport_error:{type(exc).__name__}",
+                status="outcome_unknown",
+                summary="Provider transport failed; remote execution status is unknown.",
+                failure_reason="transport_error",
+                outcome_kind="ambiguous_response",
             )
 
         if not isinstance(response, ProviderResponse):
