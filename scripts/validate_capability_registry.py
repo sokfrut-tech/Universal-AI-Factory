@@ -45,6 +45,10 @@ def main() -> None:
     if not isinstance(capabilities, list) or not capabilities:
         fail("capabilities must be a non-empty array")
 
+    capability_properties = schema.get("properties", {}).get("capabilities", {}).get("items", {}).get("properties", {})
+    if not {"data_boundary", "write_scope", "adapter_evidence"}.issubset(capability_properties):
+        fail("schema is missing capability metadata properties used by the registry")
+
     seen = set()
     for item in capabilities:
         if not isinstance(item, dict):
@@ -61,6 +65,12 @@ def main() -> None:
             fail(f"{capability_id}: operations must be a non-empty array")
         if item.get("access_state") == "blocked" and not item.get("blocked_reason"):
             fail(f"{capability_id}: blocked entries need blocked_reason")
+        unknown = set(item) - set(capability_properties)
+        if unknown:
+            fail(f"{capability_id}: properties missing from schema: " + ", ".join(sorted(unknown)))
+        for field in ("data_boundary", "write_scope", "adapter_evidence", "blocked_reason"):
+            if field in item and not isinstance(item[field], str):
+                fail(f"{capability_id}: {field} must be a string")
         if item.get("access_state") == "agent_enabled" and not item.get("adapter_evidence"):
             fail(f"{capability_id}: agent_enabled requires adapter_evidence")
 
