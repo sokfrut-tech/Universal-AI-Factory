@@ -1,0 +1,30 @@
+name: Validate Factory Capability Registry
+
+on:
+  pull_request:
+    paths:
+      - 'config/capability-registry.json'
+      - 'schemas/capability-registry.schema.json'
+      - 'scripts/validate_capability_registry.py'
+      - '.github/workflows/validate-capability-registry.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'config/capability-registry.json'
+      - 'schemas/capability-registry.schema.json'
+      - 'scripts/validate_capability_registry.py'
+      - '.github/workflows/validate-capability-registry.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate capability registry
+        run: python scripts/validate_capability_registry.py
