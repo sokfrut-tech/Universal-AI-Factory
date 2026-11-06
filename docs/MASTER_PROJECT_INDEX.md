@@ -92,3 +92,14 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - Platform source audit: minSdk=29, targetSdk=35 on current main; Android 7/API24 is not currently supported. Accessibility service is empty and its broad XML scope must be narrowed before implementation.
 - PR #78 CI run #42277569386: secret scanning and CodeQL succeeded; emulator smoke test was still in progress at the latest check. Recheck before any merge.
 - Next: finish the active emulator CI diagnosis, then implement small tested vertical slices in dependency order: typed tool/capability contracts -> local planner/reminders/alarms -> calendar -> media/radio -> web assistant -> broader integrations and local neural reasoning.
+
+
+### Jarvis strict privacy and on-device learning — mandatory invariant
+- Intelligence growth must happen locally: user-approved memory, corrections, task outcomes, local skill/rule refinement and (only if feasible) on-device model adaptation.
+- Be honest about learning type: updating memory/retrieval/rules is not the same as training model weights. Any local weight update must be versioned, regression-tested and rollback-capable.
+- Default network egress from private context is forbidden: no telemetry, analytics, crash uploads, conversation/memory sync, training-data uploads or background content transmission.
+- Web search/radio are permitted network functions, but send only the minimum query/URL explicitly requested. Never append private memory, contacts, calendar, messages, files or notification contents to network requests automatically.
+- Cloud model fallback is OFF by default. If later offered, it must be per-request, show the exact data leaving the device and require explicit user confirmation. A model/agent cannot enable it autonomously.
+- Audit manifests, SDKs, dependencies, endpoints and background workers; automated tests must prove local memory/learning/inference do not make outbound calls.
+- User controls: inspect, correct, reset and delete local memory/learning data; backups only by explicit user action and protected locally.
+- Full privacy contract and acceptance gates: https://github.com/sokfrut-tech/Gemeni/blob/feature/jarvis-phone-control-foundation-2026-11-06/docs/engineering/2026-11-06-phone-control-design.md
