@@ -131,3 +131,13 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - Important hardware caveat: Snapdragon 8 Gen 2 appears in Qualcomm's supported-device matrix (Hexagon V73), and SD1.5 NPU is a plausible local image-generation target. SDXL/newer DiT/video pipelines are not assumed supported on this generation.
 - APK building directly on-device remains a separate feasibility spike: embedded Python does not provide Android SDK/Gradle. No source upload or cloud build fallback without explicit per-task consent.
 - No runtime is claimed integrated or benchmarked on the physical OPPO. Next proof: device identity/resource probe, Qwen small-model inference smoke test, isolated offline Python execution, and independent SD1.5 local generation benchmark.
+
+
+### Jarvis device capability probe — PR #83 — 2026-11-06
+- Draft PR: https://github.com/sokfrut-tech/Gemeni/pull/83
+- Branch: `feature/jarvis-device-capability-probe-2026-11-06`, based on runtime integration branch used by PR #78.
+- Adds local-only Android device probe for manufacturer/model/hardware/SoC, API, ABIs, RAM, app heap cap, free app storage, low-memory and thermal status.
+- Adds conservative model runtime budget selector and deterministic threshold unit tests.
+- No network, analytics, telemetry or user-content access in this component.
+- PR created at head `ab1db08bdbcbba0199ad3c9a8282e1a9b7b47c01`; mergeability was reported true. No CI run was returned at the time of recording; tests/build remain unverified.
+- This is the first executable foundation for measuring the target OPPO rather than guessing which Qwen/model tier it can handle. UI integration and physical-device measurement remain next.
