@@ -122,3 +122,12 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - Qwen is not treated as a universal image/audio generator: separate specialist models and runtimes are required. Local diffusion, Python native wheels, Android SDK/Gradle and game-engine support must be benchmarked on the OPPO Find X6 Pro before capability claims.
 - Delivery sequence: device/runtime benchmark -> local Python/code vertical slice -> on-device APK factory -> image/creative studio -> playable game factory -> local learning integration.
 - This is an approved product brief, not shipped functionality. No capability is marked implemented until an end-to-end on-device test proves it.
+
+
+### Jarvis local runtime assessment — OPPO Find X6 Pro — 2026-11-06
+- Runtime assessment: `sokfrut-tech/Gemeni/docs/engineering/2026-11-06-jarvis-local-runtime-assessment-oppo-find-x6-pro.md` on PR #81 documentation branch.
+- Candidate stack: llama.cpp Android/GGUF as portable Qwen baseline; Qualcomm GenieX/QAIRT as an optional Snapdragon 8 Gen 2 acceleration path; Qwen3-VL as a separate vision-language path; Chaquopy 17.2 as the embedded Python candidate; dedicated SD1.5/QNN path for first local image-generation benchmark.
+- Official/runtime docs reviewed: llama.cpp Android guide, Qwen3.5 repository, Qualcomm GenieX/QAIRT Android support, Chaquopy 17.2 Android setup. Chaquopy docs state minSdk 24 and arm64-v8a support; current Jarvis app minSdk 29 is compatible in principle, but Gradle/runtime integration still needs build verification.
+- Important hardware caveat: Snapdragon 8 Gen 2 appears in Qualcomm's supported-device matrix (Hexagon V73), and SD1.5 NPU is a plausible local image-generation target. SDXL/newer DiT/video pipelines are not assumed supported on this generation.
+- APK building directly on-device remains a separate feasibility spike: embedded Python does not provide Android SDK/Gradle. No source upload or cloud build fallback without explicit per-task consent.
+- No runtime is claimed integrated or benchmarked on the physical OPPO. Next proof: device identity/resource probe, Qwen small-model inference smoke test, isolated offline Python execution, and independent SD1.5 local generation benchmark.
