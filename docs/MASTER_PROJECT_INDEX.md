@@ -229,3 +229,12 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - PR #85 run #108: Secret Scanning succeeded; CodeQL job still running at emulator step after compile/build/verification/upload passed.
 - PR #86 run #109: queued; it is intended to prevent emulator startup from blocking CodeQL in future workflow runs.
 - Do not mark any Android runtime PR fully green based only on APK build. Keep draft until independent CodeQL and emulator results are available and reviewed.
+
+
+### PR #86 first execution evidence — 2026-11-06 19:56 UTC
+- Run #109 / id `42283835061` started on exact head `ec62c07116428de700631cb4ea842fe4fdd9a096`.
+- Secret scanning completed successfully.
+- CodeQL static-analysis job and Android emulator instrumentation job are both running as separate parallel jobs. This confirms the workflow graph no longer serializes CodeQL behind emulator startup.
+- Emulator job has completed checkout, JDK and Android SDK setup; SDK/NDK installation is in progress.
+- CodeQL job has completed checkout/JDK/Gradle setup; Android SDK setup is in progress.
+- No compile, CodeQL or emulator conclusion yet.
