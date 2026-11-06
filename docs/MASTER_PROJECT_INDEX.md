@@ -209,3 +209,23 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - PR #83 run #103: Secret Scanning succeeded; CodeQL/emulator pipeline still in progress.
 - PR #84 run #105: Secret Scanning succeeded; CodeQL/emulator pipeline still in progress.
 - PR #85 run #108: Secret Scanning succeeded; CodeQL/emulator pipeline still in progress on latest head `5599925801e07aee4a81e7d7f8e803dda06dad58`.
+
+
+### CI architecture repair — PR #86 — 2026-11-06
+- Draft PR: https://github.com/sokfrut-tech/Gemeni/pull/86
+- Branch: `ci/jarvis-independent-emulator-codeql-2026-11-06`, base `integration/jarvis-safe-agent-runtime-2026-11-06`.
+- Workflow change: CodeQL compile/build/analyze is now independent from Android emulator instrumentation. Emulator tests run in their own job with bounded 20-minute step / 35-minute job, fresh AVD, headless boot options and always-uploaded test results.
+- Rationale: PR #82 run #98 built and verified APK, but the emulator never booted; this caused CodeQL analysis to be skipped/failed as a downstream dependency. Separating jobs ensures static analysis still completes if emulator infrastructure fails.
+- Head SHA: `ec62c07116428de700631cb4ea842fe4fdd9a096`.
+- CI run #109 / id `42283835061` was queued when recorded. No validation result yet; keep draft until exact-head jobs finish.
+- No emulator assertions were removed or relaxed.
+
+### Latest Jarvis CI state — 2026-11-06 19:55 UTC
+- PR #81 run #104: full workflow success (documentation branch).
+- PR #78 run #93: CodeQL and Secret Scanning succeeded; Android emulator job remains in progress.
+- PR #82 run #98: Secret Scanning succeeded; CodeQL job failed because emulator startup timed out before tests began. Kotlin compile, APK build, verification and artifact upload had passed. No test assertions ran.
+- PR #83 run #103: Secret Scanning succeeded; CodeQL job is still blocked/running at emulator step after Kotlin compile, APK build, verification and upload passed.
+- PR #84 run #105: Secret Scanning succeeded; CodeQL job still running at emulator step after compile/build/verification/upload passed.
+- PR #85 run #108: Secret Scanning succeeded; CodeQL job still running at emulator step after compile/build/verification/upload passed.
+- PR #86 run #109: queued; it is intended to prevent emulator startup from blocking CodeQL in future workflow runs.
+- Do not mark any Android runtime PR fully green based only on APK build. Keep draft until independent CodeQL and emulator results are available and reviewed.
