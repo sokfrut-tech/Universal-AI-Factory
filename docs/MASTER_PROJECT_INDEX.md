@@ -144,7 +144,17 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 
 
 ### Jarvis CI checkpoint — 2026-11-06 19:43 UTC
-- PR #78 run #93: secret scan and CodeQL completed successfully; JVM unit tests, Kotlin compile, debug APK build and APK hash verification passed. Emulator smoke job failed before executing any test (0 tests): ADB/UTP package installer timed out with `ShellCommandUnresponsiveException` while installing split APK. This is not an assertion failure. Only the failed emulator job was re-run; retry is in progress.
-- PR #82 run #98: secret scan passed; Kotlin compile, full debug APK build, APK verification/hash and upload steps completed; emulator smoke tests still in progress; CodeQL analysis pending behind the emulator step. Do not mark CI green yet.
-- PR #83 run #103: secret scan passed; CodeQL/build job in progress. No test/build conclusion yet.
-- Do not merge stacked PRs #82/#83 before PR #78 dependency chain is reconciled and emulator tests are completed.
+- PR #78 run #93: latest job snapshot — secret scan and CodeQL succeeded; debug APK build completed; emulator smoke tests still in progress. The prior attempt failed during ADB split-APK installation before any test executed; the retry has progressed past APK build and is now at the emulator test step. No emulator result yet.
+- PR #82 run #98: secret scan succeeded; CodeQL job completed Kotlin build, full debug APK build, APK verification/hash and upload steps; emulator smoke tests are in progress. CodeQL analysis is queued after emulator. No full CI conclusion yet.
+- PR #83 run #103: secret scan succeeded; CodeQL job completed Kotlin build, full debug APK build, APK verification/hash and upload steps; emulator smoke tests are in progress. CodeQL analysis is queued after emulator. No full CI conclusion yet.
+- Rechecked latest jobs on 2026-11-06: PR #78 emulator job 128112867371 in progress; PR #82 emulator job 128107922074 in progress; PR #83 emulator job 128112530329 in progress. Do not mark any PR fully green or merge stacked PRs #82/#83 before PR #78 dependency chain is reconciled.
+
+
+### Jarvis Python Studio isolated-runtime spike — 2026-11-06
+- Added design brief to PR #81 branch: https://github.com/sokfrut-tech/Gemeni/blob/feature/jarvis-phone-control-foundation-2026-11-06/docs/engineering/2026-11-06-jarvis-python-studio-isolated-runtime-spike.md
+- Defines a phone-first offline Python workspace (project browser/editor, bounded runner, tests, export) and a strict privacy/security contract.
+- Chaquopy embedded in the main app process is explicitly **not** accepted as a sandbox for user scripts.
+- Preferred feasibility experiment: Chaquopy inside an Android `isolatedProcess` service with a distinct UID, no app permissions, no network, and only bounded Binder/pipe file-descriptor exchange. Compatibility is unproven and must be demonstrated before exposing Run.
+- If isolatedProcess cannot host the runtime safely, stop and evaluate a separate worker APK/UID; do not silently run untrusted scripts in Jarvis's main process.
+- P0 acceptance requires proof of UID/permission isolation, no network egress, bounded resources, cancellation, path-traversal resistance, no access to Jarvis memory/model files/credentials/tool gateway, and physical OPPO validation.
+- This is a design brief only; no Python runtime or editor is yet integrated.
