@@ -178,3 +178,23 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - PR #81 run #104: Secret Scanning succeeded; CodeQL job 128114750087 remains in progress.
 - PR #84 run #105: Secret Scanning succeeded; CodeQL job 128115243996 remains in progress.
 - No new PR has full green CI. Keep all dependent implementation PRs in draft until the required checks complete and code/test evidence is reviewed.
+
+
+### Jarvis explicit model-download consent fix — PR #85 — 2026-11-06
+- Draft PR: https://github.com/sokfrut-tech/Gemeni/pull/85
+- Branch: `fix/jarvis-explicit-model-download-consent-2026-11-06`, based on safe runtime PR #78.
+- Code review found a privacy-contract violation: microphone startup called `ensureRussianAsr()`, which silently downloaded the Russian ASR model from Hugging Face on first use.
+- Changed the normal `prepare()` path to verify/load only an already-installed model; no download is performed there.
+- Added a separate user-consent dialog. Only after tapping **Разрешить загрузку** does the app fetch model files. Dialog states that the host receives connection metadata (including IP), while voice, messages, local files and memory are not included in model-file requests.
+- Model readiness hash checks are moved off the UI thread.
+- PR head SHA: `5599925801e07aee4a81e7d7f8e803dda06dad58` (latest at index update). Run #106 / id `42283105816` started on an earlier head; newer commits may trigger a follow-up run.
+- Validation remains pending. Add automated coverage for no network before consent and test the accept/decline/error/busy UI paths. The app still has INTERNET permission; all other network call sites require a separate egress audit.
+
+### CI checkpoint — 2026-11-06 19:51 UTC
+- PR #81 run #104: CodeQL and Secret Scanning both completed successfully. Documentation-only PR; no emulator test job.
+- PR #78 run #93: CodeQL and Secret Scanning succeeded; Android emulator smoke test still in progress.
+- PR #82 run #98: Secret Scanning succeeded; CodeQL job still in progress.
+- PR #83 run #103: Secret Scanning succeeded; CodeQL job still in progress.
+- PR #84 run #105: Secret Scanning succeeded; CodeQL job still in progress.
+- PR #85 run #106: workflow in progress on initial head `7a7c30c1fb3de8185ebd9263ecb252613f91b48d`; latest code has since advanced to `5599925801e07aee4a81e7d7f8e803dda06dad58`.
+- PR #81's successful checks do not validate any Android runtime code. Do not describe any app feature as release-ready based on these checks.
