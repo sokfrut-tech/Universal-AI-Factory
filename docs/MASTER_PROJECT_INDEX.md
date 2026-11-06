@@ -78,3 +78,10 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - Technical decision: https://github.com/sokfrut-tech/Gemeni/blob/integration/jarvis-safe-agent-runtime-2026-11-06/docs/engineering/2026-11-06-local-inference-runtime-decision.md
 - Phase B brief: https://github.com/sokfrut-tech/Gemeni/blob/integration/jarvis-safe-agent-runtime-2026-11-06/docs/agents/BRIEF_LOCAL_REASONING_RUNTIME_PHASE_B_2026-11-06.md
 - Safe runtime PR #78: https://github.com/sokfrut-tech/Gemeni/pull/78
+
+
+### Jarvis model shortlist update — Qwen3.5 (2026-11-06)
+- Official Qwen3.5-0.8B is Apache-2.0; official ggml-org GGUF Q4_0 candidate is 563 MB, pinned revision `4c11520cef475dd40ed72ec4a1e68b26721bd769`, SHA-256 `57d1997790d1744fba5b40a7317df71ea5e2acee28c47e78f0cce39c0703f8cf`. Use for initial runtime bring-up only, not as a quality promise.
+- Qwen3.5-2B instruction model is Apache-2.0. bartowski Q4_K_M conversion is around 1.40 GB and is the primary quality/size candidate; pin exact conversion revision and SHA-256 before download/installation because it is third-party.
+- Full evidence and gates: https://github.com/sokfrut-tech/Gemeni/blob/integration/jarvis-safe-agent-runtime-2026-11-06/docs/engineering/2026-11-06-local-inference-runtime-decision.md
+- No model has been integrated into the APK or benchmarked on the OPPO device yet.
