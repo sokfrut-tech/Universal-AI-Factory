@@ -238,3 +238,19 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - Emulator job has completed checkout, JDK and Android SDK setup; SDK/NDK installation is in progress.
 - CodeQL job has completed checkout/JDK/Gradle setup; Android SDK setup is in progress.
 - No compile, CodeQL or emulator conclusion yet.
+
+
+### Jarvis expanded capability brief — PR #87 — 2026-11-06
+- Draft PR: https://github.com/sokfrut-tech/Gemeni/pull/87
+- Branch: `feature/jarvis-multimodal-research-memory-media-2026-11-06`, based on phone-control foundation branch.
+- Brief: `docs/engineering/2026-11-06-jarvis-music-research-memory-workspace-video-brief.md`.
+- Added first-class requirements inspired by:
+  - Suno: original music generation, lyrics, waveform editing, stems, remix/cover workflows, reusable local sound profiles and audio export.
+  - Perplexity: opt-in web research, multi-step Deep Research, source-grounded citations, contradiction checking, local file analysis and report export.
+  - Superpower: project folders, global search, conversation maps, saved prompts/chains, task queue, notes/highlights, references, gallery and export.
+  - Breeno Memory / Alice My Memory: user-confirmed local notes, tasks, reminders, project-scoped memory, provenance, inspect/edit/delete/export.
+  - Alice AI: Russian-first multimodal task assistance and safe task agents.
+  - Video studio: import, metadata, multi-track timeline, trim/split, subtitles, transcription, scene/keyframe analysis, smart rough-cut, audio tracks, text/image-to-video and real MP4 export.
+- Privacy invariants: offline/local by default; no silent cloud/API calls; explicit per-task consent for any outbound query/media; no private project, prompt, memory, audio or video upload by default.
+- The brief is documentation/planning only. None of these new features is represented as already implemented. Each requires a real end-to-end test and target-phone resource benchmark.
+- Commit: `89528dde66724b86602ddcf74be81811ef779ce8`.
