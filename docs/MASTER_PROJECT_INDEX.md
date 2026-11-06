@@ -303,3 +303,20 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - MP4 edit-list trim optimization can be fast but has a privacy/compatibility caveat: removed samples may remain in the file and be hidden by edit-list metadata. For any "permanently remove this segment" operation, use a verified re-encode/export path rather than relying on edit lists.
 - Multi-clip compositions, preview and advanced timeline features require additional implementation and target-device tests. Start with import -> metadata -> trim -> MP4 export -> playback/hash validation on the OPPO.
 - Official docs: https://developer.android.com/media/media3/transformer/transformations and https://developer.android.com/media/media3/transformer
+
+
+### Verified Jarvis memory PRs — 2026-11-06
+- PR #87 exact head `d11334adae0f5f859e04da5a08e9ee9fcf8e3465`, run #115 / `42285178637`: Secret Scanning SUCCESS; CodeQL SUCCESS. CodeQL workflow built Kotlin sources and full debug APK, verified/hash-uploaded APK, and completed static analysis. This does not prove runtime behavior on a physical OPPO.
+- PR #88 exact head `5a2cc189ea70efc238e75b64dde1d0f35560c4a7`, run #116 / `42285376790`: Secret Scanning SUCCESS; CodeQL SUCCESS; Kotlin source build, full debug APK build, APK verification/hash/upload and CodeQL analysis completed. This workflow does not run Android instrumentation tests; the new UI consent instrumentation test remains unexecuted in this run.
+- Both PRs remain open/draft and are not merged.
+
+### Jarvis offline video editor — PR #89 — 2026-11-06
+- Draft PR: https://github.com/sokfrut-tech/Gemeni/pull/89
+- Branch: `feature/jarvis-offline-video-editor-2026-11-06`, based on PR #88 branch.
+- Adds Media3 Transformer 1.11.1 stable; system video picker; local duration inspection; start/end trim sliders; a validated trim window with 500 ms minimum; new MP4 export to app cache then MediaStore Movies/Jarvis; cancellation; share-sheet handoff; Jarvis home shortcut.
+- Original media is read-only and never uploaded. Export is a new file. This is a trim/export MVP, not a multitrack editor or AI video generator.
+- Added `VideoTrimRangeTest` boundary unit tests and PR-specific workflow `.github/workflows/jarvis-video-ci.yml` to run unit tests and assemble/verify the APK for relevant pull requests.
+- Latest PR #89 head: `427e8805f5ef1db1a7693f8aee7d776382c3f687`.
+- CI run #1 / id `42286126486` was in progress at last check, still setting up Android SDK. Factory Security Baseline run #118 was pending; prior run #117 on the preceding head was still in progress. No compile/test pass is claimed yet.
+- Physical OPPO codec support, performance, file-picker permissions and export playback remain untested.
+- Official Media3 docs confirm 1.11.1 stable and Transformer dependencies: https://developer.android.com/jetpack/androidx/releases/media3 and https://developer.android.com/media/media3/transformer/getting-started
