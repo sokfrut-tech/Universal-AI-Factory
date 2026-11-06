@@ -28,7 +28,8 @@ Purpose: the single entry point for resuming active projects without relying on 
 |---|---|---|---|
 | Factory | sokfrut-tech/Universal-AI-Factory | docs/FACTORY_CONTINUATION_BRIEF.md | Audit dispatcher, workflows and a real end-to-end task |
 | StampCleaner / Neon Club | sokfrut-tech/stamp-cleaner | https://github.com/sokfrut-tech/stamp-cleaner/blob/main/docs/PROJECT_HANDOFF_2026-11-06.md | Inspect PR #4/source; validate cleaning pipeline and dancer animation |
-| RussSearchOPPO / Jarvis | sokfrut-tech/RussSearchOPPO | https://github.com/sokfrut-tech/RussSearchOPPO/blob/main/docs/PROJECT_HANDOFF_2026-11-06.md | Recheck PR #1/CI; make offline voice loop demonstrably work |
+| Jarvis AI (primary) | sokfrut-tech/Gemeni | https://github.com/sokfrut-tech/Gemeni/blob/main/docs/REPOSITORY_WIDE_AI_AUDIT_2026-11-06.md | Reconcile PR #58–#63; build real reasoning, memory and verified tool loop |
+| RussSearchOPPO (voice/translation baseline) | sokfrut-tech/RussSearchOPPO | https://github.com/sokfrut-tech/RussSearchOPPO/blob/main/docs/PROJECT_HANDOFF_2026-11-06.md | Preserve Vosk, translation and ColorOS modules for Jarvis reuse |
 | Antigravity Mobile | sokfrut-tech/Antigravity-Mobile | https://github.com/sokfrut-tech/Antigravity-Mobile/blob/main/docs/PROJECT_HANDOFF_2026-11-06.md | Inspect APK/source/API; connect UI to real factory state |
 | AVTOY KOREA | sokfrut-tech/avtoy-korea-auto | https://github.com/sokfrut-tech/avtoy-korea-auto/blob/main/docs/PROJECT_HANDOFF_2026-11-06.md | Recheck PR #55/Worker; verify private inquiries and Telegram media |
 | Forest 4G | No dedicated repository confirmed | This document, below | Confirm measurements and create/confirm dedicated repo before implementation |
