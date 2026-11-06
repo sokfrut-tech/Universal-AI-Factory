@@ -320,3 +320,13 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - CI run #1 / id `42286126486` was in progress at last check, still setting up Android SDK. Factory Security Baseline run #118 was pending; prior run #117 on the preceding head was still in progress. No compile/test pass is claimed yet.
 - Physical OPPO codec support, performance, file-picker permissions and export playback remain untested.
 - Official Media3 docs confirm 1.11.1 stable and Transformer dependencies: https://developer.android.com/jetpack/androidx/releases/media3 and https://developer.android.com/media/media3/transformer/getting-started
+
+
+### Jarvis video editor preview + cancellation hardening — PR #89 update — 2026-11-06
+- Added Media3 ExoPlayer + UI 1.11.1 (same aligned version as Transformer) for an embedded local playback preview.
+- Added player lifecycle cleanup on screen disposal; selected media is prepared locally and is not sent to a service.
+- Export cancellation now tracks and deletes the temporary MP4 file.
+- Latest PR #89 head: `4ea4393effde1d2d9b7ddbb0377e047b2b92f495`.
+- Latest exact-head Jarvis Video CI run #6 / id `42286439605` was queued; Factory Security Baseline run #123 / id `42286439956` was in progress. Earlier runs were cancelled by subsequent commits; no result yet.
+- PR #87 run #115 and PR #88 run #116 both completed successfully (Secret Scanning + CodeQL, including Kotlin build and debug APK build). PR #88 UI instrumentation test was added but was not executed by that CodeQL workflow.
+- PR #89 remains draft; no merge and no claim of device validation.
