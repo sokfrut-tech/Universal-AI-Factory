@@ -1,0 +1,135 @@
+name: Real AI Agent Execution
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'coordination/claude/inbox/*.md'
+      - 'coordination/gemini/inbox/*.md'
+  workflow_dispatch:
+    inputs:
+      agent:
+        description: 'Which connected agent should execute an inbox task'
+        required: true
+        type: choice
+        options: [claude, gemini]
+      task_file:
+        description: 'Exact inbox markdown path'
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: real-agent-execution
+  cancel-in-progress: false
+
+jobs:
+  execute-agent:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout factory
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.FACTORY_PAT || github.token }}
+
+      - name: Resolve inbox tasks
+        id: tasks
+        shell: bash
+        env:
+          EVENT_BEFORE: ${{ github.event.before }}
+          EVENT_SHA: ${{ github.sha }}
+          INPUT_AGENT: ${{ inputs.agent }}
+          INPUT_TASK: ${{ inputs.task_file }}
+        run: |
+          set -euo pipefail
+          : > /tmp/tasks.tsv
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            [[ -f "${INPUT_TASK}" ]] || { echo "::error::Inbox task not found: ${INPUT_TASK}"; exit 1; }
+            [[ "${INPUT_TASK}" == "coordination/${INPUT_AGENT}/inbox/"*.md ]] || { echo "::error::Task path does not match selected agent"; exit 1; }
+            printf '%s\t%s\n' "${INPUT_AGENT}" "${INPUT_TASK}" >> /tmp/tasks.tsv
+          else
+            if [[ -z "${EVENT_BEFORE}" || "${EVENT_BEFORE}" == "0000000000000000000000000000000000000000" ]]; then
+              RANGE="${EVENT_SHA}~1 ${EVENT_SHA}"
+            else
+              RANGE="${EVENT_BEFORE} ${EVENT_SHA}"
+            fi
+            for agent in claude gemini; do
+              while IFS= read -r file; do
+                [[ -n "${file}" ]] && printf '%s\t%s\n' "${agent}" "${file}" >> /tmp/tasks.tsv
+              done < <(git diff --name-only --diff-filter=AM ${RANGE} -- "coordination/${agent}/inbox/" | grep -E '\.md$' || true)
+            done
+          fi
+          if [[ ! -s /tmp/tasks.tsv ]]; then
+            echo "No new inbox tasks in this event."
+            exit 0
+          fi
+          cat /tmp/tasks.tsv
+
+      - name: Execute connected AI agents
+        if: steps.tasks.outcome == 'success'
+        shell: bash
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+        run: |
+          set -euo pipefail
+          while IFS=$'\t' read -r agent task; do
+            [[ -n "${agent}" && -n "${task}" ]] || continue
+            task_body="$(cat "${task}")"
+            task_name="$(basename "${task}" .md)"
+            mkdir -p "coordination/${agent}/outbox"
+            report="coordination/${agent}/outbox/REPORT_${task_name}.md"
+            if [[ -f "${report}" ]]; then
+              echo "Skipping already completed task: ${report}"
+              continue
+            fi
+
+            system_prompt="You are an engineering agent in Universal AI Factory. Follow the task exactly. Be truthful about what you did. You cannot access other repositories unless their contents are provided in this prompt. Do not claim to edit source repositories, run builds, inspect files, or create PRs unless the task provides tools to do so. Your deliverable is a substantive engineering analysis or implementation plan with evidence, risks, exact next steps, and an honest status. Return Markdown."
+
+            if [[ "${agent}" == "claude" ]]; then
+              [[ -n "${ANTHROPIC_API_KEY}" ]] || { echo "::error::Missing repository secret ANTHROPIC_API_KEY; Claude agent is not connected."; exit 1; }
+              model="${CLAUDE_MODEL:-claude-sonnet-4-5-20250929}"
+              payload="$(jq -n --arg model "${model}" --arg system "${system_prompt}" --arg task "${task_body}" '{model:$model,max_tokens:7000,system:$system,messages:[{role:"user",content:$task}]}')"
+              response="$(curl --fail-with-body --silent --show-error https://api.anthropic.com/v1/messages -H "x-api-key: ${ANTHROPIC_API_KEY}" -H "anthropic-version: 2023-06-01" -H "content-type: application/json" -d "${payload}")"
+              answer="$(printf '%s' "${response}" | jq -r '[.content[]? | select(.type=="text") | .text] | join("\n")')"
+            else
+              [[ -n "${GEMINI_API_KEY}" ]] || { echo "::error::Missing repository secret GEMINI_API_KEY; Gemini agent is not connected."; exit 1; }
+              model="${GEMINI_MODEL:-gemini-2.5-pro}"
+              prompt="${system_prompt}\n\nTASK:\n${task_body}"
+              payload="$(jq -n --arg prompt "${prompt}" '{contents:[{parts:[{text:$prompt}]}],generationConfig:{temperature:0.2,maxOutputTokens:7000}}')"
+              response="$(curl --fail-with-body --silent --show-error "https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}" -H "content-type: application/json" -d "${payload}")"
+              answer="$(printf '%s' "${response}" | jq -r '[.candidates[0].content.parts[]?.text] | join("\n")')"
+            fi
+
+            [[ -n "${answer//[[:space:]]/}" ]] || { echo "::error::Agent ${agent} returned an empty response for ${task}"; exit 1; }
+            {
+              echo "# Agent report: ${agent}"
+              echo
+              echo "- Task: \`${task}\`"
+              echo "- Model: ${model}"
+              echo "- Generated at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+              echo "- Execution: live API response"
+              echo
+              printf '%s\n' "${answer}"
+            } > "${report}"
+            echo "Created substantive agent report: ${report}"
+          done < /tmp/tasks.tsv
+
+      - name: Commit agent reports
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "Universal AI Factory Agent"
+          git config user.email "factory-agent@users.noreply.github.com"
+          git add coordination/claude/outbox/coordination/claude/outbox/ 2>/dev/null || true
+          git add coordination/claude/outbox/ coordination/gemini/outbox/
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(factory): save live Claude and Gemini agent reports [skip ci]"
+            git push origin HEAD:main
+          else
+            echo "No new agent reports to commit."
+          fi
