@@ -50,10 +50,8 @@ Requirements:
 
 Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and candidate datasheets. No purchase recommendation until B31 and environmental suitability are verified.
 
-
-
 ## Jarvis AI — 2026-11-06 live handoff
-- Integration branch: `sokfrut-tech/Gemeni` / `integration/jarvis-safe-agent-runtime-2026-11-06`.
+- Integration branch: sokfrut-tech/Gemeni / integration/jarvis-safe-agent-runtime-2026-11-06.
 - Draft PR #78: https://github.com/sokfrut-tech/Gemeni/pull/78 — active ASR transcript now routes through the provider contract, strict proposal validator and Android tool gateway; dialer actions require explicit approval.
 - Honest capability boundary: current local provider is deterministic command parsing, not a neural LLM. Real on-device inference is Phase B; brief is linked in the project row above.
 - PR #60 truncates three handoff documents; PR #78 restores them from current main. Do not merge #58–#63 blindly.
@@ -69,9 +67,8 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 6. Record commit SHA, exact tests/results, artifact URL and remaining risks.
 7. Use status labels: Verified (checked now), Historical (must recheck), Planned, Implemented-unverified, Blocked (with evidence and next action).
 
-
 ## Jarvis AI — local inference runtime decision (2026-11-06)
-- Preferred first neural runtime spike: llama.cpp through an app-owned JNI adapter, pinned to upstream commit `954de248ac6907dd05dc19f0f511ab18f2807a54`.
+- Preferred first neural runtime spike: llama.cpp through an app-owned JNI adapter, pinned to upstream commit 954de248ac6907dd05dc19f0f511ab18f2807a54.
 - The current Arm AI Chat wrapper is not drop-in compatible: its library declares minSdk 33; generic llama.cpp Android NDK guide example uses API 28. API24 compatibility remains unproven.
 - MLC LLM is deferred to a physical-device Adreno GPU experiment; ONNX Runtime Android package availability alone does not prove generative LLM support.
 - Jarvis source has no real local neural inference yet. The prompt-echo placeholder was removed and a regression test added.
@@ -79,23 +76,19 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - Phase B brief: https://github.com/sokfrut-tech/Gemeni/blob/integration/jarvis-safe-agent-runtime-2026-11-06/docs/agents/BRIEF_LOCAL_REASONING_RUNTIME_PHASE_B_2026-11-06.md
 - Safe runtime PR #78: https://github.com/sokfrut-tech/Gemeni/pull/78
 
-
 ### Jarvis model shortlist update — Qwen3.5 (2026-11-06)
-- Official Qwen3.5-0.8B is Apache-2.0; official ggml-org GGUF Q4_0 candidate is 563 MB, pinned revision `4c11520cef475dd40ed72ec4a1e68b26721bd769`, SHA-256 `57d1997790d1744fba5b40a7317df71ea5e2acee28c47e78f0cce39c0703f8cf`. Use for initial runtime bring-up only, not as a quality promise.
+- Official Qwen3.5-0.8B is Apache-2.0; official ggml-org GGUF Q4_0 candidate is 563 MB, pinned revision 4c11520cef475dd40ed72ec4a1e68b26721bd769, SHA-256 57d1997790d1744fba5b40a7317df71ea5e2acee28c47e78f0cce39c0703f8cf. Use for initial runtime bring-up only, not as a quality promise.
 - Qwen3.5-2B instruction model is Apache-2.0. bartowski Q4_K_M conversion is around 1.40 GB and is the primary quality/size candidate; pin exact conversion revision and SHA-256 before download/installation because it is third-party.
 - Full evidence and gates: https://github.com/sokfrut-tech/Gemeni/blob/integration/jarvis-safe-agent-runtime-2026-11-06/docs/engineering/2026-11-06-local-inference-runtime-decision.md
 - No model has been integrated into the APK or benchmarked on the OPPO device yet.
 
-
-## Jarvis Phone Control — 2026-11-06
-- New implementation issue: https://github.com/sokfrut-tech/Gemeni/issues/80
-- Goal: manage OPPO/ColorOS phone functions and services through a typed, allowlisted Android gateway with explicit permission checks, approval for sensitive actions, cancellation, audit history and post-action state verification.
-- First scope: read-only device diagnostics; audio/display/flashlight; app and settings launch; supported media/alarms/notification actions; connectivity via user-mediated system panels where direct toggles are restricted; approval-gated dial/SMS intents; user-defined automation scenes.
-- Existing source gateway inspected on PR #78 branch: `AndroidJarvisToolRegistry.kt` currently supports app launch, web search, navigation, time and approval-gated dialer only. No full phone-control module is implemented yet.
-- Platform boundary: Android 10+ ordinary apps cannot directly toggle Wi-Fi; Android 13+ ordinary apps cannot directly enable/disable Bluetooth. Implement supported system panels/intents and verify actual resulting state; never report fake success.
-- CI run #42277569386 rechecked while updating this handoff: secret scanning and CodeQL passed; emulator smoke tests were still in progress after APK build passed. Do not commit to PR #78 branch until that run finishes, to avoid cancelling/restarting it.
-- Next: finish PR #78 CI diagnosis; then implement Phone Control capability matrix and typed contracts in a separate focused change, with API-level and OPPO physical-device acceptance gates.
-
-- Phone Control design baseline committed on `sokfrut-tech/Gemeni` branch `feature/jarvis-phone-control-foundation-2026-11-06` (commit `b0be2ca7406dc7a1906490f2ca9c8b26ad7623db`): https://github.com/sokfrut-tech/Gemeni/blob/feature/jarvis-phone-control-foundation-2026-11-06/docs/engineering/2026-11-06-phone-control-design.md. Design only; implementation not yet verified.
-
-- Source audit for Phone Control design: Gemeni `app/build.gradle.kts` on main is verified at `minSdk=29`, `targetSdk=35` (not Android 7/API24); AccessibilityService config currently requests all event types and window-content access despite the service being empty. Narrow this privacy surface before implementation. Documented in PR #81.
+## Jarvis complete assistant capability roadmap — 2026-11-06
+- Design PR #81: https://github.com/sokfrut-tech/Gemeni/pull/81 (draft, documentation only; not an implementation claim).
+- Full capability design: https://github.com/sokfrut-tech/Gemeni/blob/feature/jarvis-phone-control-foundation-2026-11-06/docs/engineering/2026-11-06-phone-control-design.md
+- Explicit product scope now includes: intelligent planner and tasks; calendar read/write; reminders, timers and alarm clock; web search and safe browser surfing; local music; internet radio; media controls; Russian voice interaction; local-first reasoning and controlled memory; maps/navigation; weather/news/utilities; and phone/system control.
+- Multi-step execution must be bounded, cancellable and tool-by-tool policy checked. The assistant must verify postconditions and never claim success from a launched screen or unverified request.
+- Calendar writes, messages, sensitive settings and external side effects require user review/approval. Browser automation must not handle credentials, purchases or destructive submissions without explicit review. No DRM/paywall/access-control circumvention.
+- Core should remain free and offline-first. Internet-only services are clearly labeled; online model fallback is optional and opt-in.
+- Platform source audit: minSdk=29, targetSdk=35 on current main; Android 7/API24 is not currently supported. Accessibility service is empty and its broad XML scope must be narrowed before implementation.
+- PR #78 CI run #42277569386: secret scanning and CodeQL succeeded; emulator smoke test was still in progress at the latest check. Recheck before any merge.
+- Next: finish the active emulator CI diagnosis, then implement small tested vertical slices in dependency order: typed tool/capability contracts -> local planner/reminders/alarms -> calendar -> media/radio -> web assistant -> broader integrations and local neural reasoning.
