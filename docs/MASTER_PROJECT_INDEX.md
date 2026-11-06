@@ -198,3 +198,14 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - PR #84 run #105: Secret Scanning succeeded; CodeQL job still in progress.
 - PR #85 run #106: workflow in progress on initial head `7a7c30c1fb3de8185ebd9263ecb252613f91b48d`; latest code has since advanced to `5599925801e07aee4a81e7d7f8e803dda06dad58`.
 - PR #81's successful checks do not validate any Android runtime code. Do not describe any app feature as release-ready based on these checks.
+
+
+### PR #82 emulator/CI diagnosis — 2026-11-06 19:52 UTC
+- PR #82 run #98 CodeQL job 128107922074 ended **failure** after Kotlin build, debug APK build, APK verification/hash and artifact upload all passed.
+- The failing step was **Android emulator smoke tests**: emulator never reached boot-completed state and the runner reported `Timeout waiting for emulator to boot` at 19:51:22 UTC. No app assertion was reached. CodeQL analyze was skipped because the job's build/test dependency failed; this is an infrastructure/emulator boot failure, not a CodeQL finding.
+- Do not weaken tests or mark PR #82 green. Next diagnostic: capture emulator startup configuration, boot logs and runner resource state; consider a bounded retry only after preserving diagnostics.
+- PR #81 run #104: CodeQL and Secret Scanning succeeded.
+- PR #78 run #93: CodeQL and Secret Scanning succeeded; emulator smoke remains in progress.
+- PR #83 run #103: Secret Scanning succeeded; CodeQL/emulator pipeline still in progress.
+- PR #84 run #105: Secret Scanning succeeded; CodeQL/emulator pipeline still in progress.
+- PR #85 run #108: Secret Scanning succeeded; CodeQL/emulator pipeline still in progress on latest head `5599925801e07aee4a81e7d7f8e803dda06dad58`.
