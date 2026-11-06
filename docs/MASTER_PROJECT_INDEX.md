@@ -357,3 +357,11 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - Compatibility correction: pinned all Media3 artifacts to 1.5.1 on PR #89 branch (commit `666d981d563e1522799df571fb40ecc4ed8ac45d`) and PR #90 branch (commit `b7954bd497fce7e2ce44025d3ae08b81fa67e703`). Official Media3 release notes identify 1.5.1 as a stable release; fresh CI runs were queued/in progress at last check. Do not mark fixed until exact-head build and unit tests pass.
 - Current PR #89 branch also needs a fresh compile/build/test after the downgrade; physical OPPO playback/export remains unverified.
 - Keep both PRs draft/unmerged until CI passes, inspect resulting APK, and validate on device. No network sync or training on user data was introduced.
+
+### Qwen catalog loader + CI follow-up — 2026-11-06 (latest)
+- Latest PR #90 head recorded: `f2a0b75e5913686b072a31397391dc0206ce0dcb`. This supersedes earlier PR #90 head SHAs in the historical entries above.
+- Implementation includes local asset parser/repository, typed domain metadata, lazy `JarvisCore.knowledgeCatalog`, unit tests, and updated brief describing exact limitations.
+- Exact-head workflow runs for `f2a0b75e5913686b072a31397391dc0206ce0dcb`: Factory Security Baseline `42287861231` and Jarvis Video CI `42287861213` were queued at last check. Prior exact-head runs on `c2a0c8a2b39220b920fe388282fa8f8abc634dda`: Secret Scanning SUCCESS; Kotlin compilation and video unit tests still running at last check. Do not claim build success until the latest SHA has completed.
+- PR #89 branch was updated to Media3 1.5.1 at commit `666d981d563e1522799df571fb40ecc4ed8ac45d`; its Factory Security and Jarvis Video CI runs `42287482857` / `42287482845` were still running. Await full unit-test + APK build evidence.
+- PR #90 branch also pins Media3 1.5.1 so its inherited build can pass the API 35 / AGP 8.7.3 project toolchain. This is a compatibility choice, not a feature reduction to the Qwen catalog.
+- PRs #89 and #90 remain draft/open/unmerged. No physical OPPO device test, full knowledge corpus, RAG, Python sandbox, or model-weight training is claimed.
