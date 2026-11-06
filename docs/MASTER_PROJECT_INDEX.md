@@ -341,3 +341,9 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - Explicit safeguards: evidence-based medical framing, local radio regulations, chemical/energy safety, authorized cybersecurity, engineering safety, non-predictive treatment of lotteries, and clear distinction between astronomy and astrology.
 - PR #90 is documentation/requirements only; it does not establish that all subjects are already installed in Qwen or that model weights have been trained.
 - Head SHA: `faec77e4ba59c6b3b4f4c26a085d532fbac0da83`. PR remains draft and is not merged.
+
+
+#### Qwen domain catalog added to PR #90
+- Added machine-readable `app/src/main/assets/knowledge/domain_catalog.json` (Russian, schema v1) with 21 domain groups, topic lists, local-only/network-consent policy, source-provenance fields and answer-quality requirements.
+- Catalog explicitly labels astrology as a non-empirical cultural system and lottery outcomes as not reliably predictable; medicine and neuroanalytics have safety profiles.
+- Latest PR #90 head: `b8bc463ee66b1ef810cb6aa00d1a53e962fde3e1`; PR remains draft and unmerged. Catalog is metadata only, not a downloaded knowledge corpus or implemented RAG.
