@@ -254,3 +254,19 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - Privacy invariants: offline/local by default; no silent cloud/API calls; explicit per-task consent for any outbound query/media; no private project, prompt, memory, audio or video upload by default.
 - The brief is documentation/planning only. None of these new features is represented as already implemented. Each requires a real end-to-end test and target-phone resource benchmark.
 - Commit: `89528dde66724b86602ddcf74be81811ef779ce8`.
+
+
+### Jarvis P1 local memory implementation slice — 2026-11-06
+- Added to PR #87: https://github.com/sokfrut-tech/Gemeni/pull/87
+- New implementation file: `app/src/main/java/com/jarvis/breeno/assistant/memory/JarvisMemoryRepository.kt`.
+- New instrumentation tests: `app/src/androidTest/java/com/jarvis/breeno/assistant/JarvisMemoryRepositoryTest.kt`.
+- Provides app-private, local-only explicit-save memory records with kinds NOTE/PREFERENCE/FACT/PROJECT/TASK/REMINDER; project scopes; timestamps; list/filter; case-insensitive literal search; edit/delete/clear-scope operations; bounded entry/text sizes (500 entries, 4,000 chars each).
+- Save/update/delete APIs are deliberately named `*AfterUserConfirmation`; caller must show the exact content/action and obtain user confirmation before invoking. No implicit conversation capture, background recording, semantic embedding or network code is present.
+- Persistence uses a dedicated SharedPreferences file and Gson. No encryption-at-rest claim; existing PR #82 backup-exclusion changes remain a separate stacked branch and are not automatically included in PR #87's base.
+- Commit 1: `55779a8ae7072c860bc8793fcc851eae54adfc3d`; tests commit: `aaa0f20a39ab869eff7806559b398acfc932a127`.
+- Verification pending: PR #87 run #111 was queued after the test commit. No build/test result has been claimed yet.
+- Not yet integrated into UI, assistant planner, semantic recall, reminder notifications or encrypted storage. This is a tested-intent design slice pending CI and must not be presented as a complete memory feature.
+
+### CI repair PR #86 update — 2026-11-06
+- Run #109 / id `42283835061`: Secret Scanning passed; CodeQL static analysis passed on exact head `ec62c07116428de700631cb4ea842fe4fdd9a096`; Android emulator instrumentation job remained in progress at last check.
+- This demonstrates the CodeQL/emulator jobs now complete independently. Emulator result remains outstanding.
