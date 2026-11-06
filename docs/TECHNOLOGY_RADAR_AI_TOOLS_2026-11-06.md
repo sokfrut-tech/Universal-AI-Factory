@@ -90,3 +90,5 @@ Never describe DISCOVERED/REVIEWED/PROTOTYPED as integrated. Do not copy code or
 - Sherpa-ONNX: https://github.com/k2-fsa/sherpa-onnx
 
 Last reviewed: 2026-11-06. Recheck upstream repositories and licenses before each actual adoption; this document is a research snapshot, not a permanent guarantee.
+## Jarvis is an AI agent — product-level requirement
+The owner explicitly clarified on 2026-11-06 that Jarvis is an artificial intelligence, not merely a voice assistant. The product architecture must provide reasoning/planning, persistent user-controlled memory, tool/skill use, device perception, voice, model routing, controlled learning, agent coordination and verified action execution. The full source inventory and current implementation gaps across all connected project repositories are documented in https://github.com/sokfrut-tech/Gemeni/blob/main/docs/REPOSITORY_WIDE_AI_AUDIT_2026-11-06.md.
