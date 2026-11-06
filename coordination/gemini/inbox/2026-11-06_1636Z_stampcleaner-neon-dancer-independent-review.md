@@ -39,3 +39,6 @@
 
 ## Runner retry note
 The factory runner now uses the currently documented stable Gemini API model `gemini-3.8-flash` by default and sends the API key in the `x-goog-api-key` header. Re-run this task against the current runner. The API key is a GitHub Actions secret; never print or include it in the report.
+
+## Retry note — 2026-11-06
+The previous live Gemini request reached the configured API key but the Gemini endpoint returned HTTP 503 (temporary service unavailability). The factory runner now retries transient API failures automatically. Please execute this review again and save a substantive report to the Gemini outbox.
