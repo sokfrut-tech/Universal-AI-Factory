@@ -35,3 +35,7 @@
 ## Повторный запуск после настройки API-ключей
 
 Пользователь сообщил, что добавил API-ключи в GitHub Actions Secrets. Выполни это задание через live API сейчас. Если ключ для данного агента отсутствует или API отклоняет модель/запрос, зафиксируй точную безопасную причину без вывода секретов. Не утверждай, что изучил исходный репозиторий: в этом workflow передан только текст задания, если файлы проекта отдельно не приложены.
+
+
+## Runner retry note
+The factory runner now uses the currently documented stable Gemini API model `gemini-3.8-flash` by default and sends the API key in the `x-goog-api-key` header. Re-run this task against the current runner. The API key is a GitHub Actions secret; never print or include it in the report.
