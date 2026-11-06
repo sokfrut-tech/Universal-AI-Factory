@@ -97,3 +97,5 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - Next: finish PR #78 CI diagnosis; then implement Phone Control capability matrix and typed contracts in a separate focused change, with API-level and OPPO physical-device acceptance gates.
 
 - Phone Control design baseline committed on `sokfrut-tech/Gemeni` branch `feature/jarvis-phone-control-foundation-2026-11-06` (commit `b0be2ca7406dc7a1906490f2ca9c8b26ad7623db`): https://github.com/sokfrut-tech/Gemeni/blob/feature/jarvis-phone-control-foundation-2026-11-06/docs/engineering/2026-11-06-phone-control-design.md. Design only; implementation not yet verified.
+
+- Source audit for Phone Control design: Gemeni `app/build.gradle.kts` on main is verified at `minSdk=29`, `targetSdk=35` (not Android 7/API24); AccessibilityService config currently requests all event types and window-content access despite the service being empty. Narrow this privacy surface before implementation. Documented in PR #81.
