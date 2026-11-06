@@ -270,3 +270,18 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 ### CI repair PR #86 update — 2026-11-06
 - Run #109 / id `42283835061`: Secret Scanning passed; CodeQL static analysis passed on exact head `ec62c07116428de700631cb4ea842fe4fdd9a096`; Android emulator instrumentation job remained in progress at last check.
 - This demonstrates the CodeQL/emulator jobs now complete independently. Emulator result remains outstanding.
+
+
+### Jarvis memory privacy hardening — PR #87 update — 2026-11-06
+- Added `android:allowBackup="false"`, `android:fullBackupContent="false"`, and `android:dataExtractionRules="@xml/data_extraction_rules"` to the application manifest.
+- Added `app/src/main/res/xml/data_extraction_rules.xml` excluding app-private data from cloud backup and device transfer.
+- Added instrumentation assertion that `ApplicationInfo.FLAG_ALLOW_BACKUP` is unset.
+- Rationale: SharedPreferences are app-private, but Android backup/transfer defaults must not be treated as "local-only". This hardening is required before the memory module can be considered private by default.
+- Latest PR #87 head: `d11334adae0f5f859e04da5a08e9ee9fcf8e3465`; run #115 / id `42285178637` was pending at the time of this update. Earlier exact-head runs were cancelled by newer commits; no green result yet.
+- Memory remains a repository-only slice: no UI confirmation dialog, planner integration, semantic recall, encryption-at-rest or reminder scheduling has been implemented yet.
+
+### Video feasibility research note — target device constraint
+- Public Android on-device generation projects indicate support is model/chip-specific, not a generic Android capability. Nightmare Mobile's README search result lists SD 1.5 on Snapdragon 888+, but more advanced diffusion/video models on Snapdragon 8 Gen 3 / 8 Elite classes; it does not establish WAN/video generation on Snapdragon 8 Gen 2.
+- Qualcomm's public GenieX Android example currently documents Snapdragon 8 Elite / Elite Gen 5 prerequisites; it is not proof of support for the user's Find X6 Pro.
+- Therefore Jarvis should first deliver offline conventional editing (MediaCodec/MediaExtractor/MediaMuxer or a validated editing library), transcription, subtitles, thumbnails and MP4 export on the actual OPPO. Text/image-to-video remains a separate feasibility spike; no promise of local generative video on 8 Gen 2.
+- Sources reviewed: https://github.com/AbrahamPaulJ/nightmare-mobile and https://qualcomm.github.io/qidk/blogs/geniex_android.html
