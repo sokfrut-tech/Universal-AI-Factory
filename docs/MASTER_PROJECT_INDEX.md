@@ -11,6 +11,11 @@ Purpose: the single entry point for resuming active projects without relying on 
 5. Prefer free, local and offline-first solutions. No paid APIs or unexpected spending without explicit approval.
 6. Before merge/deploy inspect the diff, run tests/build/security checks and verify the exact result. Failed required checks must block deployment.
 7. Ask the user only for decisions, credentials, device actions or other steps that cannot safely be done by the agent. User mainly works from Android phone.
+8. Maintain a cross-project technology radar: research useful tools, algorithms and implementation mechanics; adopt only after license, security, compatibility and test review. Research is not integration.
+
+## Cross-project technology radar
+- Research snapshot and adoption gates: [docs/TECHNOLOGY_RADAR_AI_TOOLS_2026-11-06.md](TECHNOLOGY_RADAR_AI_TOOLS_2026-11-06.md).
+- Reusable patterns: typed tools/skills, bounded agent loop, action verification, controlled memory, local-first fallbacks, safety confirmations, device E2E evidence and model provenance.
 
 ## Project index
 
