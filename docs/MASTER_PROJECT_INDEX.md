@@ -158,3 +158,14 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - If isolatedProcess cannot host the runtime safely, stop and evaluate a separate worker APK/UID; do not silently run untrusted scripts in Jarvis's main process.
 - P0 acceptance requires proof of UID/permission isolation, no network egress, bounded resources, cancellation, path-traversal resistance, no access to Jarvis memory/model files/credentials/tool gateway, and physical OPPO validation.
 - This is a design brief only; no Python runtime or editor is yet integrated.
+
+
+### Jarvis isolated Python worker proof — PR #84 — 2026-11-06
+- Draft PR: https://github.com/sokfrut-tech/Gemeni/pull/84
+- Branch: `spike/jarvis-isolated-python-worker-2026-11-06`, based on safe runtime PR #78.
+- Adds a non-exported Android `isolatedProcess` probe service and instrumentation test. The test asks the service for its process UID and checks whether INTERNET and RECORD_AUDIO permissions are present.
+- This is an OS-level identity/permission proof only. No Python interpreter, script execution, project file access, UI or user-facing Run action is included.
+- Head SHA: `e0449c98bfa3199e75614d954f63d06f210527d1`.
+- Factory Security Baseline run #105 / id `42282624776` was queued at 2026-11-06 19:46 UTC. No result yet.
+- Acceptance: prove a distinct UID and no inherited permissions on emulator, then validate on the OPPO. Passing this test does not prove Chaquopy compatibility or full sandboxing.
+- Keep PR draft and do not integrate Python until this proof plus separate file-transfer, resource-quota, cancellation and no-egress tests pass.
