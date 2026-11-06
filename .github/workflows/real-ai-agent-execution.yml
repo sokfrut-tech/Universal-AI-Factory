@@ -125,7 +125,6 @@ jobs:
           set -euo pipefail
           git config user.name "Universal AI Factory Agent"
           git config user.email "factory-agent@users.noreply.github.com"
-          git add coordination/claude/outbox/coordination/claude/outbox/ 2>/dev/null || true
           git add coordination/claude/outbox/ coordination/gemini/outbox/
           if ! git diff --cached --quiet; then
             git commit -m "chore(factory): save live Claude and Gemini agent reports [skip ci]"
