@@ -68,3 +68,13 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 5. Start with the first unchecked P0 item. Make a small change and run targeted then full relevant checks.
 6. Record commit SHA, exact tests/results, artifact URL and remaining risks.
 7. Use status labels: Verified (checked now), Historical (must recheck), Planned, Implemented-unverified, Blocked (with evidence and next action).
+
+
+## Jarvis AI — local inference runtime decision (2026-11-06)
+- Preferred first neural runtime spike: llama.cpp through an app-owned JNI adapter, pinned to upstream commit `954de248ac6907dd05dc19f0f511ab18f2807a54`.
+- The current Arm AI Chat wrapper is not drop-in compatible: its library declares minSdk 33; generic llama.cpp Android NDK guide example uses API 28. API24 compatibility remains unproven.
+- MLC LLM is deferred to a physical-device Adreno GPU experiment; ONNX Runtime Android package availability alone does not prove generative LLM support.
+- Jarvis source has no real local neural inference yet. The prompt-echo placeholder was removed and a regression test added.
+- Technical decision: https://github.com/sokfrut-tech/Gemeni/blob/integration/jarvis-safe-agent-runtime-2026-11-06/docs/engineering/2026-11-06-local-inference-runtime-decision.md
+- Phase B brief: https://github.com/sokfrut-tech/Gemeni/blob/integration/jarvis-safe-agent-runtime-2026-11-06/docs/agents/BRIEF_LOCAL_REASONING_RUNTIME_PHASE_B_2026-11-06.md
+- Safe runtime PR #78: https://github.com/sokfrut-tech/Gemeni/pull/78
