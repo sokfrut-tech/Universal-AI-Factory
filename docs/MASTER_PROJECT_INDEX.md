@@ -95,3 +95,5 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - Platform boundary: Android 10+ ordinary apps cannot directly toggle Wi-Fi; Android 13+ ordinary apps cannot directly enable/disable Bluetooth. Implement supported system panels/intents and verify actual resulting state; never report fake success.
 - CI run #42277569386 rechecked while updating this handoff: secret scanning and CodeQL passed; emulator smoke tests were still in progress after APK build passed. Do not commit to PR #78 branch until that run finishes, to avoid cancelling/restarting it.
 - Next: finish PR #78 CI diagnosis; then implement Phone Control capability matrix and typed contracts in a separate focused change, with API-level and OPPO physical-device acceptance gates.
+
+- Phone Control design baseline committed on `sokfrut-tech/Gemeni` branch `feature/jarvis-phone-control-foundation-2026-11-06` (commit `b0be2ca7406dc7a1906490f2ca9c8b26ad7623db`): https://github.com/sokfrut-tech/Gemeni/blob/feature/jarvis-phone-control-foundation-2026-11-06/docs/engineering/2026-11-06-phone-control-design.md. Design only; implementation not yet verified.
