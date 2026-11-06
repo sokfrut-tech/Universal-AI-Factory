@@ -139,5 +139,5 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - Adds local-only Android device probe for manufacturer/model/hardware/SoC, API, ABIs, RAM, app heap cap, free app storage, low-memory and thermal status.
 - Adds conservative model runtime budget selector and deterministic threshold unit tests.
 - No network, analytics, telemetry or user-content access in this component.
-- PR created at head `ab1db08bdbcbba0199ad3c9a8282e1a9b7b47c01`; mergeability was reported true. No CI run was returned at the time of recording; tests/build remain unverified.
+- Latest head `4b3c67a98cd1e704e4dd26a5e33b4cd2049cfd3f`; preflight tiering was refined to use system-available RAM rather than Java heap (native inference memory is not Java heap). PR currently reports mergeability unknown/false; no CI run was returned yet, so tests/build remain unverified.
 - This is the first executable foundation for measuring the target OPPO rather than guessing which Qwen/model tier it can handle. UI integration and physical-device measurement remain next.
