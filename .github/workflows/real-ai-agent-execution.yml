@@ -91,7 +91,10 @@ jobs:
             system_prompt="You are an engineering agent in Universal AI Factory. Follow the task exactly. Be truthful about what you did. You cannot access other repositories unless their contents are provided in this prompt. Do not claim to edit source repositories, run builds, inspect files, or create PRs unless the task provides tools to do so. Your deliverable is a substantive engineering analysis or implementation plan with evidence, risks, exact next steps, and an honest status. Return Markdown."
 
             if [[ "${agent}" == "claude" ]]; then
-              [[ -n "${ANTHROPIC_API_KEY}" ]] || { echo "::error::Missing repository secret ANTHROPIC_API_KEY; Claude agent is not connected."; exit 1; }
+              if [[ -z "${ANTHROPIC_API_KEY}" ]]; then
+                echo "::notice::Claude skipped: ANTHROPIC_API_KEY is not configured. This optional agent will not block Gemini or other factory work."
+                continue
+              fi
               model="${CLAUDE_MODEL:-claude-sonnet-4-5-20250929}"
               payload="$(jq -n --arg model "${model}" --arg system "${system_prompt}" --arg task "${task_body}" '{model:$model,max_tokens:7000,system:$system,messages:[{role:"user",content:$task}]}')"
               response="$(curl --fail-with-body --silent --show-error https://api.anthropic.com/v1/messages -H "x-api-key: ${ANTHROPIC_API_KEY}" -H "anthropic-version: 2023-06-01" -H "content-type: application/json" -d "${payload}")"
