@@ -347,3 +347,13 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - Added machine-readable `app/src/main/assets/knowledge/domain_catalog.json` (Russian, schema v1) with 21 domain groups, topic lists, local-only/network-consent policy, source-provenance fields and answer-quality requirements.
 - Catalog explicitly labels astrology as a non-empirical cultural system and lottery outcomes as not reliably predictable; medicine and neuroanalytics have safety profiles.
 - Latest PR #90 head: `b8bc463ee66b1ef810cb6aa00d1a53e962fde3e1`; PR remains draft and unmerged. Catalog is metadata only, not a downloaded knowledge corpus or implemented RAG.
+
+### Qwen local domain-catalog loader — PR #90 update — 2026-11-06
+- Added `KnowledgeDomainCatalog.kt`: typed domain metadata, strict schema/policy validation, and an Android asset repository that reads only bundled `knowledge/domain_catalog.json`. It contains no HTTP client, downloader, sync, or background task.
+- Exposed the bundled catalog lazily from `JarvisCore.knowledgeCatalog`; this is metadata discovery only, not factual retrieval, RAG, model training, or a claim that Qwen already knows every listed subject.
+- Added `KnowledgeDomainCatalogParserTest.kt` for valid parsing, duplicate IDs, non-local storage, forbidden implicit training, background network policy, and unknown-domain lookup.
+- PR #90 head after this implementation: `c2a0c8a2b39220b920fe388282fa8f8abc634dda` (verify against GitHub before merge).
+- Earlier exact-head CodeQL run `42286946665` failed because inherited Media3 1.11.1 dependencies require compileSdk 36 while the project is on compileSdk 35 / AGP 8.7.3. Secret scanning passed. Failure was a build-toolchain/dependency mismatch, not a finding in the Qwen catalog.
+- Compatibility correction: pinned all Media3 artifacts to 1.5.1 on PR #89 branch (commit `666d981d563e1522799df571fb40ecc4ed8ac45d`) and PR #90 branch (commit `b7954bd497fce7e2ce44025d3ae08b81fa67e703`). Official Media3 release notes identify 1.5.1 as a stable release; fresh CI runs were queued/in progress at last check. Do not mark fixed until exact-head build and unit tests pass.
+- Current PR #89 branch also needs a fresh compile/build/test after the downgrade; physical OPPO playback/export remains unverified.
+- Keep both PRs draft/unmerged until CI passes, inspect resulting APK, and validate on device. No network sync or training on user data was introduced.
