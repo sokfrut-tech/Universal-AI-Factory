@@ -112,3 +112,13 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - Manifest now disables Android backup and device transfer, with explicit data-extraction exclusions, to prevent silent backup/migration of app data.
 - This is memory/retrieval learning only, NOT neural model-weight training; it is not yet integrated into the assistant reasoning loop or settings UI.
 - CI has not yet reported a run for PR #82 at the time of this entry. Build, tests, manifest validation and network-egress review remain pending.
+
+
+### Jarvis Creative & Development Studio — 2026-11-06
+- Product direction: evolve Jarvis into a phone-first, local-first AI creative/development studio, with Qwen as the primary reasoning/coding core and specialist local models/runtimes for vision, image generation, ASR/TTS and audio.
+- Full brief: `sokfrut-tech/Gemeni/docs/engineering/2026-11-06-jarvis-creative-development-studio.md` on PR #81 branch; PR #81 remains documentation-only.
+- Target capabilities: project/code reading and editing, Python workspace and sandboxed execution, Android project generation and local APK builds, playable games, image understanding and actual image generation/editing, poetry/writing and specialist audio tools.
+- Core privacy invariant: no telemetry, prompts, source code, images, audio, memory or project files leave the phone in local mode. Any online search/generation/build is explicit per task and discloses exact data first.
+- Qwen is not treated as a universal image/audio generator: separate specialist models and runtimes are required. Local diffusion, Python native wheels, Android SDK/Gradle and game-engine support must be benchmarked on the OPPO Find X6 Pro before capability claims.
+- Delivery sequence: device/runtime benchmark -> local Python/code vertical slice -> on-device APK factory -> image/creative studio -> playable game factory -> local learning integration.
+- This is an approved product brief, not shipped functionality. No capability is marked implemented until an end-to-end on-device test proves it.
