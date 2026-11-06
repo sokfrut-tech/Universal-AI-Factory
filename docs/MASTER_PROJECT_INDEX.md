@@ -141,3 +141,10 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - No network, analytics, telemetry or user-content access in this component.
 - Latest head `4b3c67a98cd1e704e4dd26a5e33b4cd2049cfd3f`; preflight tiering was refined to use system-available RAM rather than Java heap (native inference memory is not Java heap). PR currently reports mergeability unknown/false; no CI run was returned yet, so tests/build remain unverified.
 - This is the first executable foundation for measuring the target OPPO rather than guessing which Qwen/model tier it can handle. UI integration and physical-device measurement remain next.
+
+
+### Jarvis CI checkpoint — 2026-11-06 19:43 UTC
+- PR #78 run #93: secret scan and CodeQL completed successfully; JVM unit tests, Kotlin compile, debug APK build and APK hash verification passed. Emulator smoke job failed before executing any test (0 tests): ADB/UTP package installer timed out with `ShellCommandUnresponsiveException` while installing split APK. This is not an assertion failure. Only the failed emulator job was re-run; retry is in progress.
+- PR #82 run #98: secret scan passed; Kotlin compile, full debug APK build, APK verification/hash and upload steps completed; emulator smoke tests still in progress; CodeQL analysis pending behind the emulator step. Do not mark CI green yet.
+- PR #83 run #103: secret scan passed; CodeQL/build job in progress. No test/build conclusion yet.
+- Do not merge stacked PRs #82/#83 before PR #78 dependency chain is reconciled and emulator tests are completed.
