@@ -103,7 +103,7 @@ jobs:
               model="${GEMINI_MODEL:-gemini-3.8-flash}"
               printf -v prompt '%s\n\nTASK:\n%s' "${system_prompt}" "${task_body}"
               payload="$(jq -n --arg prompt "${prompt}" '{contents:[{parts:[{text:$prompt}]}],generationConfig:{temperature:0.2,maxOutputTokens:7000}}')"
-              response="$(curl --fail-with-body --silent --show-error --retry 5 --retry-delay 3 --retry-max-time 90 --retry-connrefused "https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent" -H "x-goog-api-key: ${GEMINI_API_KEY}" -H "content-type: application/json" -d "${payload}")"
+              response="$(curl --fail-with-body --silent --show-error --retry 1 --retry-delay 3 --retry-max-time 30 --retry-connrefused "https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent" -H "x-goog-api-key: ${GEMINI_API_KEY}" -H "content-type: application/json" -d "${payload}")"
               answer="$(printf '%s' "${response}" | jq -r '[.candidates[0].content.parts[]?.text] | join("\n")')"
             fi
 
