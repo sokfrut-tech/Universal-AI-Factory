@@ -4,8 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'coordination/claude/inbox/*.md'
-      - 'coordination/gemini/inbox/*.md'
+      - 'coordination/gemini/dispatch/*.md'
   workflow_dispatch:
     inputs:
       agent:
@@ -47,7 +46,7 @@ jobs:
           : > /tmp/tasks.tsv
           if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
             [[ -f "${INPUT_TASK}" ]] || { echo "::error::Inbox task not found: ${INPUT_TASK}"; exit 1; }
-            [[ "${INPUT_TASK}" == "coordination/${INPUT_AGENT}/inbox/"*.md ]] || { echo "::error::Task path does not match selected agent"; exit 1; }
+            [[ "${INPUT_TASK}" == "coordination/${INPUT_AGENT}/inbox/"*.md || "${INPUT_TASK}" == "coordination/${INPUT_AGENT}/dispatch/"*.md ]] || { echo "::error::Task path does not match selected agent"; exit 1; }
             printf '%s\t%s\n' "${INPUT_AGENT}" "${INPUT_TASK}" >> /tmp/tasks.tsv
           else
             if [[ -z "${EVENT_BEFORE}" || "${EVENT_BEFORE}" == "0000000000000000000000000000000000000000" ]]; then
@@ -55,11 +54,11 @@ jobs:
             else
               RANGE="${EVENT_BEFORE} ${EVENT_SHA}"
             fi
-            for agent in claude gemini; do
-              while IFS= read -r file; do
-                [[ -n "${file}" ]] && printf '%s\t%s\n' "${agent}" "${file}" >> /tmp/tasks.tsv
-              done < <(git diff --name-only --diff-filter=AM ${RANGE} -- "coordination/${agent}/inbox/" | grep -E '\.md$' || true)
-            done
+            # Inbox tasks are queued by default. Only explicit dispatch files
+            # invoke Gemini, conserving the user's limited API quota.
+            while IFS= read -r file; do
+              [[ -n "${file}" ]] && printf '%s\t%s\n' "gemini" "${file}" >> /tmp/tasks.tsv
+            done < <(git diff --name-only --diff-filter=AM ${RANGE} -- "coordination/gemini/dispatch/" | grep -E '\\.md$' || true)
           fi
           if [[ ! -s /tmp/tasks.tsv ]]; then
             echo "No new inbox tasks in this event."
