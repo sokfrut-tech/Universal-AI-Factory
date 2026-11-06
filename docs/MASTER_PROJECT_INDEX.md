@@ -169,3 +169,12 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - Factory Security Baseline run #105 / id `42282624776` was queued at 2026-11-06 19:46 UTC. No result yet.
 - Acceptance: prove a distinct UID and no inherited permissions on emulator, then validate on the OPPO. Passing this test does not prove Chaquopy compatibility or full sandboxing.
 - Keep PR draft and do not integrate Python until this proof plus separate file-transfer, resource-quota, cancellation and no-egress tests pass.
+
+
+### Jarvis CI refresh — 2026-11-06 19:47 UTC
+- PR #78 run #93: CodeQL and Secret Scanning succeeded; emulator job 128112867371 remains in progress.
+- PR #82 run #98: Secret Scanning succeeded; CodeQL job 128107922074 remains in progress (the job is currently at emulator tests before its CodeQL analyze step).
+- PR #83 run #103: Secret Scanning succeeded; CodeQL job 128112530329 remains in progress (emulator tests before CodeQL analyze).
+- PR #81 run #104: Secret Scanning succeeded; CodeQL job 128114750087 remains in progress.
+- PR #84 run #105: Secret Scanning succeeded; CodeQL job 128115243996 remains in progress.
+- No new PR has full green CI. Keep all dependent implementation PRs in draft until the required checks complete and code/test evidence is reviewed.
