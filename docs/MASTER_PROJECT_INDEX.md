@@ -330,3 +330,14 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - Latest exact-head Jarvis Video CI run #6 / id `42286439605` was queued; Factory Security Baseline run #123 / id `42286439956` was in progress. Earlier runs were cancelled by subsequent commits; no result yet.
 - PR #87 run #115 and PR #88 run #116 both completed successfully (Secret Scanning + CodeQL, including Kotlin build and debug APK build). PR #88 UI instrumentation test was added but was not executed by that CodeQL workflow.
 - PR #89 remains draft; no merge and no claim of device validation.
+
+
+### Qwen advanced scientific and engineering knowledge scope — PR #90 — 2026-11-06
+- Draft PR: https://github.com/sokfrut-tech/Gemeni/pull/90
+- Branch: `feature/qwen-advanced-knowledge-domains-2026-11-06`, based on the Jarvis video-editor development branch.
+- Brief: `docs/QWEN_ADVANCED_KNOWLEDGE_AND_EXPERT_SYSTEM_BRIEF_2026-11-06.md`.
+- Covers physics, mathematics, chemistry, medicine, energy, astronomy, astrology as a separate non-empirical/cultural module, psychology, radio/radioelectronics, radio stations, antennas, modems/routers, LTE/Wi-Fi, mesh/MANET, robotics, programming, computer science, cybernetics, neural networks, neuroanalytics, geography, cartography, navigation, construction, gardening, probability/lotteries and calculations.
+- Defines local-first knowledge packs, provenance/versioning, opt-in web research/downloads, local RAG, Python/calculation/simulation tools, answer verification, test suites and phased acceptance criteria.
+- Explicit safeguards: evidence-based medical framing, local radio regulations, chemical/energy safety, authorized cybersecurity, engineering safety, non-predictive treatment of lotteries, and clear distinction between astronomy and astrology.
+- PR #90 is documentation/requirements only; it does not establish that all subjects are already installed in Qwen or that model weights have been trained.
+- Head SHA: `faec77e4ba59c6b3b4f4c26a085d532fbac0da83`. PR remains draft and is not merged.
