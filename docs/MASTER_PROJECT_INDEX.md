@@ -13,6 +13,11 @@ Purpose: the single entry point for resuming active projects without relying on 
 7. Ask the user only for decisions, credentials, device actions or other steps that cannot safely be done by the agent. User mainly works from Android phone.
 8. Maintain a cross-project technology radar: research useful tools, algorithms and implementation mechanics; adopt only after license, security, compatibility and test review. Research is not integration.
 
+## Jarvis AI source audit
+- Primary repository: [sokfrut-tech/Gemeni](https://github.com/sokfrut-tech/Gemeni).
+- Repository-wide audit and cross-language source inventory: [docs/REPOSITORY_WIDE_AI_AUDIT_2026-11-06.md](https://github.com/sokfrut-tech/Gemeni/blob/main/docs/REPOSITORY_WIDE_AI_AUDIT_2026-11-06.md).
+- Jarvis is an AI agent, not only a voice assistant. Preserve reasoning, planning, memory, perception, tool use, controlled learning and evidence-based execution as core product requirements.
+
 ## Cross-project technology radar
 - Research snapshot and adoption gates: [docs/TECHNOLOGY_RADAR_AI_TOOLS_2026-11-06.md](TECHNOLOGY_RADAR_AI_TOOLS_2026-11-06.md).
 - Reusable patterns: typed tools/skills, bounded agent loop, action verification, controlled memory, local-first fallbacks, safety confirmations, device E2E evidence and model provenance.
