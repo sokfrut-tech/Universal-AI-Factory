@@ -103,3 +103,12 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - Audit manifests, SDKs, dependencies, endpoints and background workers; automated tests must prove local memory/learning/inference do not make outbound calls.
 - User controls: inspect, correct, reset and delete local memory/learning data; backups only by explicit user action and protected locally.
 - Full privacy contract and acceptance gates: https://github.com/sokfrut-tech/Gemeni/blob/feature/jarvis-phone-control-foundation-2026-11-06/docs/engineering/2026-11-06-phone-control-design.md
+
+
+### Jarvis local learning implementation slice — 2026-11-06
+- Draft stacked PR #82: https://github.com/sokfrut-tech/Gemeni/pull/82 (base is runtime PR #78; do not merge independently or before dependency reconciliation).
+- Adds app-private, bounded correction memory with explicit opt-in disabled by default, exact normalized retrieval, correction replacement, size caps and clear operation.
+- Adds unit tests for default-off, opt-in, normalization, replacement, disabling, deletion, invalid inputs and bounded retention.
+- Manifest now disables Android backup and device transfer, with explicit data-extraction exclusions, to prevent silent backup/migration of app data.
+- This is memory/retrieval learning only, NOT neural model-weight training; it is not yet integrated into the assistant reasoning loop or settings UI.
+- CI has not yet reported a run for PR #82 at the time of this entry. Build, tests, manifest validation and network-egress review remain pending.
