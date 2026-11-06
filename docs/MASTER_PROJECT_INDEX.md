@@ -285,3 +285,21 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - Qualcomm's public GenieX Android example currently documents Snapdragon 8 Elite / Elite Gen 5 prerequisites; it is not proof of support for the user's Find X6 Pro.
 - Therefore Jarvis should first deliver offline conventional editing (MediaCodec/MediaExtractor/MediaMuxer or a validated editing library), transcription, subtitles, thumbnails and MP4 export on the actual OPPO. Text/image-to-video remains a separate feasibility spike; no promise of local generative video on 8 Gen 2.
 - Sources reviewed: https://github.com/AbrahamPaulJ/nightmare-mobile and https://qualcomm.github.io/qidk/blogs/geniex_android.html
+
+
+### Jarvis memory UI vertical slice — PR #88 — 2026-11-06
+- Draft PR: https://github.com/sokfrut-tech/Gemeni/pull/88
+- Branch: `feature/jarvis-memory-ui-consent-2026-11-06`, based on PR #87 head `d11334adae0f5f859e04da5a08e9ee9fcf8e3465`.
+- Added `JarvisMemoryActivity.kt`: a local memory screen reachable from Jarvis home; project scope, memory type, explicit save/update confirmation, search, edit and delete confirmation.
+- All repository I/O is dispatched to `Dispatchers.IO`; no network, automatic capture or cloud sync.
+- Added UI instrumentation test `JarvisMemoryConsentUiTest.kt` verifying the repository remains empty until the user taps the explicit confirmation button, then stores the approved text.
+- Commits on PR #88 head `5a2cc189ea70efc238e75b64dde1d0f35560c4a7`.
+- CI run #116 / id `42285376790`: Secret Scanning passed; CodeQL job was still setting up Gradle at last check. Build and instrumentation test results are not available yet. Keep draft.
+- PR #87 run #115 / id `42285178637`: Secret Scanning passed; CodeQL build job in progress. PR #87 exact-head code still requires verification.
+- PR #86 run #109 / id `42283835061`: CodeQL and Secret Scanning passed; emulator instrumentation remained in progress. Workflow independence is proven, but emulator test result remains pending.
+
+### Video editor implementation decision
+- Prefer AndroidX Jetpack Media3 Transformer as first candidate for offline trimming, transcoding, resizing, rotation, track removal, effects and MP4 export; it is an Android-native API and supports hardware codecs where available.
+- MP4 edit-list trim optimization can be fast but has a privacy/compatibility caveat: removed samples may remain in the file and be hidden by edit-list metadata. For any "permanently remove this segment" operation, use a verified re-encode/export path rather than relying on edit lists.
+- Multi-clip compositions, preview and advanced timeline features require additional implementation and target-device tests. Start with import -> metadata -> trim -> MP4 export -> playback/hash validation on the OPPO.
+- Official docs: https://developer.android.com/media/media3/transformer/transformations and https://developer.android.com/media/media3/transformer
