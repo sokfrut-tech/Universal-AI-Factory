@@ -85,3 +85,13 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - Qwen3.5-2B instruction model is Apache-2.0. bartowski Q4_K_M conversion is around 1.40 GB and is the primary quality/size candidate; pin exact conversion revision and SHA-256 before download/installation because it is third-party.
 - Full evidence and gates: https://github.com/sokfrut-tech/Gemeni/blob/integration/jarvis-safe-agent-runtime-2026-11-06/docs/engineering/2026-11-06-local-inference-runtime-decision.md
 - No model has been integrated into the APK or benchmarked on the OPPO device yet.
+
+
+## Jarvis Phone Control — 2026-11-06
+- New implementation issue: https://github.com/sokfrut-tech/Gemeni/issues/80
+- Goal: manage OPPO/ColorOS phone functions and services through a typed, allowlisted Android gateway with explicit permission checks, approval for sensitive actions, cancellation, audit history and post-action state verification.
+- First scope: read-only device diagnostics; audio/display/flashlight; app and settings launch; supported media/alarms/notification actions; connectivity via user-mediated system panels where direct toggles are restricted; approval-gated dial/SMS intents; user-defined automation scenes.
+- Existing source gateway inspected on PR #78 branch: `AndroidJarvisToolRegistry.kt` currently supports app launch, web search, navigation, time and approval-gated dialer only. No full phone-control module is implemented yet.
+- Platform boundary: Android 10+ ordinary apps cannot directly toggle Wi-Fi; Android 13+ ordinary apps cannot directly enable/disable Bluetooth. Implement supported system panels/intents and verify actual resulting state; never report fake success.
+- CI run #42277569386 rechecked while updating this handoff: secret scanning and CodeQL passed; emulator smoke tests were still in progress after APK build passed. Do not commit to PR #78 branch until that run finishes, to avoid cancelling/restarting it.
+- Next: finish PR #78 CI diagnosis; then implement Phone Control capability matrix and typed contracts in a separate focused change, with API-level and OPPO physical-device acceptance gates.
