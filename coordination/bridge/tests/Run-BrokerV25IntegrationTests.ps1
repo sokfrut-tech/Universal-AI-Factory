@@ -10,8 +10,20 @@ function Write-Task{
     $content="---"+$nl+"task_id: $TaskId"+$nl+"from: $From"+$nl+"to: $To"+$nl+$Extra+"---"+$nl+"Body for $TaskId"+$nl
     [IO.File]::WriteAllText($Path,$content,(New-Object System.Text.UTF8Encoding($false)))
 }
+function New-TestAckSignature {
+    param([string]$AckId,[string]$From,[string]$To,[string]$AckTaskId)
+    $canonical="jarvis-ack-v1"+[char]10+$AckId+[char]10+$From+[char]10+$To+[char]10+$AckTaskId
+    $hmac=New-Object System.Security.Cryptography.HMACSHA256
+    try{
+        $hmac.Key=[Text.Encoding]::UTF8.GetBytes($env:JARVIS_ACK_HMAC_KEY)
+        $digest=$hmac.ComputeHash([Text.Encoding]::UTF8.GetBytes($canonical))
+        return ([BitConverter]::ToString($digest)).Replace("-","").ToLowerInvariant()
+    }finally{$hmac.Dispose()}
+}
 function Invoke-BrokerOnce{param([string]$Root);& $broker -BasePath $Root -Once -MutexName ("Local\JarvisBrokerTest_"+[guid]::NewGuid().ToString("N"))}
+$originalAckKey=$env:JARVIS_ACK_HMAC_KEY
 try{
+    $env:JARVIS_ACK_HMAC_KEY="CI-ONLY-TEST-KEY-DO-NOT-REUSE"
     New-Item -ItemType Directory -Path $testRoot -Force|Out-Null
     Write-Host "=== Jarvis Broker v2.5 integration tests: Windows PowerShell 5.1 ===" -ForegroundColor Cyan
     foreach($path in @($broker,$PSCommandPath)){$tokens=$null;$errors=$null;[System.Management.Automation.Language.Parser]::ParseFile($path,[ref]$tokens,[ref]$errors)|Out-Null;Assert-True ($errors.Count -eq 0) ("Parser accepts "+(Split-Path $path -Leaf))}
@@ -28,7 +40,8 @@ try{
     Assert-True ($ledger.'same-task'.Status -eq "TRANSPORT_NOT_CONFIGURED") "Gemini transport stays disabled"
     $root=New-TestRoot "ack"
     Write-Task (Join-Path $root "processing\original.md") "original-id" "jarvis" "gemini"
-    Write-Task (Join-Path $root "outbox_gemini\ack.md") "ack-record" "gemini" "jarvis" ("ack_task_id: original-id"+[Environment]::NewLine)
+    $validAckSignature=New-TestAckSignature -AckId "original-id" -From "gemini" -To "jarvis" -AckTaskId "ack-record"
+    Write-Task (Join-Path $root "outbox_gemini\ack.md") "ack-record" "gemini" "jarvis" ("ack_task_id: original-id"+[Environment]::NewLine+"signature: $validAckSignature"+[Environment]::NewLine)
     Invoke-BrokerOnce $root
     $ledger=Get-Content (Join-Path $root "ledger.json") -Raw|ConvertFrom-Json
     Assert-True ($ledger.'original-id'.Status -eq "COMPLETED") "ACK marks original task completed"
@@ -37,11 +50,19 @@ try{
     Assert-True (Test-Path (Join-Path $root "processed\ack.md")) "ACK file moves to processed"
     $root=New-TestRoot "forged-ack"
     Write-Task (Join-Path $root "processing\original.md") "original-id" "jarvis" "gemini"
-    Write-Task (Join-Path $root "outbox_gemini\forged.md") "forged-ack" "attacker" "jarvis" ("ack_task_id: original-id"+[Environment]::NewLine)
+    $forgedRouteSignature=New-TestAckSignature -AckId "original-id" -From "attacker" -To "jarvis" -AckTaskId "forged-ack"
+    Write-Task (Join-Path $root "outbox_gemini\forged.md") "forged-ack" "attacker" "jarvis" ("ack_task_id: original-id"+[Environment]::NewLine+"signature: $forgedRouteSignature"+[Environment]::NewLine)
     Invoke-BrokerOnce $root
     $ledger=Get-Content (Join-Path $root "ledger.json") -Raw|ConvertFrom-Json
     Assert-True ($ledger.'original-id'.Status -ne "COMPLETED") "ACK with mismatched sender cannot complete original task"
     Assert-True (Test-Path (Join-Path $root "processing\forged.md")) "Mismatched ACK is retained for investigation"
+    $root=New-TestRoot "invalid-signature"
+    Write-Task (Join-Path $root "processing\original.md") "original-id" "jarvis" "gemini"
+    Write-Task (Join-Path $root "outbox_gemini\bad-signature.md") "bad-signature" "gemini" "jarvis" ("ack_task_id: original-id"+[Environment]::NewLine+"signature: "+"0"*64+[Environment]::NewLine)
+    Invoke-BrokerOnce $root
+    $ledger=Get-Content (Join-Path $root "ledger.json") -Raw|ConvertFrom-Json
+    Assert-True ($ledger.'original-id'.Status -ne "COMPLETED") "ACK with invalid HMAC cannot complete original task"
+    Assert-True (Test-Path (Join-Path $root "processing\bad-signature.md")) "Invalid HMAC ACK remains in processing"
     $root=New-TestRoot "orphan"
     Write-Task (Join-Path $root "processing\orphan.md") "orphan-id" "jarvis" "gemini"
     Invoke-BrokerOnce $root
@@ -73,4 +94,7 @@ try{
     Assert-True ($second.ExitCode -ne 0) "Second concurrent process is rejected by OS mutex"
     Assert-True ($first.ExitCode -eq 0) "Mutex owner exits and releases mutex"
     Write-Host ("=== RESULT: {0} assertions passed ===" -f $script:passed) -ForegroundColor Cyan
-}finally{if(Test-Path $testRoot){Remove-Item $testRoot -Recurse -Force}}
+}finally{
+    $env:JARVIS_ACK_HMAC_KEY=$originalAckKey
+    if(Test-Path $testRoot){Remove-Item $testRoot -Recurse -Force}
+}
