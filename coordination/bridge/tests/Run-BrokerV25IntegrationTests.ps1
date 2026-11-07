@@ -63,6 +63,16 @@ try{
     $ledger=Get-Content (Join-Path $root "ledger.json") -Raw|ConvertFrom-Json
     Assert-True ($ledger.'original-id'.Status -ne "COMPLETED") "ACK with invalid HMAC cannot complete original task"
     Assert-True (Test-Path (Join-Path $root "processing\bad-signature.md")) "Invalid HMAC ACK remains in processing"
+    $root=New-TestRoot "missing-secret"
+    Write-Task (Join-Path $root "processing\original.md") "original-id" "jarvis" "gemini"
+    $validButUnavailableKeySignature=New-TestAckSignature -AckId "original-id" -From "gemini" -To "jarvis" -AckTaskId "missing-secret-ack"
+    Write-Task (Join-Path $root "outbox_gemini\missing-secret-ack.md") "missing-secret-ack" "gemini" "jarvis" ("ack_task_id: original-id"+[Environment]::NewLine+"signature: $validButUnavailableKeySignature"+[Environment]::NewLine)
+    $env:JARVIS_ACK_HMAC_KEY=$null
+    Invoke-BrokerOnce $root
+    $env:JARVIS_ACK_HMAC_KEY="CI-ONLY-TEST-KEY-DO-NOT-REUSE"
+    $ledger=Get-Content (Join-Path $root "ledger.json") -Raw|ConvertFrom-Json
+    Assert-True ($ledger.'original-id'.Status -ne "COMPLETED") "ACK fails closed when HMAC secret is missing"
+    Assert-True (Test-Path (Join-Path $root "processing\missing-secret-ack.md")) "ACK without configured secret remains in processing"
     $root=New-TestRoot "orphan"
     Write-Task (Join-Path $root "processing\orphan.md") "orphan-id" "jarvis" "gemini"
     Invoke-BrokerOnce $root
