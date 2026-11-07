@@ -23,7 +23,7 @@ function New-TestAckSignature {
 function Invoke-BrokerOnce{param([string]$Root);& $broker -BasePath $Root -Once -MutexName ("Local\JarvisBrokerTest_"+[guid]::NewGuid().ToString("N"))}
 $originalAckKey=$env:JARVIS_ACK_HMAC_KEY
 try{
-    $env:JARVIS_ACK_HMAC_KEY="CI-ONLY-TEST-KEY-DO-NOT-REUSE"
+    $env:JARVIS_ACK_HMAC_KEY="CI-ONLY-TEST-KEY-DO-NOT-REUSE-AND-ROTATE-32-BYTE-MINIMUM"
     New-Item -ItemType Directory -Path $testRoot -Force|Out-Null
     Write-Host "=== Jarvis Broker v2.5 integration tests: Windows PowerShell 5.1 ===" -ForegroundColor Cyan
     foreach($path in @($broker,$PSCommandPath)){$tokens=$null;$errors=$null;[System.Management.Automation.Language.Parser]::ParseFile($path,[ref]$tokens,[ref]$errors)|Out-Null;Assert-True ($errors.Count -eq 0) ("Parser accepts "+(Split-Path $path -Leaf))}
@@ -69,10 +69,20 @@ try{
     Write-Task (Join-Path $root "outbox_gemini\missing-secret-ack.md") "missing-secret-ack" "gemini" "jarvis" ("ack_task_id: original-id"+[Environment]::NewLine+"signature: $validButUnavailableKeySignature"+[Environment]::NewLine)
     $env:JARVIS_ACK_HMAC_KEY=$null
     Invoke-BrokerOnce $root
-    $env:JARVIS_ACK_HMAC_KEY="CI-ONLY-TEST-KEY-DO-NOT-REUSE"
+    $env:JARVIS_ACK_HMAC_KEY="CI-ONLY-TEST-KEY-DO-NOT-REUSE-AND-ROTATE-32-BYTE-MINIMUM"
     $ledger=Get-Content (Join-Path $root "ledger.json") -Raw|ConvertFrom-Json
     Assert-True ($ledger.'original-id'.Status -ne "COMPLETED") "ACK fails closed when HMAC secret is missing"
     Assert-True (Test-Path (Join-Path $root "processing\missing-secret-ack.md")) "ACK without configured secret remains in processing"
+    $root=New-TestRoot "weak-secret"
+    Write-Task (Join-Path $root "processing\original.md") "original-id" "jarvis" "gemini"
+    $validStrongKeySignature=New-TestAckSignature -AckId "original-id" -From "gemini" -To "jarvis" -AckTaskId "weak-secret-ack"
+    Write-Task (Join-Path $root "outbox_gemini\weak-secret-ack.md") "weak-secret-ack" "gemini" "jarvis" ("ack_task_id: original-id"+[Environment]::NewLine+"signature: $validStrongKeySignature"+[Environment]::NewLine)
+    $env:JARVIS_ACK_HMAC_KEY="short-key"
+    Invoke-BrokerOnce $root
+    $env:JARVIS_ACK_HMAC_KEY="CI-ONLY-TEST-KEY-DO-NOT-REUSE-AND-ROTATE-32-BYTE-MINIMUM"
+    $ledger=Get-Content (Join-Path $root "ledger.json") -Raw|ConvertFrom-Json
+    Assert-True ($ledger.'original-id'.Status -ne "COMPLETED") "ACK fails closed when HMAC secret is shorter than 32 bytes"
+    Assert-True (Test-Path (Join-Path $root "processing\weak-secret-ack.md")) "ACK with weak secret remains in processing"
     $root=New-TestRoot "orphan"
     Write-Task (Join-Path $root "processing\orphan.md") "orphan-id" "jarvis" "gemini"
     Invoke-BrokerOnce $root
