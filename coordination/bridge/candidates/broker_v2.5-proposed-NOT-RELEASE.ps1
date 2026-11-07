@@ -158,6 +158,25 @@ function Recover-ProcessedFiles {
         }
     }
 }
+function Test-AckSignature {
+    param([string]$AckId,[string]$From,[string]$To,[string]$AckTaskId,[string]$Signature)
+    $secret=[Environment]::GetEnvironmentVariable("JARVIS_ACK_HMAC_KEY","Process")
+    if([string]::IsNullOrWhiteSpace($secret)){return $false}
+    if($Signature -notmatch '\A[0-9a-fA-F]{64}\z'){return $false}
+    $canonical="jarvis-ack-v1"+[char]10+$AckId+[char]10+$From+[char]10+$To+[char]10+$AckTaskId
+    $hmac=New-Object System.Security.Cryptography.HMACSHA256
+    try{
+        $hmac.Key=[Text.Encoding]::UTF8.GetBytes($secret)
+        $digest=$hmac.ComputeHash([Text.Encoding]::UTF8.GetBytes($canonical))
+        $expected=([BitConverter]::ToString($digest)).Replace("-","").ToLowerInvariant()
+    }finally{$hmac.Dispose()}
+    $left=[Text.Encoding]::ASCII.GetBytes($expected)
+    $right=[Text.Encoding]::ASCII.GetBytes($Signature.ToLowerInvariant())
+    if($left.Length -ne $right.Length){return $false}
+    $difference=0
+    for($i=0;$i -lt $left.Length;$i++){$difference=$difference -bor ($left[$i] -bxor $right[$i])}
+    return ($difference -eq 0)
+}
 function Complete-Acknowledgement {
     param([hashtable]$Ledger,[string]$AckId,[string]$AckFileName,[string]$AckTaskId)
     if(-not $Ledger.ContainsKey($AckId)){return $false}
@@ -193,6 +212,10 @@ function Invoke-BrokerIteration {
         }
         if($parsed.Meta.ContainsKey("ack_task_id")){
             $ackId=[string]$parsed.Meta.ack_task_id
+            if(-not (Test-AckSignature -AckId $ackId -From ([string]$parsed.Meta.from) -To ([string]$parsed.Meta.to) -AckTaskId $id -Signature ([string]$parsed.Meta.signature))){
+                Write-Log ("ACK signature invalid or JARVIS_ACK_HMAC_KEY unavailable for {0}; retained." -f $ackId) "ERROR"
+                continue
+            }
             if($ledger.ContainsKey($ackId)){
                 $original=$ledger[$ackId]
                 if(([string]$parsed.Meta.from -ne [string]$original.Target) -or ([string]$parsed.Meta.to -ne [string]$original.Source)){
