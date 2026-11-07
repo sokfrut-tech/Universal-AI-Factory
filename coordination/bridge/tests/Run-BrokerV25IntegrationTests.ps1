@@ -54,6 +54,13 @@ try{
     Invoke-BrokerOnce $root
     $ledger=Get-Content (Join-Path $root "ledger.json") -Raw|ConvertFrom-Json
     Assert-True ($null -ne $ledger.PSObject.Properties["backup-id"]) "Corrupt primary recovers from backup"
+    $root=New-TestRoot "crash-after-move"
+    Write-Task (Join-Path $root "processed\already-moved.md") "crash-task" "jarvis" "gemini"
+    $crashLedger=@{"crash-task"=@{Status="TRANSPORT_NOT_CONFIGURED";File="already-moved.md";Attempts=0;Source="jarvis";Target="gemini"}}|ConvertTo-Json -Depth 5
+    [IO.File]::WriteAllText((Join-Path $root "ledger.json"),$crashLedger,(New-Object System.Text.UTF8Encoding($false)))
+    Invoke-BrokerOnce $root
+    $ledger=Get-Content (Join-Path $root "ledger.json") -Raw|ConvertFrom-Json
+    Assert-True ($ledger.'crash-task'.Status -eq "COMPLETED") "Processed file reconciles Ledger after simulated crash between move and save"
     $root=New-TestRoot "mutex"
     $mutexName="Local\JarvisBrokerMutex_"+[guid]::NewGuid().ToString("N")
     $powershell=Join-Path $PSHOME "powershell.exe"
