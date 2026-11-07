@@ -1,0 +1,46 @@
+name: Agent Task Contract Tests
+
+on:
+  pull_request:
+    paths:
+      - "coordination/shared/TASK_LIFECYCLE_AND_PROVIDER_CONTRACT.md"
+      - "coordination/shared/task-status.schema.json"
+      - "scripts/test_task_status_contract.py"
+      - "scripts/provider_adapter.py"
+      - "scripts/provider_guard.py"
+      - "scripts/provider_ledger_bridge.py"
+      - "scripts/test_provider_adapter.py"
+      - "scripts/test_provider_ledger_bridge.py"
+      - "scripts/provider_ledger_client.py"
+      - "scripts/test_provider_ledger_client.py"
+      - ".github/workflows/test-agent-task-contract.yml"
+  push:
+    branches: [main]
+    paths:
+      - "coordination/shared/TASK_LIFECYCLE_AND_PROVIDER_CONTRACT.md"
+      - "coordination/shared/task-status.schema.json"
+      - "scripts/test_task_status_contract.py"
+      - "scripts/provider_adapter.py"
+      - "scripts/provider_guard.py"
+      - "scripts/provider_ledger_bridge.py"
+      - "scripts/test_provider_adapter.py"
+      - "scripts/test_provider_ledger_bridge.py"
+      - "scripts/provider_ledger_client.py"
+      - "scripts/test_provider_ledger_client.py"
+      - ".github/workflows/test-agent-task-contract.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  task-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate task lifecycle invariants
+        run: python3 scripts/test_task_status_contract.py
+      - name: Test disabled-by-default provider adapter and ledger bridge
+        run: python3 -m unittest discover -s scripts -p 'test_provider_*.py' -v
