@@ -35,6 +35,13 @@ try{
     Assert-True ($ledger.'ack-record'.Status -eq "COMPLETED") "ACK record is completed"
     Assert-True (Test-Path (Join-Path $root "processed\original.md")) "Original task moves to processed"
     Assert-True (Test-Path (Join-Path $root "processed\ack.md")) "ACK file moves to processed"
+    $root=New-TestRoot "forged-ack"
+    Write-Task (Join-Path $root "processing\original.md") "original-id" "jarvis" "gemini"
+    Write-Task (Join-Path $root "outbox_gemini\forged.md") "forged-ack" "attacker" "jarvis" ("ack_task_id: original-id"+[Environment]::NewLine)
+    Invoke-BrokerOnce $root
+    $ledger=Get-Content (Join-Path $root "ledger.json") -Raw|ConvertFrom-Json
+    Assert-True ($ledger.'original-id'.Status -ne "COMPLETED") "ACK with mismatched sender cannot complete original task"
+    Assert-True (Test-Path (Join-Path $root "processing\forged.md")) "Mismatched ACK is retained for investigation"
     $root=New-TestRoot "orphan"
     Write-Task (Join-Path $root "processing\orphan.md") "orphan-id" "jarvis" "gemini"
     Invoke-BrokerOnce $root
