@@ -11,7 +11,7 @@ GitHub Actions run: https://github.com/sokfrut-tech/Universal-AI-Factory/actions
 - Windows Server 2025 runner, Windows PowerShell 5.1.
 - v2.4 compatibility checks passed.
 - v2.5 candidate parser passed.
-- v2.5 integration suite passed: **16 assertions**.
+- v2.5 integration suite passed: **17 assertions**.
 - Disabled-transport source guard passed.
 
 The 16 assertions cover:
@@ -30,7 +30,7 @@ The 16 assertions cover:
 13. Orphaned processing file is reconstructed into Ledger.
 14. Corrupt primary Ledger is restored from valid backup.
 15. Second concurrent broker process is rejected by the OS Mutex.
-16. Mutex owner exits cleanly and releases the Mutex.
+16. Processed-file reconciliation marks a task complete after a simulated crash between moving the file and saving Ledger.\n17. Mutex owner exits cleanly and releases the Mutex.
 
 ## Changes in v2.5
 
@@ -43,7 +43,7 @@ The 16 assertions cover:
 - Validates ACK sender/recipient routing against the original task before completion.
 - Gemini transport remains deliberately disabled (`$geminiPanelEndpoint = $null`).
 
-## Release status
+## Latest verified run\n\nGitHub Actions run: https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/42364002876\n\nCommit: `b51c002ab441ae127bb2c63a8d51251a54a7cdf2`\n\nThe added crash-window test confirms a processed file repairs a stale Ledger status on the next broker iteration.\n\n## Release status
 
 **NOT RELEASE-APPROVED. Do not merge or deploy this candidate.**
 
@@ -51,7 +51,7 @@ Passing CI establishes the tested behaviors above, not full production readiness
 
 1. ACK routing metadata is not cryptographic authentication. Add a signed/HMAC ACK contract and secret handling before trusting ACKs across an untrusted boundary.
 2. Add crash-injection tests for every file/ledger transition, especially a process crash after moving ACK/original files but before persisting the final Ledger state.
-3. Add idempotent reconciliation for files already in `processed` when the Ledger write was interrupted.
+3. Expand idempotent reconciliation tests to cover ACK crash points (original moved, ACK moved, Ledger commit interrupted) and filename collisions.
 4. Test simultaneous writers and filesystem failure modes beyond the single-instance mutex scenario.
 5. Keep Gemini HTTP transport disabled until the separate authenticated transport integration is implemented and tested end-to-end.
 
