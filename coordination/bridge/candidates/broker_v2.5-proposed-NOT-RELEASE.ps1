@@ -49,7 +49,7 @@ function Load-Ledger {
         catch{Write-Log ("Primary Ledger invalid; trying backup: {0}" -f $_.Exception.Message) "CRITICAL"}
     }
     if(Test-Path -LiteralPath $ledgerBakPath){
-        try{$value=Read-LedgerFile -Path $ledgerBakPath;Write-Log "Ledger recovered from backup." "WARN";return $value}
+        try{$value=Read-LedgerFile -Path $ledgerBakPath;[IO.File]::Copy($ledgerBakPath,$ledgerPath,$true);Write-Log "Ledger recovered from backup and primary restored." "WARN";return $value}
         catch{throw ("Both primary and backup Ledger are unusable: {0}" -f $_.Exception.Message)}
     }
     return @{}
@@ -145,7 +145,7 @@ function Recover-OrphanedProcessingFiles {
     }
 }
 function Complete-Acknowledgement {
-    param([hashtable]$Ledger,[string]$AckId,[string]$AckFileName)
+    param([hashtable]$Ledger,[string]$AckId,[string]$AckFileName,[string]$AckTaskId)
     if(-not $Ledger.ContainsKey($AckId)){return $false}
     $original=$Ledger[$AckId]
     $originalPath=Join-Path $processingPath $original.File
@@ -157,7 +157,7 @@ function Complete-Acknowledgement {
     if(Test-Path -LiteralPath $ackPath){
         Move-ToUniquePath -Source $ackPath -Destination (Join-Path (Join-Path $BasePath "processed") $AckFileName)
     }
-    $Ledger[$AckFileName].Status="COMPLETED"
+    $Ledger[$AckTaskId].Status="COMPLETED"
     Save-Ledger -Ledger $Ledger
     Write-Log ("ACK completed task {0}" -f $AckId)
     return $true
@@ -178,7 +178,7 @@ function Invoke-BrokerIteration {
         }
         if($parsed.Meta.ContainsKey("ack_task_id")){
             $ackId=[string]$parsed.Meta.ack_task_id
-            if(Complete-Acknowledgement -Ledger $ledger -AckId $ackId -AckFileName $task.File){continue}
+            if(Complete-Acknowledgement -Ledger $ledger -AckId $ackId -AckFileName $task.File -AckTaskId $id){continue}
             Write-Log ("Unknown ACK target {0}; retained." -f $ackId) "WARN";continue
         }
         if($task.Target -eq "gemini" -and [string]::IsNullOrWhiteSpace($geminiPanelEndpoint)){
