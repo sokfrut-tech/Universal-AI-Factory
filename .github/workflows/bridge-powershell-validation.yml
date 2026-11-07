@@ -33,7 +33,9 @@ jobs:
             [ref]$errors
           ) | Out-Null
           if ($errors.Count -gt 0) {
-            $errors | Format-List * | Out-String | Write-Host
+            foreach ($parseError in $errors) {
+              Write-Host ("PARSE_ERROR line={0} column={1} extent=<{2}> id={3} message={4}" -f $parseError.Extent.StartLineNumber, $parseError.Extent.StartColumnNumber, $parseError.Extent.Text, $parseError.ErrorId, $parseError.Message)
+            }
             throw "PowerShell 5.1 parser reported $($errors.Count) error(s)."
           }
           Write-Host "PowerShell 5.1 parser: PASS"
