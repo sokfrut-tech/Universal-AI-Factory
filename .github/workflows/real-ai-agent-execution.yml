@@ -61,7 +61,7 @@ jobs:
           echo "Resolved Gemini task: $TASK"
 
       - name: Call Gemini Developer API directly
-        timeout-minutes: 7
+        timeout-minutes: 8
         shell: bash
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -84,7 +84,7 @@ jobs:
           }' > /tmp/gemini-request.json
 
           echo "Calling Gemini model: $MODEL"
-          curl --fail-with-body --silent --show-error --max-time 180             --retry 1 --retry-delay 3 --retry-max-time 360             "https://generativelanguage.googleapis.com/v1beta/models/$MODEL:generateContent"             -H "x-goog-api-key: $GEMINI_API_KEY"             -H "content-type: application/json"             --data-binary @/tmp/gemini-request.json             -o /tmp/gemini-response.json
+          curl --fail-with-body --silent --show-error --max-time 180             --retry 2 --retry-max-time 420 --retry-connrefused             "https://generativelanguage.googleapis.com/v1beta/models/$MODEL:generateContent"             -H "x-goog-api-key: $GEMINI_API_KEY"             -H "content-type: application/json"             --data-binary @/tmp/gemini-request.json             -o /tmp/gemini-response.json
 
           bash coordination/gemini/scripts/extract-answer.sh /tmp/gemini-response.json > /tmp/gemini-answer.md
           REPORT="coordination/gemini/outbox/REPORT_$(basename "$TASK_PATH")"
