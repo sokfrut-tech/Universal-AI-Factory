@@ -90,7 +90,7 @@ function Parse-Yaml {
 
 Write-Log "Message Broker v2.4 (PS 5.1 Strict) инициализирован." "START"
 
-try {
+function Invoke-BrokerLoop {
     while ($true) {
         $ledger = Load-Ledger
         $outboxes = @("outbox_jarvis", "outbox_gemini")
@@ -207,6 +207,10 @@ try {
         }
         Start-Sleep -Seconds 3
     }
+}
+
+try {
+    Invoke-BrokerLoop
 } finally {
     if ($null -ne $mutex) {
         $mutex.ReleaseMutex()
