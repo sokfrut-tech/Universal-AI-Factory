@@ -162,6 +162,7 @@ function Test-AckSignature {
     param([string]$AckId,[string]$From,[string]$To,[string]$AckTaskId,[string]$Signature)
     $secret=[Environment]::GetEnvironmentVariable("JARVIS_ACK_HMAC_KEY","Process")
     if([string]::IsNullOrWhiteSpace($secret)){return $false}
+    if([Text.Encoding]::UTF8.GetByteCount($secret) -lt 32){return $false}
     if($Signature -notmatch '\A[0-9a-fA-F]{64}\z'){return $false}
     $canonical="jarvis-ack-v1"+[char]10+$AckId+[char]10+$From+[char]10+$To+[char]10+$AckTaskId
     $hmac=New-Object System.Security.Cryptography.HMACSHA256
