@@ -30,7 +30,7 @@ assert_eq "$ACTUAL" "coordination/gemini/dispatch/task-1.md" "push event resolve
 ACTUAL="$(cd "$TMP" && "$RESOLVER" workflow_dispatch "" "$HEAD_SHA" "coordination/gemini/dispatch/task-1.md")"
 assert_eq "$ACTUAL" "coordination/gemini/dispatch/task-1.md" "manual dispatch accepts exact task path"
 assert_fails bash -c "cd '$TMP' && '$RESOLVER' workflow_dispatch '' '$HEAD_SHA' '../secrets.md'"
-assert_fails bash -c "cd '$TMP' && '$RESOLVER' push '0000000000000000000000000000000000000000' '$HEAD_SHA' ''"
+ACTUAL="$(cd "$TMP" && "$RESOLVER" push "0000000000000000000000000000000000000000" "$HEAD_SHA" "")"; assert_eq "$ACTUAL" "coordination/gemini/dispatch/task-1.md" "zero-before push resolves task using parent-aware diff"
 
 printf '%s\n' '{"candidates":[{"content":{"parts":[{"text":"Gemini diagnosis"}]}}]}' > "$TMP/ok.json"
 ACTUAL="$("$EXTRACTOR" "$TMP/ok.json")"
