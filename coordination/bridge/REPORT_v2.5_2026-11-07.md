@@ -11,7 +11,7 @@ GitHub Actions run: https://github.com/sokfrut-tech/Universal-AI-Factory/actions
 - Windows Server 2025 runner, Windows PowerShell 5.1.
 - v2.4 compatibility checks passed.
 - v2.5 candidate parser passed.
-- v2.5 integration suite passed: **19 assertions**.
+- v2.5 integration suite passed: **21 assertions**.
 - Disabled-transport source guard passed.
 
 The 16 assertions cover:
@@ -30,7 +30,7 @@ The 16 assertions cover:
 13. Orphaned processing file is reconstructed into Ledger.
 14. Corrupt primary Ledger is restored from valid backup.
 15. Second concurrent broker process is rejected by the OS Mutex.
-16. Processed-file reconciliation marks a task complete after a simulated crash between moving the file and saving Ledger.\n17. ACK with an invalid HMAC signature is rejected and retained in processing.\n18. Processed-file reconciliation repairs Ledger after a simulated crash between file move and Ledger save.\n19. Mutex owner exits cleanly and releases the Mutex.
+16. Processed-file reconciliation marks a task complete after a simulated crash between moving the file and saving Ledger.\n17. ACK with an invalid HMAC signature is rejected and retained in processing.\n18. Processed-file reconciliation repairs Ledger after a simulated crash between file move and Ledger save.\n19. ACK with invalid HMAC is rejected and retained in processing.\n20. ACK is rejected when the HMAC secret is missing.\n21. Mutex owner exits cleanly and releases the Mutex.
 
 ## Changes in v2.5
 
@@ -43,13 +43,13 @@ The 16 assertions cover:
 - Validates ACK sender/recipient routing against the original task before completion.\n- Requires HMAC-SHA256 signature over canonical `v1` ACK fields; secret is read only from process environment variable `JARVIS_ACK_HMAC_KEY`. Missing secret or invalid signature fails closed.\n- Reconciles files already in `processed` with stale Ledger state after a crash between file move and Ledger save.
 - Gemini transport remains deliberately disabled (`$geminiPanelEndpoint = $null`).
 
-## Latest verified run\n\nGitHub Actions run: https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/42364096112\n\nValidated broker/test commit: `950ddbc6b7efcbfe653e9d9a8455c7d52631de75`\n\nWorkflow source-guard revision: `0fca461327c0498827e457ca315f0d31449fbb43`\n\nThe run confirms 19 assertions, including HMAC rejection, route validation, and recovery after a simulated crash between file move and Ledger save. The same run also passed the workflow source guard requiring the HMAC function, process-environment secret lookup, and HMACSHA256 implementation.\n\n## Release status
+## Latest verified run\n\nGitHub Actions run: https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/42364145301\n\nValidated broker/test commit: `950ddbc6b7efcbfe653e9d9a8455c7d52631de75`\n\nWorkflow source-guard revision: `0fca461327c0498827e457ca315f0d31449fbb43`\n\nThe run confirms 21 assertions, including valid signed ACK completion, rejection of invalid signatures, fail-closed behavior when the HMAC secret is missing, route validation, and recovery after a simulated crash between file move and Ledger save. The same run also passed the workflow source guard requiring the HMAC function, process-environment secret lookup, and HMACSHA256 implementation.\n\n## Release status
 
 **NOT RELEASE-APPROVED. Do not merge or deploy this candidate.**
 
 Passing CI establishes the tested behaviors above, not full production readiness. Remaining gates:
 
-1. CI uses an isolated test-only HMAC key. Before deployment, provision a high-entropy shared secret separately on every trusted participant, document rotation/revocation, and verify sender key identity. HMAC proves possession of the shared key, not a unique sender identity.
+1. CI uses an isolated test-only HMAC key. The missing-secret negative test passed. Before deployment, provision a high-entropy shared secret separately on every trusted participant, document rotation/revocation, and verify sender key identity. HMAC proves possession of the shared key, not a unique sender identity.
 2. Add crash-injection tests for every file/ledger transition, especially a process crash after moving ACK/original files but before persisting the final Ledger state.
 3. Expand idempotent reconciliation tests to cover ACK crash points (original moved, ACK moved, Ledger commit interrupted) and filename collisions.
 4. Test simultaneous writers and filesystem failure modes beyond the single-instance mutex scenario.
