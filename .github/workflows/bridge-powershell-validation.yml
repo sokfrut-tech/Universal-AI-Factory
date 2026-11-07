@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'coordination/bridge/candidates/*.ps1'
+      - 'coordination/bridge/tests/*.ps1'
       - '.github/workflows/bridge-powershell-validation.yml'
   workflow_dispatch:
 
@@ -12,26 +13,22 @@ permissions:
   contents: read
 
 jobs:
-  powershell-51-static:
+  powershell-51-validation:
     runs-on: windows-latest
     timeout-minutes: 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Parse candidate with Windows PowerShell 5.1
+      - name: Parse broker candidate with Windows PowerShell 5.1
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
-          $candidate = 'coordination/bridge/candidates/broker_v2.3-proposed-NOT-RELEASE.ps1'
+          $candidate = 'coordination/bridge/candidates/broker_v2.4-proposed-NOT-RELEASE.ps1'
           if (-not (Test-Path $candidate)) { throw "Candidate not found: $candidate" }
           $tokens = $null
           $errors = $null
-          [System.Management.Automation.Language.Parser]::ParseFile(
-            (Resolve-Path $candidate).Path,
-            [ref]$tokens,
-            [ref]$errors
-          ) | Out-Null
+          [System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $candidate).Path, [ref]$tokens, [ref]$errors) | Out-Null
           if ($errors.Count -gt 0) {
             foreach ($parseError in $errors) {
               Write-Host ("PARSE_ERROR line={0} column={1} extent=<{2}> id={3} message={4}" -f $parseError.Extent.StartLineNumber, $parseError.Extent.StartColumnNumber, $parseError.Extent.Text, $parseError.ErrorId, $parseError.Message)
@@ -40,18 +37,19 @@ jobs:
           }
           Write-Host "PowerShell 5.1 parser: PASS"
 
-      - name: Enforce no fabricated transport success
+      - name: Run broker smoke tests on Windows PowerShell 5.1
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
-          $source = Get-Content 'coordination/bridge/candidates/broker_v2.3-proposed-NOT-RELEASE.ps1' -Raw
-          if ($source -match '(?im)^\s*\$statusCode\s*=\s*200\b') {
-            throw 'Fabricated HTTP 200 assignment detected.'
-          }
-          if ($source -notmatch 'TRANSPORT_NOT_CONFIGURED') {
-            throw 'Missing disabled-transport state.'
-          }
-          if ($source -notmatch 'Invoke-RestMethod') {
-            throw 'No real HTTP call found in candidate.'
-          }
+          & '.\coordination\bridge\tests\Run-BrokerTests.ps1'
+
+      - name: Enforce disabled transport and real HTTP call source guards
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $source = Get-Content 'coordination/bridge/candidates/broker_v2.4-proposed-NOT-RELEASE.ps1' -Raw
+          if ($source -match '(?im)^\s*\$statusCode\s*=\s*200\b') { throw 'Fabricated HTTP 200 assignment detected.' }
+          if ($source -notmatch 'TRANSPORT_NOT_CONFIGURED') { throw 'Missing disabled-transport state.' }
+          if ($source -notmatch 'Invoke-RestMethod') { throw 'No real HTTP call found in candidate.' }
+          if ($source -notmatch '\$geminiPanelEndpoint\s*=\s*\$null') { throw 'Transport must remain disabled for this validation.' }
           Write-Host "Transport source guards: PASS"
