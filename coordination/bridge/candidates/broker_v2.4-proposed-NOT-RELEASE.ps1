@@ -160,7 +160,10 @@ try {
                         }
                         $origTask.Status = "COMPLETED"
                         
-                        $targetInbox = if ($task.Target -eq "jarvis") { "inbox_jarvis" } else { "inbox_gemini" }
+                        $targetInbox = "inbox_gemini"
+                        if ($task.Target -eq "jarvis") {
+                            $targetInbox = "inbox_jarvis"
+                        }
                         Move-Item -Path $procFile -Destination (Join-Path $basePath "$targetInbox\$($task.File)") -Force
                         $task.Status = "COMPLETED"
                         Save-Ledger -Ledger $ledger
