@@ -1,0 +1,28 @@
+name: Patch Validator Tests
+
+on:
+  pull_request:
+    paths:
+      - "factory_runner/**"
+      - "tests/test_patch_validator.py"
+      - ".github/workflows/patch-validator-tests.yml"
+  push:
+    branches:
+      - "feat/no-network-patch-validator-2026-11-05"
+    paths:
+      - "factory_runner/**"
+      - "tests/test_patch_validator.py"
+      - ".github/workflows/patch-validator-tests.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Run standard-library unit tests
+        run: python3 -m unittest discover -s tests -v
