@@ -35,12 +35,12 @@ assert_fails bash -c "cd '$TMP' && bash '$RESOLVER' workflow_dispatch '' '$HEAD_
 ACTUAL="$(cd "$TMP" && bash "$RESOLVER" push "0000000000000000000000000000000000000000" "$HEAD_SHA" "")"
 assert_eq "$ACTUAL" "coordination/gemini/dispatch/task-1.md" "zero-before push resolves task using parent-aware diff"
 
-printf '%s\\n' '{"candidates":[{"content":{"parts":[{"text":"Gemini diagnosis"}]}}]}' > "$TMP/ok.json"
+printf '%s\n' '{"candidates":[{"content":{"parts":[{"text":"Gemini diagnosis"}]}}]}' > "$TMP/ok.json"
 ACTUAL="$(bash "$EXTRACTOR" "$TMP/ok.json")"
 assert_eq "$ACTUAL" "Gemini diagnosis" "extractor returns candidate text"
-printf '%s\\n' '{"candidates":[{"content":{"parts":[{"text":"  "}]}}]}' > "$TMP/empty.json"
+printf '%s\n' '{"candidates":[{"content":{"parts":[{"text":"  "}]}}]}' > "$TMP/empty.json"
 assert_fails bash "$EXTRACTOR" "$TMP/empty.json"
-printf '%s\\n' '{"error":{"code":400,"message":"invalid model"}}' > "$TMP/error.json"
+printf '%s\n' '{"error":{"code":400,"message":"invalid model"}}' > "$TMP/error.json"
 assert_fails bash "$EXTRACTOR" "$TMP/error.json"
 
 # Deterministic curl/sleep shims exercise retry, fallback, diagnostics, and secret hygiene.
@@ -63,23 +63,23 @@ n=0
 [[ -f "$FAKE_CURL_COUNT" ]] && n="$(cat "$FAKE_CURL_COUNT")"
 n=$((n + 1))
 printf '%s' "$n" > "$FAKE_CURL_COUNT"
-printf '%s\\n' "$url" >> "$FAKE_CURL_URLS"
+printf '%s\n' "$url" >> "$FAKE_CURL_URLS"
 status="$(sed -n "${n}p" "$FAKE_CURL_STATUSES")"
 if [[ -z "$status" ]]; then status=503; fi
 if [[ "$status" == "200" ]]; then
   printf '%s' '{"candidates":[{"content":{"parts":[{"text":"OK"}]}}]}' > "$out"
 else
-  printf '%s' "{\\"error\\":{\\"code\\":$status,\\"status\\":\\"UNAVAILABLE\\",\\"message\\":\\"diagnostic contains $FAKE_SECRET_SENTINEL\\"}}" > "$out"
+  printf '{"error":{"code":%s,"status":"UNAVAILABLE","message":"diagnostic contains %s"}}' "$status" "$FAKE_SECRET_SENTINEL" > "$out"
 fi
 printf '%s' "$status"
 FAKE_CURL
 cat > "$TMP/bin/fake-sleep" <<'FAKE_SLEEP'
 #!/usr/bin/env bash
-printf '%s\\n' "$1" >> "$FAKE_SLEEP_LOG"
+printf '%s\n' "$1" >> "$FAKE_SLEEP_LOG"
 FAKE_SLEEP
 chmod +x "$TMP/bin/fake-curl" "$TMP/bin/fake-sleep"
 
-printf '503\\n503\\n200\\n' > "$TMP/statuses-success"
+printf '503\n503\n200\n' > "$TMP/statuses-success"
 : > "$TMP/urls-success"
 : > "$TMP/sleeps-success"
 export FAKE_CURL_STATUSES="$TMP/statuses-success" FAKE_CURL_COUNT="$TMP/count-success"
@@ -98,7 +98,7 @@ if [[ "$OUTPUT" == *"$FAKE_SECRET_SENTINEL"* ]]; then fail "API secret leaked to
 pass=$((pass + 1))
 assert_eq "$(bash "$EXTRACTOR" "$TMP/api-response.json")" "OK" "successful API response remains parseable"
 
-printf '503\\n503\\n503\\n503\\n503\\n' > "$TMP/statuses-exhausted"
+printf '503\n503\n503\n503\n503\n' > "$TMP/statuses-exhausted"
 : > "$TMP/urls-exhausted"
 : > "$TMP/sleeps-exhausted"
 export FAKE_CURL_STATUSES="$TMP/statuses-exhausted" FAKE_CURL_COUNT="$TMP/count-exhausted"
@@ -114,7 +114,7 @@ assert_eq "$(wc -l < "$TMP/sleeps-exhausted" | tr -d ' ')" "4" "no sleep occurs 
 if [[ "$OUTPUT" == *"$FAKE_SECRET_SENTINEL"* ]]; then fail "secret leaked in exhausted retry diagnostics"; fi
 pass=$((pass + 1))
 
-printf '400\\n' > "$TMP/statuses-fatal"
+printf '400\n' > "$TMP/statuses-fatal"
 : > "$TMP/urls-fatal"
 : > "$TMP/sleeps-fatal"
 export FAKE_CURL_STATUSES="$TMP/statuses-fatal" FAKE_CURL_COUNT="$TMP/count-fatal"
