@@ -47,7 +47,7 @@ jobs:
             else
               RANGE="${EVENT_BEFORE} ${EVENT_SHA}"
             fi
-            mapfile -t TASKS < <(git diff --name-only --diff-filter=AM ${RANGE} -- 'coordination/gemini/dispatch/*.md')
+            mapfile -t TASKS < <(git diff --name-only --diff-filter=AM ${EVENT_BEFORE} ${EVENT_SHA} -- 'coordination/gemini/dispatch/*.md')
             if [[ "${#TASKS[@]}" -eq 0 ]]; then
               echo "::error::No new Gemini dispatch task found in this push."
               exit 1
