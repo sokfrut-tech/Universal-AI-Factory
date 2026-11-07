@@ -144,6 +144,20 @@ function Recover-OrphanedProcessingFiles {
         }
     }
 }
+function Recover-ProcessedFiles {
+    param([hashtable]$Ledger)
+    $processedPath=Join-Path $BasePath "processed"
+    foreach($file in @(Get-ChildItem -LiteralPath $processedPath -Filter "*.md" -File|Sort-Object Name)){
+        $parsed=Parse-Yaml -Content ([IO.File]::ReadAllText($file.FullName,[Text.Encoding]::UTF8))
+        if(-not $parsed.Valid){continue}
+        $id=[string]$parsed.Meta.task_id
+        if($Ledger.ContainsKey($id) -and $Ledger[$id].Status -ne "COMPLETED"){
+            $Ledger[$id].Status="COMPLETED"
+            Save-Ledger -Ledger $Ledger
+            Write-Log ("Reconciled processed file with Ledger task {0}." -f $id) "WARN"
+        }
+    }
+}
 function Complete-Acknowledgement {
     param([hashtable]$Ledger,[string]$AckId,[string]$AckFileName,[string]$AckTaskId)
     if(-not $Ledger.ContainsKey($AckId)){return $false}
@@ -165,6 +179,7 @@ function Complete-Acknowledgement {
 function Invoke-BrokerIteration {
     $ledger=Load-Ledger
     Recover-OrphanedProcessingFiles -Ledger $ledger
+    Recover-ProcessedFiles -Ledger $ledger
     Import-Outboxes -Ledger $ledger
     foreach($id in @($ledger.Keys)){
         $task=$ledger[$id]
