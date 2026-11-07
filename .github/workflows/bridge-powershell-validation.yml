@@ -85,4 +85,7 @@ jobs:
           $source = Get-Content 'coordination/bridge/candidates/broker_v2.5-proposed-NOT-RELEASE.ps1' -Raw
           if ($source -notmatch '\$geminiPanelEndpoint\s*=\s*\$null') { throw 'v2.5 transport must remain disabled.' }
           if ($source -match '(?im)^\s*Invoke-RestMethod\b') { throw 'Unexpected active transport call in v2.5.' }
-          Write-Host "v2.5 disabled-transport guard: PASS"
+          if ($source -notmatch 'function\s+Test-AckSignature') { throw 'Missing ACK authentication function.' }
+          if ($source -notmatch 'JARVIS_ACK_HMAC_KEY') { throw 'ACK secret must come from process environment.' }
+          if ($source -notmatch 'HMACSHA256') { throw 'ACK HMAC-SHA256 implementation missing.' }
+          Write-Host "v2.5 disabled-transport and HMAC source guards: PASS"
