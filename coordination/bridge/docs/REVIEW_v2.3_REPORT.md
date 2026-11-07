@@ -47,3 +47,9 @@ This is a static source review. No PowerShell process was run on the user's PC a
 - Functional queue/ACK/recovery tests: not run.
 - Local Gemini panel API discovery/integration: not run.
 - Release decision: BLOCKED.
+
+## CI evidence update (2026-11-07)
+- First Windows PowerShell 5.1 parser run: FAILED. GitHub Actions run [42349737698](https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/42349737698) found a syntax error in the interpolated string `"Ошибка отправки $key: ..."` (`InvalidVariableReferenceWithDrive`), followed by a parser cascade error.
+- The candidate was minimally corrected to use `${key}` in that message. This fixes the reported parser defect only; it does not resolve the architectural blockers above.
+- A fresh Windows PowerShell 5.1 validation run [42349771804](https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/42349771804) was started against the corrected commit. At report update time it was still in progress; no green result is claimed.
+- The CI workflow currently checks PowerShell 5.1 parsing and source-level transport guards only. It does not yet run behavioral queue, recovery, locking, ACK, or HTTP integration tests.
