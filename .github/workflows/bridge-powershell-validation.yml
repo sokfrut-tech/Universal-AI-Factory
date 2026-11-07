@@ -2,6 +2,8 @@ name: Bridge PowerShell 5.1 Validation
 
 on:
   push:
+    branches: [main, 'feat/jarvis-broker-v2.5-integration']
+  pull_request:
     branches: [main]
     paths:
       - 'coordination/bridge/candidates/*.ps1'
@@ -15,7 +17,7 @@ permissions:
 jobs:
   powershell-51-validation:
     runs-on: windows-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -53,3 +55,34 @@ jobs:
           if ($source -notmatch 'Invoke-RestMethod') { throw 'No real HTTP call found in candidate.' }
           if ($source -notmatch '\$geminiPanelEndpoint\s*=\s*\$null') { throw 'Transport must remain disabled for this validation.' }
           Write-Host "Transport source guards: PASS"
+
+      - name: Parse v2.5 broker candidate with Windows PowerShell 5.1
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $candidate = 'coordination/bridge/candidates/broker_v2.5-proposed-NOT-RELEASE.ps1'
+          $tokens = $null
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $candidate).Path, [ref]$tokens, [ref]$errors) | Out-Null
+          if ($errors.Count -gt 0) {
+            foreach ($parseError in $errors) {
+              Write-Host ("V25_PARSE_ERROR line={0} column={1} extent=<{2}> message={3}" -f $parseError.Extent.StartLineNumber, $parseError.Extent.StartColumnNumber, $parseError.Extent.Text, $parseError.Message)
+            }
+            throw "PowerShell 5.1 parser reported $($errors.Count) v2.5 error(s)."
+          }
+          Write-Host "v2.5 PowerShell 5.1 parser: PASS"
+
+      - name: Run v2.5 runtime integration tests
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          & '.\coordination\bridge\tests\Run-BrokerV25IntegrationTests.ps1'
+
+      - name: Enforce v2.5 transport remains disabled
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $source = Get-Content 'coordination/bridge/candidates/broker_v2.5-proposed-NOT-RELEASE.ps1' -Raw
+          if ($source -notmatch '\$geminiPanelEndpoint\s*=\s*\$null') { throw 'v2.5 transport must remain disabled.' }
+          if ($source -match '(?im)^\s*Invoke-RestMethod\b') { throw 'Unexpected active transport call in v2.5.' }
+          Write-Host "v2.5 disabled-transport guard: PASS"
