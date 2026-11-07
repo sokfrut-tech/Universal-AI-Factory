@@ -1,0 +1,3 @@
+config/hermes.local.yaml
+.env
+*.key
