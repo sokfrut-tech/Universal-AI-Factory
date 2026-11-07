@@ -30,6 +30,7 @@ jobs:
           set -euo pipefail
           bash -n coordination/gemini/scripts/resolve-task.sh
           bash -n coordination/gemini/scripts/extract-answer.sh
+          bash -n coordination/gemini/scripts/call-gemini-api.sh
           bash -n coordination/gemini/tests/test-runner.sh
       - name: Run Gemini dispatcher and response tests
         run: |
