@@ -88,4 +88,5 @@ jobs:
           if ($source -notmatch 'function\s+Test-AckSignature') { throw 'Missing ACK authentication function.' }
           if ($source -notmatch 'JARVIS_ACK_HMAC_KEY') { throw 'ACK secret must come from process environment.' }
           if ($source -notmatch 'HMACSHA256') { throw 'ACK HMAC-SHA256 implementation missing.' }
+          if ($source -notmatch 'GetByteCount\(\$secret\)\s*-lt\s*32') { throw 'ACK HMAC secret must enforce at least 32 UTF-8 bytes.' }
           Write-Host "v2.5 disabled-transport and HMAC source guards: PASS"
