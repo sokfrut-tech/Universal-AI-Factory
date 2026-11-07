@@ -1,0 +1,3 @@
+# Gemini — Jarvis emulator hang diagnosis
+
+Use the task and evidence in `coordination/gemini/dispatch/2026-11-07_jarvis-emulator-hang-root-cause.md`. The factory dispatcher now selects tasks using a Git pathspec `coordination/gemini/dispatch/*.md`, avoiding the broken regex. Return an evidence-based diagnosis and exact minimal workflow changes. Do not claim access to Gemeni source repository, local PC, or OPPO device. Save report to `coordination/gemini/outbox/REPORT_2026-11-07_jarvis-emulator-hang-root-cause.md`.
