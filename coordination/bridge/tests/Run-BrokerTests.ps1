@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 Write-Host "=== Запуск тестов Message Broker v2.4 ===" -ForegroundColor Cyan
 $broker = "coordination/bridge/candidates/broker_v2.4-proposed-NOT-RELEASE.ps1"
 if (-not (Test-Path $broker)) { throw "Broker candidate not found: $broker" }
