@@ -1,31 +1,29 @@
-name: Real AI Agent Execution
+name: Real Gemini Agent Execution
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
       - 'coordination/gemini/dispatch/*.md'
+      - '.github/workflows/real-ai-agent-execution.yml'
   workflow_dispatch:
     inputs:
-      agent:
-        description: 'Which connected agent should execute an inbox task'
-        required: true
-        type: choice
-        options: [claude, gemini]
       task_file:
-        description: 'Exact inbox markdown path'
+        description: 'Exact Gemini dispatch task markdown path'
         required: true
+        type: string
 
 permissions:
   contents: write
 
 concurrency:
-  group: real-agent-execution
+  group: real-gemini-agent-execution
   cancel-in-progress: false
 
 jobs:
-  execute-agent:
+  execute-gemini:
     runs-on: ubuntu-latest
+    timeout-minutes: 8
     steps:
       - name: Checkout factory
         uses: actions/checkout@v4
@@ -33,332 +31,95 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.FACTORY_PAT || github.token }}
 
-      - name: Resolve inbox tasks
-        id: tasks
+      - name: Resolve task
+        id: task
         shell: bash
         env:
           EVENT_BEFORE: ${{ github.event.before }}
           EVENT_SHA: ${{ github.sha }}
-          INPUT_AGENT: ${{ inputs.agent }}
           INPUT_TASK: ${{ inputs.task_file }}
         run: |
           set -euo pipefail
-          : > /tmp/tasks.tsv
           if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
-            [[ -f "${INPUT_TASK}" ]] || { echo "::error::Inbox task not found: ${INPUT_TASK}"; exit 1; }
-            [[ "${INPUT_TASK}" == "coordination/${INPUT_AGENT}/inbox/"*.md || "${INPUT_TASK}" == "coordination/${INPUT_AGENT}/dispatch/"*.md ]] || { echo "::error::Task path does not match selected agent"; exit 1; }
-            printf '%s\t%s\n' "${INPUT_AGENT}" "${INPUT_TASK}" >> /tmp/tasks.tsv
+            TASK="${INPUT_TASK}"
           else
             if [[ -z "${EVENT_BEFORE}" || "${EVENT_BEFORE}" == "0000000000000000000000000000000000000000" ]]; then
               RANGE="${EVENT_SHA}~1 ${EVENT_SHA}"
             else
               RANGE="${EVENT_BEFORE} ${EVENT_SHA}"
             fi
-            # Only explicit dispatch files invoke Gemini, conserving the user's limited API quota.
-            # Match Markdown paths with a single escaped dot in the ERE.
-            while IFS= read -r file; do
-              [[ -n "${file}" ]] && printf '%s\t%s\n' "gemini" "${file}" >> /tmp/tasks.tsv
-            done < <(git diff --name-only --diff-filter=AM ${RANGE} -- 'coordination/gemini/dispatch/*.md')
+            mapfile -t TASKS < <(git diff --name-only --diff-filter=AM ${RANGE} -- 'coordination/gemini/dispatch/*.md')
+            if [[ "${#TASKS[@]}" -eq 0 ]]; then
+              echo "::error::No new Gemini dispatch task found in this push."
+              exit 1
+            fi
+            if [[ "${#TASKS[@]}" -gt 1 ]]; then
+              echo "::error::One task per API run is required; found ${#TASKS[@]}."
+              exit 1
+            fi
+            TASK="${TASKS[0]}"
           fi
-          if [[ ! -s /tmp/tasks.tsv ]]; then
-            echo "No new inbox tasks in this event."
-            exit 0
-          fi
-          cat /tmp/tasks.tsv
+          [[ "${TASK}" == coordination/gemini/dispatch/*.md && -f "${TASK}" ]] || { echo "::error::Invalid or missing task path: ${TASK}"; exit 1; }
+          echo "path=${TASK}" >> "${GITHUB_OUTPUT}"
+          echo "Resolved Gemini task: ${TASK}"
 
-      - name: Execute connected AI agents
-        if: steps.tasks.outcome == 'success'
+      - name: Call Gemini Developer API directly
         shell: bash
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+          TASK_PATH: ${{ steps.task.outputs.path }}
         run: |
           set -euo pipefail
-          while IFS=$'\t' read -r agent task; do
-            [[ -n "${agent}" && -n "${task}" ]] || continue
-            task_body="$(cat "${task}")"
-            task_name="$(basename "${task}" .md)"
-            mkdir -p "coordination/${agent}/outbox"
-            report="coordination/${agent}/outbox/REPORT_${task_name}.md"
-            if [[ -f "${report}" ]]; then
-              echo "Skipping already completed task: ${report}"
-              continue
-            fi
+          [[ -n "${GEMINI_API_KEY}" ]] || { echo "::error::GEMINI_API_KEY secret is missing."; exit 1; }
+          MODEL="${GEMINI_MODEL:-gemini-3.8-flash}"
+          TASK_BODY="$(cat "${TASK_PATH}")"
+          SYSTEM_PROMPT='You are Gemini, the independent senior engineering agent of Universal AI Factory. Perform the requested analysis rigorously. Separate verified facts from hypotheses. Never claim to inspect repositories, devices, logs, or run tests unless their contents or access are explicitly provided. Return a substantial Markdown engineering report with evidence, root-cause ranking, minimal safe fixes, risks, and verification steps. Do not return an ACK.'
+          PROMPT="${SYSTEM_PROMPT}
 
-            system_prompt="You are an engineering agent in Universal AI Factory. Follow the task exactly. Be truthful about what you did. You cannot access other repositories unless their contents are provided in this prompt. Do not claim to edit source repositories, run builds, inspect files, or create PRs unless the task provides tools to do so. Your deliverable is a substantive engineering analysis or implementation plan with evidence, risks, exact next steps, and an honest status. Return Markdown."
+TASK FILE: ${TASK_PATH}
 
-            if [[ "${agent}" == "claude" ]]; then
-              if [[ -z "${ANTHROPIC_API_KEY}" ]]; then
-                echo "::notice::Claude skipped: ANTHROPIC_API_KEY is not configured. This optional agent will not block Gemini or other factory work."
-                continue
-              fi
-              model="${CLAUDE_MODEL:-claude-sonnet-4-5-20250929}"
-              payload="$(jq -n --arg model "${model}" --arg system "${system_prompt}" --arg task "${task_body}" '{model:$model,max_tokens:7000,system:$system,messages:[{role:"user",content:$task}]}')"
-              response="$(curl --fail-with-body --silent --show-error https://api.anthropic.com/v1/messages -H "x-api-key: ${ANTHROPIC_API_KEY}" -H "anthropic-version: 2023-06-01" -H "content-type: application/json" -d "${payload}")"
-              answer="$(printf '%s' "${response}" | jq -r '[.content[]? | select(.type=="text") | .text] | join("\n")')"
-            else
-              [[ -n "${GEMINI_API_KEY}" ]] || { echo "::error::Missing repository secret GEMINI_API_KEY; Gemini agent is not connected."; exit 1; }
-              model="${GEMINI_MODEL:-gemini-3.8-flash}"
-              printf -v prompt '%s\n\nTASK:\n%s' "${system_prompt}" "${task_body}"
-              payload="$(jq -n --arg prompt "${prompt}" '{contents:[{parts:[{text:$prompt}]}],generationConfig:{temperature:0.2,maxOutputTokens:7000}}')"
-              response="$(curl --fail-with-body --silent --show-error --retry 1 --retry-delay 3 --retry-max-time 30 --retry-connrefused "https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent" -H "x-goog-api-key: ${GEMINI_API_KEY}" -H "content-type: application/json" -d "${payload}")"
-              answer="$(printf '%s' "${response}" | jq -r '[.candidates[0].content.parts[]?.text] | join("\n")')"
-            fi
+${TASK_BODY}"
+          jq -n --arg prompt "${PROMPT}" '{
+            contents:[{role:"user",parts:[{text:$prompt}]}],
+            generationConfig:{temperature:0.15,maxOutputTokens:12000}
+          }' > /tmp/gemini-request.json
+          curl --fail-with-body --silent --show-error --max-time 240 --retry 2 --retry-delay 4 --retry-all-errors \
+            "https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent" \
+            -H "x-goog-api-key: ${GEMINI_API_KEY}" \
+            -H "content-type: application/json" \
+            --data-binary @/tmp/gemini-request.json \
+            -o /tmp/gemini-response.json
+          ANSWER="$(jq -r '[.candidates[0].content.parts[]?.text] | join("\n")' /tmp/gemini-response.json)"
+          if [[ -z "${ANSWER//[[:space:]]/}" ]]; then
+            echo "::error::Gemini API returned no text. Response metadata:"
+            jq '{error, promptFeedback, candidates:[.candidates[]? | {finishReason, safetyRatings}]}' /tmp/gemini-response.json
+            exit 1
+          fi
+          REPORT="coordination/gemini/outbox/REPORT_$(basename "${TASK_PATH}")"
+          mkdir -p coordination/gemini/outbox
+          {
+            echo "# Gemini engineering report"
+            echo
+            echo "- Task: `${TASK_PATH}`"
+            echo "- Model: ${MODEL}"
+            echo "- Generated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo "- Execution: direct Gemini Developer API response"
+            echo
+            printf '%s\n' "${ANSWER}"
+          } > "${REPORT}"
+          echo "Created substantive Gemini report: ${REPORT}"
 
-            [[ -n "${answer//[[:space:]]/}" ]] || { echo "::error::Agent ${agent} returned an empty response for ${task}"; exit 1; }
-            {
-              echo "# Agent report: ${agent}"
-              echo
-              echo "- Task: \`${task}\`"
-              echo "- Model: ${model}"
-              echo "- Generated at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-              echo "- Execution: live API response"
-              echo
-              printf '%s\n' "${answer}"
-            } > "${report}"
-            echo "Created substantive agent report: ${report}"
-          done < /tmp/tasks.tsv
-
-      - name: Commit agent reports
+      - name: Commit report to factory
         shell: bash
         run: |
           set -euo pipefail
-          git config user.name "Universal AI Factory Agent"
-          git config user.email "factory-agent@users.noreply.github.com"
-          git add coordination/claude/outbox/ coordination/gemini/outbox/
-          if ! git diff --cached --quiet; then
-            git commit -m "chore(factory): save live Claude and Gemini agent reports [skip ci]"
-            git push origin HEAD:main
-          else
-            echo "No new agent reports to commit."
+          git config user.name "Universal AI Factory Gemini Agent"
+          git config user.email "gemini-agent@users.noreply.github.com"
+          git add coordination/gemini/outbox/
+          if git diff --cached --quiet; then
+            echo "::error::Gemini produced no report to commit."
+            exit 1
           fi
- || true)
-          fi
-          if [[ ! -s /tmp/tasks.tsv ]]; then
-            echo "No new inbox tasks in this event."
-            exit 0
-          fi
-          cat /tmp/tasks.tsv
-
-      - name: Execute connected AI agents
-        if: steps.tasks.outcome == 'success'
-        shell: bash
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL }}
-          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
-        run: |
-          set -euo pipefail
-          while IFS=$'\t' read -r agent task; do
-            [[ -n "${agent}" && -n "${task}" ]] || continue
-            task_body="$(cat "${task}")"
-            task_name="$(basename "${task}" .md)"
-            mkdir -p "coordination/${agent}/outbox"
-            report="coordination/${agent}/outbox/REPORT_${task_name}.md"
-            if [[ -f "${report}" ]]; then
-              echo "Skipping already completed task: ${report}"
-              continue
-            fi
-
-            system_prompt="You are an engineering agent in Universal AI Factory. Follow the task exactly. Be truthful about what you did. You cannot access other repositories unless their contents are provided in this prompt. Do not claim to edit source repositories, run builds, inspect files, or create PRs unless the task provides tools to do so. Your deliverable is a substantive engineering analysis or implementation plan with evidence, risks, exact next steps, and an honest status. Return Markdown."
-
-            if [[ "${agent}" == "claude" ]]; then
-              if [[ -z "${ANTHROPIC_API_KEY}" ]]; then
-                echo "::notice::Claude skipped: ANTHROPIC_API_KEY is not configured. This optional agent will not block Gemini or other factory work."
-                continue
-              fi
-              model="${CLAUDE_MODEL:-claude-sonnet-4-5-20250929}"
-              payload="$(jq -n --arg model "${model}" --arg system "${system_prompt}" --arg task "${task_body}" '{model:$model,max_tokens:7000,system:$system,messages:[{role:"user",content:$task}]}')"
-              response="$(curl --fail-with-body --silent --show-error https://api.anthropic.com/v1/messages -H "x-api-key: ${ANTHROPIC_API_KEY}" -H "anthropic-version: 2023-06-01" -H "content-type: application/json" -d "${payload}")"
-              answer="$(printf '%s' "${response}" | jq -r '[.content[]? | select(.type=="text") | .text] | join("\n")')"
-            else
-              [[ -n "${GEMINI_API_KEY}" ]] || { echo "::error::Missing repository secret GEMINI_API_KEY; Gemini agent is not connected."; exit 1; }
-              model="${GEMINI_MODEL:-gemini-3.8-flash}"
-              printf -v prompt '%s\n\nTASK:\n%s' "${system_prompt}" "${task_body}"
-              payload="$(jq -n --arg prompt "${prompt}" '{contents:[{parts:[{text:$prompt}]}],generationConfig:{temperature:0.2,maxOutputTokens:7000}}')"
-              response="$(curl --fail-with-body --silent --show-error --retry 1 --retry-delay 3 --retry-max-time 30 --retry-connrefused "https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent" -H "x-goog-api-key: ${GEMINI_API_KEY}" -H "content-type: application/json" -d "${payload}")"
-              answer="$(printf '%s' "${response}" | jq -r '[.candidates[0].content.parts[]?.text] | join("\n")')"
-            fi
-
-            [[ -n "${answer//[[:space:]]/}" ]] || { echo "::error::Agent ${agent} returned an empty response for ${task}"; exit 1; }
-            {
-              echo "# Agent report: ${agent}"
-              echo
-              echo "- Task: \`${task}\`"
-              echo "- Model: ${model}"
-              echo "- Generated at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-              echo "- Execution: live API response"
-              echo
-              printf '%s\n' "${answer}"
-            } > "${report}"
-            echo "Created substantive agent report: ${report}"
-          done < /tmp/tasks.tsv
-
-      - name: Commit agent reports
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "Universal AI Factory Agent"
-          git config user.email "factory-agent@users.noreply.github.com"
-          git add coordination/claude/outbox/ coordination/gemini/outbox/
-          if ! git diff --cached --quiet; then
-            git commit -m "chore(factory): save live Claude and Gemini agent reports [skip ci]"
-            git push origin HEAD:main
-          else
-            echo "No new agent reports to commit."
-          fi
- || true)
-          fi
-          if [[ ! -s /tmp/tasks.tsv ]]; then
-            echo "No new inbox tasks in this event."
-            exit 0
-          fi
-          cat /tmp/tasks.tsv
-
-      - name: Execute connected AI agents
-        if: steps.tasks.outcome == 'success'
-        shell: bash
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL }}
-          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
-        run: |
-          set -euo pipefail
-          while IFS=$'\t' read -r agent task; do
-            [[ -n "${agent}" && -n "${task}" ]] || continue
-            task_body="$(cat "${task}")"
-            task_name="$(basename "${task}" .md)"
-            mkdir -p "coordination/${agent}/outbox"
-            report="coordination/${agent}/outbox/REPORT_${task_name}.md"
-            if [[ -f "${report}" ]]; then
-              echo "Skipping already completed task: ${report}"
-              continue
-            fi
-
-            system_prompt="You are an engineering agent in Universal AI Factory. Follow the task exactly. Be truthful about what you did. You cannot access other repositories unless their contents are provided in this prompt. Do not claim to edit source repositories, run builds, inspect files, or create PRs unless the task provides tools to do so. Your deliverable is a substantive engineering analysis or implementation plan with evidence, risks, exact next steps, and an honest status. Return Markdown."
-
-            if [[ "${agent}" == "claude" ]]; then
-              if [[ -z "${ANTHROPIC_API_KEY}" ]]; then
-                echo "::notice::Claude skipped: ANTHROPIC_API_KEY is not configured. This optional agent will not block Gemini or other factory work."
-                continue
-              fi
-              model="${CLAUDE_MODEL:-claude-sonnet-4-5-20250929}"
-              payload="$(jq -n --arg model "${model}" --arg system "${system_prompt}" --arg task "${task_body}" '{model:$model,max_tokens:7000,system:$system,messages:[{role:"user",content:$task}]}')"
-              response="$(curl --fail-with-body --silent --show-error https://api.anthropic.com/v1/messages -H "x-api-key: ${ANTHROPIC_API_KEY}" -H "anthropic-version: 2023-06-01" -H "content-type: application/json" -d "${payload}")"
-              answer="$(printf '%s' "${response}" | jq -r '[.content[]? | select(.type=="text") | .text] | join("\n")')"
-            else
-              [[ -n "${GEMINI_API_KEY}" ]] || { echo "::error::Missing repository secret GEMINI_API_KEY; Gemini agent is not connected."; exit 1; }
-              model="${GEMINI_MODEL:-gemini-3.8-flash}"
-              printf -v prompt '%s\n\nTASK:\n%s' "${system_prompt}" "${task_body}"
-              payload="$(jq -n --arg prompt "${prompt}" '{contents:[{parts:[{text:$prompt}]}],generationConfig:{temperature:0.2,maxOutputTokens:7000}}')"
-              response="$(curl --fail-with-body --silent --show-error --retry 1 --retry-delay 3 --retry-max-time 30 --retry-connrefused "https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent" -H "x-goog-api-key: ${GEMINI_API_KEY}" -H "content-type: application/json" -d "${payload}")"
-              answer="$(printf '%s' "${response}" | jq -r '[.candidates[0].content.parts[]?.text] | join("\n")')"
-            fi
-
-            [[ -n "${answer//[[:space:]]/}" ]] || { echo "::error::Agent ${agent} returned an empty response for ${task}"; exit 1; }
-            {
-              echo "# Agent report: ${agent}"
-              echo
-              echo "- Task: \`${task}\`"
-              echo "- Model: ${model}"
-              echo "- Generated at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-              echo "- Execution: live API response"
-              echo
-              printf '%s\n' "${answer}"
-            } > "${report}"
-            echo "Created substantive agent report: ${report}"
-          done < /tmp/tasks.tsv
-
-      - name: Commit agent reports
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "Universal AI Factory Agent"
-          git config user.email "factory-agent@users.noreply.github.com"
-          git add coordination/claude/outbox/ coordination/gemini/outbox/
-          if ! git diff --cached --quiet; then
-            git commit -m "chore(factory): save live Claude and Gemini agent reports [skip ci]"
-            git push origin HEAD:main
-          else
-            echo "No new agent reports to commit."
-          fi
- || true)
-          fi
-          if [[ ! -s /tmp/tasks.tsv ]]; then
-            echo "No new inbox tasks in this event."
-            exit 0
-          fi
-          cat /tmp/tasks.tsv
-
-      - name: Execute connected AI agents
-        if: steps.tasks.outcome == 'success'
-        shell: bash
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL }}
-          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
-        run: |
-          set -euo pipefail
-          while IFS=$'\t' read -r agent task; do
-            [[ -n "${agent}" && -n "${task}" ]] || continue
-            task_body="$(cat "${task}")"
-            task_name="$(basename "${task}" .md)"
-            mkdir -p "coordination/${agent}/outbox"
-            report="coordination/${agent}/outbox/REPORT_${task_name}.md"
-            if [[ -f "${report}" ]]; then
-              echo "Skipping already completed task: ${report}"
-              continue
-            fi
-
-            system_prompt="You are an engineering agent in Universal AI Factory. Follow the task exactly. Be truthful about what you did. You cannot access other repositories unless their contents are provided in this prompt. Do not claim to edit source repositories, run builds, inspect files, or create PRs unless the task provides tools to do so. Your deliverable is a substantive engineering analysis or implementation plan with evidence, risks, exact next steps, and an honest status. Return Markdown."
-
-            if [[ "${agent}" == "claude" ]]; then
-              if [[ -z "${ANTHROPIC_API_KEY}" ]]; then
-                echo "::notice::Claude skipped: ANTHROPIC_API_KEY is not configured. This optional agent will not block Gemini or other factory work."
-                continue
-              fi
-              model="${CLAUDE_MODEL:-claude-sonnet-4-5-20250929}"
-              payload="$(jq -n --arg model "${model}" --arg system "${system_prompt}" --arg task "${task_body}" '{model:$model,max_tokens:7000,system:$system,messages:[{role:"user",content:$task}]}')"
-              response="$(curl --fail-with-body --silent --show-error https://api.anthropic.com/v1/messages -H "x-api-key: ${ANTHROPIC_API_KEY}" -H "anthropic-version: 2023-06-01" -H "content-type: application/json" -d "${payload}")"
-              answer="$(printf '%s' "${response}" | jq -r '[.content[]? | select(.type=="text") | .text] | join("\n")')"
-            else
-              [[ -n "${GEMINI_API_KEY}" ]] || { echo "::error::Missing repository secret GEMINI_API_KEY; Gemini agent is not connected."; exit 1; }
-              model="${GEMINI_MODEL:-gemini-3.8-flash}"
-              printf -v prompt '%s\n\nTASK:\n%s' "${system_prompt}" "${task_body}"
-              payload="$(jq -n --arg prompt "${prompt}" '{contents:[{parts:[{text:$prompt}]}],generationConfig:{temperature:0.2,maxOutputTokens:7000}}')"
-              response="$(curl --fail-with-body --silent --show-error --retry 1 --retry-delay 3 --retry-max-time 30 --retry-connrefused "https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent" -H "x-goog-api-key: ${GEMINI_API_KEY}" -H "content-type: application/json" -d "${payload}")"
-              answer="$(printf '%s' "${response}" | jq -r '[.candidates[0].content.parts[]?.text] | join("\n")')"
-            fi
-
-            [[ -n "${answer//[[:space:]]/}" ]] || { echo "::error::Agent ${agent} returned an empty response for ${task}"; exit 1; }
-            {
-              echo "# Agent report: ${agent}"
-              echo
-              echo "- Task: \`${task}\`"
-              echo "- Model: ${model}"
-              echo "- Generated at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-              echo "- Execution: live API response"
-              echo
-              printf '%s\n' "${answer}"
-            } > "${report}"
-            echo "Created substantive agent report: ${report}"
-          done < /tmp/tasks.tsv
-
-      - name: Commit agent reports
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "Universal AI Factory Agent"
-          git config user.email "factory-agent@users.noreply.github.com"
-          git add coordination/claude/outbox/ coordination/gemini/outbox/
-          if ! git diff --cached --quiet; then
-            git commit -m "chore(factory): save live Claude and Gemini agent reports [skip ci]"
-            git push origin HEAD:main
-          else
-            echo "No new agent reports to commit."
-          fi
+          git commit -m "chore(factory): save direct Gemini API report [skip ci]"
+          git push origin HEAD:main
