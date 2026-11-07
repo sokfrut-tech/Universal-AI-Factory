@@ -51,3 +51,7 @@ The Universal-AI-Factory dispatcher had a malformed task-path matcher and duplic
 - Do not claim access to the user's local Windows PC, `C:\dr`, WHPX/HAXM, local qemu process, allocated AVD RAM, or physical OPPO device.
 - Do not claim to run tests or edit code.
 - Do not create an ACK. Write a substantial, useful Markdown engineering report.
+
+
+## Re-dispatch
+This revision explicitly re-dispatches the same task after the direct API runner was repaired. Execute the full report now; do not return an ACK.
