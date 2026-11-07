@@ -58,7 +58,7 @@ jobs:
             # Match Markdown paths with a single escaped dot in the ERE.
             while IFS= read -r file; do
               [[ -n "${file}" ]] && printf '%s\t%s\n' "gemini" "${file}" >> /tmp/tasks.tsv
-            done < <(git diff --name-only --diff-filter=AM ${RANGE} -- "coordination/gemini/dispatch/" | grep -E '\.md
+            done < <(git diff --name-only --diff-filter=AM ${RANGE} -- 'coordination/gemini/dispatch/*.md')
           fi
           if [[ ! -s /tmp/tasks.tsv ]]; then
             echo "No new inbox tasks in this event."
