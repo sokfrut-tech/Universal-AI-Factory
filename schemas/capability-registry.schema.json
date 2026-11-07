@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/schemas/capability-registry.schema.json",
+  "title": "Universal AI Factory capability registry",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "updated_at",
+    "access_states",
+    "default_policy",
+    "capabilities"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "access_states": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "operator_only",
+          "adapter_pending",
+          "agent_enabled",
+          "blocked"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "default_policy": {
+      "type": "object",
+      "required": [
+        "default_access",
+        "default_permission",
+        "project_isolation",
+        "approval_required_for",
+        "secret_values_in_logs",
+        "ack_is_execution"
+      ],
+      "properties": {
+        "default_access": {
+          "const": "operator_only"
+        },
+        "default_permission": {
+          "const": "read"
+        },
+        "project_isolation": {
+          "const": true
+        },
+        "approval_required_for": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "secret_values_in_logs": {
+          "const": false
+        },
+        "ack_is_execution": {
+          "const": false
+        }
+      },
+      "additionalProperties": true
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "family",
+          "access_state",
+          "operations"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "family": {
+            "type": "string"
+          },
+          "access_state": {
+            "enum": [
+              "operator_only",
+              "adapter_pending",
+              "agent_enabled",
+              "blocked"
+            ]
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "approval": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "blocked_reason": {
+            "type": "string"
+          },
+          "data_boundary": {
+            "type": "string"
+          },
+          "write_scope": {
+            "type": "string"
+          },
+          "adapter_evidence": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1
+    }
+  },
+  "additionalProperties": false
+}
