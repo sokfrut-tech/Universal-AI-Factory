@@ -58,3 +58,8 @@ Passing CI establishes the tested behaviors above, not full production readiness
 ## Operational boundary
 
 This branch is a test candidate only. The v2.4 candidate remains unchanged. No production transport was enabled, no API key was added to source, and no release/deployment was performed.
+
+
+## Protocol specification
+
+The canonical signing payload, field mapping, secret requirements, and security limitations are documented in [ACK_HMAC_PROTOCOL_v1.md](ACK_HMAC_PROTOCOL_v1.md).
