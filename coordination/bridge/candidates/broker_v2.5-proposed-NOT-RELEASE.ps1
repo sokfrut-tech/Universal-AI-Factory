@@ -178,6 +178,13 @@ function Invoke-BrokerIteration {
         }
         if($parsed.Meta.ContainsKey("ack_task_id")){
             $ackId=[string]$parsed.Meta.ack_task_id
+            if($ledger.ContainsKey($ackId)){
+                $original=$ledger[$ackId]
+                if(([string]$parsed.Meta.from -ne [string]$original.Target) -or ([string]$parsed.Meta.to -ne [string]$original.Source)){
+                    Write-Log ("ACK route mismatch for {0}; retained for investigation." -f $ackId) "ERROR"
+                    continue
+                }
+            }
             if(Complete-Acknowledgement -Ledger $ledger -AckId $ackId -AckFileName $task.File -AckTaskId $id){continue}
             Write-Log ("Unknown ACK target {0}; retained." -f $ackId) "WARN";continue
         }
