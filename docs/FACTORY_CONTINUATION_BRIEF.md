@@ -85,3 +85,11 @@ Least privilege; secrets never in source/logs; production deploy only after requ
 - Jarvis PR #7 run #11 is red at emulator Vosk-listening marker timeout; APK build and independent emulator probe passed. The artifact is available in RussSearchOPPO Actions run 42374316368, artifact ID 13575596341.
 - Jarvis continuation brief is in RussSearchOPPO PR #9, branch `docs/jarvis-continuation-brief`, head `d3e6103d261151cbb1d9e85c4ce44bc756336deb`.
 - Before dispatching an independent Gemini root-cause review, wait until duplicate dispatch workflow removal is merged; otherwise one task can invoke Gemini twice.
+
+
+### 2026-11-07 — дополнительная проверка последнего Gemini API run
+- Run: [42367422075](https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/42367422075), job `128389041601`, workflow `Real Gemini Agent Execution`, attempt 2.
+- Resolve task step passed and selected `coordination/gemini/dispatch/2026-11-07_jarvis-emulator-hang-direct-api.md`.
+- API call failed after configured retries: primary `gemini-3.1-pro-preview` returned HTTP 429 `RESOURCE_EXHAUSTED` twice; fallback `gemini-3.8-flash` returned HTTP 503 `UNAVAILABLE` twice; final fallback request timed out after 75 seconds with curl exit 28 / HTTP 000. No report was committed. This is a provider quota/availability failure, not a task parser failure.
+- Retry script currently classifies 429 as transient and allows up to five attempts. Review quota-aware retry policy (distinguish exhausted quota from short rate limit, honor Retry-After where provided, bound total wall-clock) before blind retries. Do not repeatedly dispatch this same task until provider availability/quota is confirmed.
+- PR #23 head commit `b5850b069541e0ba0412ac8084294e6d6828ec1c`; PR open and mergeable at last check; no checks had appeared at time of inspection. Recheck latest CI before merge.
