@@ -190,7 +190,7 @@ try {
                         $task.Status = "WAITING_ACK"
                         Write-Log "Task $k отправлен (HTTP 200)." "INFO"
                     } catch {
-                        Write-Log "Ошибка отправки $k: $($_.Exception.Message)" "ERROR"
+                        Write-Log "Ошибка отправки ${k}: $($_.Exception.Message)" "ERROR"
                         if ($task.Attempts -ge 3) {
                             $task.Status = "DEAD_LETTER"
                             Move-Item -Path $procFile -Destination (Join-Path $basePath "errors\$($task.File)") -Force
