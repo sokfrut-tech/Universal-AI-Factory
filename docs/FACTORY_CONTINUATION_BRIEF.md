@@ -56,3 +56,32 @@ Least privilege; secrets never in source/logs; production deploy only after requ
 - [ ] Check any still-running Gemini job; do not launch routine calls.
 - [ ] Document target-repository checkout limitation, if still present.
 - [ ] Complete one real end-to-end task with patch, tests and artifact before scaling.
+
+
+## 2026-11-07 — фабричный dispatch audit (continuation)
+
+### Confirmed current state
+- `.github/workflows/inbox-dispatcher.yml` watches Claude/Gemini/ChatGPT inboxes and writes a **non-authoritative receipt only**. It does not call Claude or Gemini.
+- `.github/workflows/real-ai-agent-execution.yml` is the substantive Gemini API execution path. It watches `coordination/gemini/dispatch/*.md` on main and supports manual `workflow_dispatch` with exact `task_file` input. It calls Gemini Developer API and writes a substantive report to `coordination/gemini/outbox/`.
+- A second workflow, `.github/workflows/gemini-direct-api.yml`, also watched the same Gemini dispatch path and independently called the Gemini API. This created duplicate calls/reports and potential duplicate cost.
+- Claude inbox currently has no verified automatic Claude API execution workflow in the inspected paths. Receipt is not proof of Claude execution. Do not claim live Claude dispatch until a real provider run/report is observed.
+- Existing Gemini reports in outbox prove that direct Gemini API calls have succeeded in earlier runs, but they do not prove that every current inbox message is automatically delivered or reviewed.
+
+### Change prepared in PR
+- Branch: `fix/single-gemini-dispatch-2026-11-07`
+- Commit: `fd1df977e035e94b9bae797251133680b5c70fab`
+- Change: remove obsolete duplicate `.github/workflows/gemini-direct-api.yml`; retain `.github/workflows/real-ai-agent-execution.yml` as the single Gemini execution path.
+- PR must be reviewed and CI checked before merge. No merge performed by this work.
+
+### Safe dispatch protocol after the duplicate-workflow fix is merged
+1. Confirm only one active workflow listens to `coordination/gemini/dispatch/*.md`.
+2. Check task filename has no existing matching report, and check latest Actions run for same task to prevent duplicate invocation.
+3. Add exactly one self-contained Markdown task file under `coordination/gemini/dispatch/` on main. This push is an explicit Gemini API invocation and may incur API quota/cost.
+4. Verify one workflow run, model, successful API response, non-empty report, commit SHA and report contents. Do not accept an ACK as a report.
+5. If failure, inspect run/log and correct the cause before retrying; no blind repeated dispatch.
+6. For Claude, use only an actual connected Claude API/agent workflow. If no provider key or execution path exists, mark blocked and keep task as a review brief; never fake Claude output.
+
+### Current project coordination finding
+- Jarvis PR #7 run #11 is red at emulator Vosk-listening marker timeout; APK build and independent emulator probe passed. The artifact is available in RussSearchOPPO Actions run 42374316368, artifact ID 13575596341.
+- Jarvis continuation brief is in RussSearchOPPO PR #9, branch `docs/jarvis-continuation-brief`, head `d3e6103d261151cbb1d9e85c4ce44bc756336deb`.
+- Before dispatching an independent Gemini root-cause review, wait until duplicate dispatch workflow removal is merged; otherwise one task can invoke Gemini twice.
