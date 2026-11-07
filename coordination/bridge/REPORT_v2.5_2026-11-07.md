@@ -43,7 +43,7 @@ The 16 assertions cover:
 - Validates ACK sender/recipient routing against the original task before completion.\n- Requires HMAC-SHA256 signature over canonical `v1` ACK fields; secret is read only from process environment variable `JARVIS_ACK_HMAC_KEY`. Missing secret or invalid signature fails closed.\n- Reconciles files already in `processed` with stale Ledger state after a crash between file move and Ledger save.
 - Gemini transport remains deliberately disabled (`$geminiPanelEndpoint = $null`).
 
-## Latest verified run\n\nGitHub Actions run: https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/42364088589\n\nCommit: `950ddbc6b7efcbfe653e9d9a8455c7d52631de75`\n\nThe run confirms 19 assertions, including HMAC rejection, route validation, and recovery after a simulated crash between file move and Ledger save. The workflow source guard for HMAC is also present in the branch workflow; a fresh run on the final report commit is required to verify that exact workflow revision.\n\n## Release status
+## Latest verified run\n\nGitHub Actions run: https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/42364096112\n\nValidated broker/test commit: `950ddbc6b7efcbfe653e9d9a8455c7d52631de75`\n\nWorkflow source-guard revision: `0fca461327c0498827e457ca315f0d31449fbb43`\n\nThe run confirms 19 assertions, including HMAC rejection, route validation, and recovery after a simulated crash between file move and Ledger save. The same run also passed the workflow source guard requiring the HMAC function, process-environment secret lookup, and HMACSHA256 implementation.\n\n## Release status
 
 **NOT RELEASE-APPROVED. Do not merge or deploy this candidate.**
 
