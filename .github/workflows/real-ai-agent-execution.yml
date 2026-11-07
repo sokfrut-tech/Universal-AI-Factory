@@ -60,17 +60,19 @@ jobs:
           echo "path=$TASK" >> "$GITHUB_OUTPUT"
           echo "Resolved Gemini task: $TASK"
 
-      - name: Call Gemini Developer API directly
+      - name: Call Gemini Developer API (exponential backoff and fallback)
         timeout-minutes: 8
         shell: bash
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+          GEMINI_FALLBACK_MODEL: gemini-3.8-flash
           TASK_PATH: ${{ steps.task.outputs.path }}
         run: |
           set -euo pipefail
           [[ -n "$GEMINI_API_KEY" ]] || { echo "::error::GEMINI_API_KEY secret is missing."; exit 1; }
-          MODEL="${GEMINI_MODEL:-gemini-3.8-flash}"
+          MODEL="${GEMINI_MODEL:-gemini-3.1-pro-preview}"
+          FALLBACK_MODEL="$GEMINI_FALLBACK_MODEL"
           TASK_BODY="$(cat "$TASK_PATH")"
           SYSTEM_PROMPT='You are Gemini, the independent senior engineering agent of Universal AI Factory. Perform the requested analysis rigorously. Separate verified facts from hypotheses. Never claim to inspect repositories, devices, logs, or run tests unless their contents or access are explicitly provided. Return a substantial Markdown engineering report with evidence, root-cause ranking, minimal safe fixes, risks, and verification steps. Do not return an ACK.'
           PROMPT="$SYSTEM_PROMPT
@@ -83,9 +85,7 @@ jobs:
             generationConfig:{temperature:0.15,maxOutputTokens:12000}
           }' > /tmp/gemini-request.json
 
-          echo "Calling Gemini model: $MODEL"
-          curl --fail-with-body --silent --show-error --max-time 180             --retry 2 --retry-max-time 420 --retry-connrefused             "https://generativelanguage.googleapis.com/v1beta/models/$MODEL:generateContent"             -H "x-goog-api-key: $GEMINI_API_KEY"             -H "content-type: application/json"             --data-binary @/tmp/gemini-request.json             -o /tmp/gemini-response.json
-
+          GEMINI_MODEL="$MODEL" bash coordination/gemini/scripts/call-gemini-api.sh /tmp/gemini-request.json /tmp/gemini-response.json
           bash coordination/gemini/scripts/extract-answer.sh /tmp/gemini-response.json > /tmp/gemini-answer.md
           REPORT="coordination/gemini/outbox/REPORT_$(basename "$TASK_PATH")"
           mkdir -p coordination/gemini/outbox
@@ -93,7 +93,8 @@ jobs:
             echo "# Gemini engineering report"
             echo
             echo "- Task: `$TASK_PATH`"
-            echo "- Model: $MODEL"
+            echo "- Configured primary model: $MODEL"
+            echo "- Fallback model: $FALLBACK_MODEL"
             echo "- Generated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
             echo "- Execution: direct Gemini Developer API response"
             echo
