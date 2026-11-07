@@ -55,3 +55,6 @@ The Universal-AI-Factory dispatcher had a malformed task-path matcher and duplic
 
 ## Re-dispatch
 This revision explicitly re-dispatches the same task after the direct API runner was repaired. Execute the full report now; do not return an ACK.
+
+
+Dispatcher retry marker: execute via the dedicated Gemini Direct API Worker workflow.
