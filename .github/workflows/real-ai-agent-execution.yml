@@ -21,14 +21,31 @@ concurrency:
 
 jobs:
   execute-gemini:
+    name: Execute one Gemini task
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 12
     steps:
+      - name: Enforce main-only execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_REF" != "refs/heads/main" ]]; then
+            echo "::error::Gemini execution is restricted to main; received $GITHUB_REF."
+            exit 1
+          fi
+
       - name: Checkout factory
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.FACTORY_PAT || github.token }}
+
+      - name: Install jq
+        run: |
+          command -v jq >/dev/null 2>&1 || {
+            sudo apt-get update
+            sudo apt-get install -y jq
+          }
 
       - name: Resolve task
         id: task
@@ -39,75 +56,52 @@ jobs:
           INPUT_TASK: ${{ inputs.task_file }}
         run: |
           set -euo pipefail
-          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
-            TASK="${INPUT_TASK}"
-          else
-            if [[ -z "${EVENT_BEFORE}" || "${EVENT_BEFORE}" == "0000000000000000000000000000000000000000" ]]; then
-              RANGE="${EVENT_SHA}~1 ${EVENT_SHA}"
-            else
-              RANGE="${EVENT_BEFORE} ${EVENT_SHA}"
-            fi
-            mapfile -t TASKS < <(git diff --name-only --diff-filter=AM ${EVENT_BEFORE} ${EVENT_SHA} -- 'coordination/gemini/dispatch/*.md')
-            if [[ "${#TASKS[@]}" -eq 0 ]]; then
-              echo "::error::No new Gemini dispatch task found in this push."
-              exit 1
-            fi
-            if [[ "${#TASKS[@]}" -gt 1 ]]; then
-              echo "::error::One task per API run is required; found ${#TASKS[@]}."
-              exit 1
-            fi
-            TASK="${TASKS[0]}"
-          fi
-          [[ "${TASK}" == coordination/gemini/dispatch/*.md && -f "${TASK}" ]] || { echo "::error::Invalid or missing task path: ${TASK}"; exit 1; }
-          echo "path=${TASK}" >> "${GITHUB_OUTPUT}"
-          echo "Resolved Gemini task: ${TASK}"
+          TASK="$(bash coordination/gemini/scripts/resolve-task.sh             "$GITHUB_EVENT_NAME" "$EVENT_BEFORE" "$EVENT_SHA" "$INPUT_TASK")"
+          echo "path=$TASK" >> "$GITHUB_OUTPUT"
+          echo "Resolved Gemini task: $TASK"
 
-      - name: Call Gemini Developer API directly
+      - name: Call Gemini Developer API (exponential backoff and fallback)
+        timeout-minutes: 8
         shell: bash
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+          GEMINI_FALLBACK_MODEL: gemini-3.8-flash
           TASK_PATH: ${{ steps.task.outputs.path }}
         run: |
           set -euo pipefail
-          [[ -n "${GEMINI_API_KEY}" ]] || { echo "::error::GEMINI_API_KEY secret is missing."; exit 1; }
-          MODEL="${GEMINI_MODEL:-gemini-3.8-flash}"
-          TASK_BODY="$(cat "${TASK_PATH}")"
+          [[ -n "$GEMINI_API_KEY" ]] || { echo "::error::GEMINI_API_KEY secret is missing."; exit 1; }
+          MODEL="${GEMINI_MODEL:-gemini-3.1-pro-preview}"
+          FALLBACK_MODEL="$GEMINI_FALLBACK_MODEL"
+          TASK_BODY="$(cat "$TASK_PATH")"
           SYSTEM_PROMPT='You are Gemini, the independent senior engineering agent of Universal AI Factory. Perform the requested analysis rigorously. Separate verified facts from hypotheses. Never claim to inspect repositories, devices, logs, or run tests unless their contents or access are explicitly provided. Return a substantial Markdown engineering report with evidence, root-cause ranking, minimal safe fixes, risks, and verification steps. Do not return an ACK.'
-          PROMPT="${SYSTEM_PROMPT}
+          PROMPT="$SYSTEM_PROMPT
 
-TASK FILE: ${TASK_PATH}
+          TASK FILE: $TASK_PATH
 
-${TASK_BODY}"
-          jq -n --arg prompt "${PROMPT}" '{
+          $TASK_BODY"
+          jq -n --arg prompt "$PROMPT" '{
             contents:[{role:"user",parts:[{text:$prompt}]}],
             generationConfig:{temperature:0.15,maxOutputTokens:12000}
           }' > /tmp/gemini-request.json
-          curl --fail-with-body --silent --show-error --max-time 240 --retry 2 --retry-delay 4 --retry-all-errors \
-            "https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent" \
-            -H "x-goog-api-key: ${GEMINI_API_KEY}" \
-            -H "content-type: application/json" \
-            --data-binary @/tmp/gemini-request.json \
-            -o /tmp/gemini-response.json
-          ANSWER="$(jq -r '[.candidates[0].content.parts[]?.text] | join("\n")' /tmp/gemini-response.json)"
-          if [[ -z "${ANSWER//[[:space:]]/}" ]]; then
-            echo "::error::Gemini API returned no text. Response metadata:"
-            jq '{error, promptFeedback, candidates:[.candidates[]? | {finishReason, safetyRatings}]}' /tmp/gemini-response.json
-            exit 1
-          fi
-          REPORT="coordination/gemini/outbox/REPORT_$(basename "${TASK_PATH}")"
+
+          GEMINI_MODEL="$MODEL" bash coordination/gemini/scripts/call-gemini-api.sh /tmp/gemini-request.json /tmp/gemini-response.json
+          bash coordination/gemini/scripts/extract-answer.sh /tmp/gemini-response.json > /tmp/gemini-answer.md
+          REPORT="coordination/gemini/outbox/REPORT_$(basename "$TASK_PATH")"
           mkdir -p coordination/gemini/outbox
           {
             echo "# Gemini engineering report"
             echo
-            echo "- Task: `${TASK_PATH}`"
-            echo "- Model: ${MODEL}"
+            echo "- Task: `$TASK_PATH`"
+            echo "- Configured primary model: $MODEL"
+            echo "- Fallback model: $FALLBACK_MODEL"
             echo "- Generated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
             echo "- Execution: direct Gemini Developer API response"
             echo
-            printf '%s\n' "${ANSWER}"
-          } > "${REPORT}"
-          echo "Created substantive Gemini report: ${REPORT}"
+            cat /tmp/gemini-answer.md
+          } > "$REPORT"
+          test -s "$REPORT"
+          echo "Created substantive Gemini report: $REPORT"
 
       - name: Commit report to factory
         shell: bash
@@ -121,4 +115,5 @@ ${TASK_BODY}"
             exit 1
           fi
           git commit -m "chore(factory): save direct Gemini API report [skip ci]"
+          git pull --rebase origin main
           git push origin HEAD:main

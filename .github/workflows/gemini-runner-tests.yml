@@ -1,0 +1,39 @@
+name: Gemini Runner Regression Tests
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/real-ai-agent-execution.yml'
+      - 'coordination/gemini/scripts/**'
+      - 'coordination/gemini/tests/**'
+      - '.github/workflows/gemini-runner-tests.yml'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/real-ai-agent-execution.yml'
+      - 'coordination/gemini/scripts/**'
+      - 'coordination/gemini/tests/**'
+      - '.github/workflows/gemini-runner-tests.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  runner-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Check shell syntax
+        run: |
+          set -euo pipefail
+          bash -n coordination/gemini/scripts/resolve-task.sh
+          bash -n coordination/gemini/scripts/extract-answer.sh
+          bash -n coordination/gemini/scripts/call-gemini-api.sh
+          bash -n coordination/gemini/tests/test-runner.sh
+      - name: Run Gemini dispatcher and response tests
+        run: |
+          set -euo pipefail
+          command -v jq
+          bash coordination/gemini/tests/test-runner.sh
