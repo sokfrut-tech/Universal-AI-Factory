@@ -1,0 +1,55 @@
+name: Bridge PowerShell 5.1 Validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'coordination/bridge/candidates/*.ps1'
+      - '.github/workflows/bridge-powershell-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  powershell-51-static:
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Parse candidate with Windows PowerShell 5.1
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $candidate = 'coordination/bridge/candidates/broker_v2.3-proposed-NOT-RELEASE.ps1'
+          if (-not (Test-Path $candidate)) { throw "Candidate not found: $candidate" }
+          $tokens = $null
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path $candidate).Path,
+            [ref]$tokens,
+            [ref]$errors
+          ) | Out-Null
+          if ($errors.Count -gt 0) {
+            $errors | Format-List * | Out-String | Write-Host
+            throw "PowerShell 5.1 parser reported $($errors.Count) error(s)."
+          }
+          Write-Host "PowerShell 5.1 parser: PASS"
+
+      - name: Enforce no fabricated transport success
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $source = Get-Content 'coordination/bridge/candidates/broker_v2.3-proposed-NOT-RELEASE.ps1' -Raw
+          if ($source -match '(?im)^\s*\$statusCode\s*=\s*200\b') {
+            throw 'Fabricated HTTP 200 assignment detected.'
+          }
+          if ($source -notmatch 'TRANSPORT_NOT_CONFIGURED') {
+            throw 'Missing disabled-transport state.'
+          }
+          if ($source -notmatch 'Invoke-RestMethod') {
+            throw 'No real HTTP call found in candidate.'
+          }
+          Write-Host "Transport source guards: PASS"
