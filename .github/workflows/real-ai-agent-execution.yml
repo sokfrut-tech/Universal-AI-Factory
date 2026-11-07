@@ -5,7 +5,6 @@ on:
     branches: [main]
     paths:
       - 'coordination/gemini/dispatch/*.md'
-      - '.github/workflows/real-ai-agent-execution.yml'
   workflow_dispatch:
     inputs:
       task_file:
