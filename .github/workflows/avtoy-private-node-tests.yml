@@ -50,6 +50,7 @@ jobs:
           token: ${{ secrets.FACTORY_PAT }}
           path: target
           fetch-depth: 1
+          retry-fetches: 0
           persist-credentials: false
 
       - name: Set up Node.js 22
