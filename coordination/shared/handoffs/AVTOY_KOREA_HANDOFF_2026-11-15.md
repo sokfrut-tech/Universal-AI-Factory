@@ -133,3 +133,11 @@ GitLab pipeline был остановлен до создания jobs из-за
 - GitLab architecture doc commit `32bbfa30` now records the verified test result.
 - MAX outbound failover code remains feature-branch only; no bot, chat, token, webhook, domain, Russian hosting or production service has been provisioned.
 - Next implementation priority: after code review, prepare secure MAX webhook receiver using documented `X-Max-Bot-Api-Secret`, event ID idempotency and configured private chat allowlist. Do not enable it until Russian HTTPS backend/domain and durable event storage exist. In parallel continue Russian runtime/API/admin panel design.
+
+
+## GitLab MR/branch correction — verified 2026-11-15
+- Important correction: GitLab MR !76 is **not** sourced from `deploy/russian-tuqo-static-2026-11-15`. Its actual source branch is `research/russia-migration-assessment-2026-11-14`, head SHA `2fe182560e35175bb1438fded60bcc1d5a74ff91`.
+- MR !76 pipeline `3069104188` and its failed status belong to that older research branch/head, not to the current MAX implementation branch.
+- The current working branch `deploy/russian-tuqo-static-2026-11-15` at `32bbfa30613a3740dce5a6924ba0205652cb3473` has no associated merge request (filtered GitLab MR query returned none).
+- Therefore do not state that the MAX commits are inside MR !76 or that MR !76 pipeline tested them. The MAX code was verified using Factory runner snapshot run `43693100303` (31/31), not GitLab CI.
+- No MR was created for the current feature branch yet; keep it unmerged until review and explicit user decision.
