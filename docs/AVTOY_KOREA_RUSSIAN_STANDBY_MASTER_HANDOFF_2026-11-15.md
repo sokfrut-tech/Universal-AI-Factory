@@ -209,3 +209,7 @@ Latest GitLab feature branch HEAD: `ce1792b743612c343be9570d3a8c31d7731f7398`.
 - This is not full-repository CI, GitLab CI, production, or live MAX E2E. No bot/group or Russian hosting provisioned.
 - Current limits: event receipt only, no command execution, per-operator authentication/allowlist, retention policy, customer reply sending or message history. Panel is an inbox MVP.
 - Next gates: sender allowlist and individual operator roles/audit; retention; customer channel mapping/reply adapters; Russian HTTPS:443 + YDB provision; only then real MAX webhook subscription.
+
+
+## 12. MAX operator sender allowlist
+Latest GitLab branch HEAD: `206cce5e8d6cb8ae602d6e0a11ff57dd72c4dae8`. `MAX_OPERATOR_USER_IDS` is now mandatory; only allowlisted users in the configured private group can produce accepted message/callback receipts. Callback actor is taken from `callback.user.user_id`. Factory run `43693780039` passed 43/43 selected tests. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43693780039.md. Still no actual MAX bot/group or Russian runtime; webhook must remain unsubscribed until HTTPS:443 and durable YDB exist.
