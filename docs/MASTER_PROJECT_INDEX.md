@@ -365,3 +365,11 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - PR #89 branch was updated to Media3 1.5.1 at commit `666d981d563e1522799df571fb40ecc4ed8ac45d`; its Factory Security and Jarvis Video CI runs `42287482857` / `42287482845` were still running. Await full unit-test + APK build evidence.
 - PR #90 branch also pins Media3 1.5.1 so its inherited build can pass the API 35 / AGP 8.7.3 project toolchain. This is a compatibility choice, not a feature reduction to the Qwen catalog.
 - PRs #89 and #90 remain draft/open/unmerged. No physical OPPO device test, full knowledge corpus, RAG, Python sandbox, or model-weight training is claimed.
+
+
+## Agent-independent execution policy — active
+- ChatGPT is the default orchestrator and may implement, test, review and record work without waiting for Claude/Gemini connectivity.
+- External agents are optional accelerators, never a default release dependency. Do not create artificial waits for missing APIs, empty inbox receipts or unavailable agents.
+- For high-risk changes, run a distinct self-review pass and label it **self-review**. Never describe it as independent external review.
+- Release gates are evidence-based: exact commit, required tests, security checks, and runtime acceptance where applicable. Missing external review alone is not a blocker when the owner has chosen agent-independent execution; unresolved technical risks remain blockers.
+- Keep factory handoffs, decisions and evidence in GitHub so work can resume across chats and agents.
