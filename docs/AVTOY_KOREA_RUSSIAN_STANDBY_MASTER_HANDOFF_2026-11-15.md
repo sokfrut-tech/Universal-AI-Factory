@@ -178,3 +178,15 @@ GitLab feature branch `deploy/russian-tuqo-static-2026-11-15` has advanced to `7
 
 
 The user wants the Russian standby mirror completed quickly, but safely and without unnecessary spending. The key unresolved question is not simply “which host is best”; it is whether a viable Russian static host/media store can be used for free with verification only. Investigate that first. Cloud.ru with a possible 100 ₽ initial balance is the leading media-storage fallback, not a decision to spend. A person in Russia is a contingency only if the chosen provider's legitimate signup/payment rules make their help necessary.
+
+
+## 10. Verified MAX failover implementation — 2026-11-15
+- Latest GitLab feature branch commit: `32bbfa30613a3740dce5a6924ba0205652cb3473`.
+- MAX sender adapter: `standby/channels/max-adapter.mjs`; fixed official API host, Authorization header, configured operator chat only, bounded plain-text notification, no customer PII.
+- Standby delivery is Telegram-first with MAX fallback. Completion is recorded when all configured Telegram admins receive it OR the configured MAX operator group accepts the notification. If both fail, the durable request remains queued.
+- YDB completion uses a stable `operators` receipt; regression coverage added.
+- Factory run **43693100303** passed **31/31 tests**, 0 failed, on Node.js 22, including syntax checks, MAX adapter tests, standby server tests and YDB request-store tests. Durable report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43693100303.md
+- Test execution used an isolated snapshot branch `factory/max-failover-test-2026-11-15` at `f83526794bccc3235284ac5d4c686ea48aeb53e2`. This is not a GitLab pipeline, not full repository-wide CI, and not production E2E.
+- GitLab CI remains blocked by account identity verification. MR !76 remains unmerged.
+- MAX webhook is not implemented yet; official secret header is documented as `X-Max-Bot-Api-Secret`. Do not enable webhook before Russian HTTPS endpoint and durable event storage exist.
+- No production changes, account registration, bot creation, payment, DNS or deployment performed.
