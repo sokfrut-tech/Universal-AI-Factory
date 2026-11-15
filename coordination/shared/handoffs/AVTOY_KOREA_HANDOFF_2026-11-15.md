@@ -294,3 +294,10 @@ GitLab pipeline был остановлен до создания jobs из-за
 - Factory selected-source suite **43751714424**: **74/74 passed**. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43751714424.md
 - Snapshot `5361ed131fe40808e581a60337272eacc27b4678`; not full CI/live YDB.
 - Yandex YDB free tier 1m RU + 1GB + 2 recent full backups; shared at billing-account level; excess billed. No account, payment, database, resource or deployment exists.
+
+
+## Provider onboarding note — 2026-11-15 19:20 UTC
+- GitLab HEAD `a3916cac63a81dd1c1e268dd2abdcd426221f619`.
+- Yandex Cloud non-resident billing is documented: USD and non-Russian card or bank transfer; manager approval can take up to 3 business days; some countries unsupported. RF resident route requires Russian-issued bank card and RUB. +49 phone is not guaranteed. Do not infer payer residency. A Russia-based helper is not currently necessary for the non-resident route.
+- No account, payment or cloud resource provisioned.
+- Last code test: Factory 43751714424, 74/74 selected-source tests passed.
