@@ -317,3 +317,13 @@ Latest GitLab branch HEAD: `206cce5e8d6cb8ae602d6e0a11ff57dd72c4dae8`. `MAX_OPER
 - Official YDB docs reviewed: database dump/restore, tools dump/restore, S3 export/import. Current YDB docs warn that database restore does not restore column-table data or secrets; current standby schema uses row tables.
 - No actual backup was created; no Russian YDB or backup target exists. Recoverability must not be claimed until a clean restore drill passes.
 - 70/70 code tests remain the latest run; run 43749661826 report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43749661826.md
+
+
+## 20. Complete YDB runtime gate + provider decision (2026-11-15 19:02 UTC)
+- GitLab branch HEAD `18251cea75bf34adf077cf331849da73d58d7332`.
+- Code fix commit `fdcd94c4`: production startup now requires the complete durable request lifecycle (`createEnquiry`, `getEnquiry`, `claimEnquiry`, `claimDueEnquiries`, `listPrivateEnquiries`, `completeDelivery`), durable MAX receipt recording when MAX is configured, and operator audit/rate-limit/read/write capabilities when individual operators are configured. This prevents a partial mock/adapter from passing startup while customer enquiries fall back to local JSON.
+- Factory run **43750064228** passed **70/70**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43750064228.md
+- Exact selected-source snapshot commit `b0c24bb817b570a1ffe22d16a01aa8b70c382a97`; selected files only, not GitLab CI or live YDB.
+- Provider selection: documented Yandex Managed YDB Serverless in Russia / `ru-central1` as preferred candidate. Official free tier lists 1m RU, 1 GB stored data, and two recent full automatic backups per month; usage beyond the tier is billed. This is not guaranteed zero-cost. Storage cap and billing alerts must be configured.
+- Provider selection doc: `standby/docs/YDB_PROVIDER_SELECTION_2026-11-15.md`. Official source says managed YDB is distributed across three `ru-central1` availability zones. User account eligibility (+49 phone/payment acceptance) remains unverified; no account, card, payment, DB or service account created.
+- Next: when user is ready, test their own Yandex ID/billing onboarding without paying or enabling billable resources; if successful, provision only Serverless in ru-central1 with strict caps and least privilege. Then live YDB DDL/transactions, Russia ISP checks and restore drill.
