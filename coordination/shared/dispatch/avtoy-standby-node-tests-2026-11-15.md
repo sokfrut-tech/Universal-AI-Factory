@@ -21,3 +21,5 @@ Sixth dispatch: verify the mobile operator inbox panel, route security and lates
 Seventh dispatch: verify final mobile phone/SMS actions and operator panel source checks.
 
 Eighth dispatch: test MAX sender allowlist and callback actor identity handling.
+
+Ninth dispatch: verify bounded MAX webhook event retention using explicit cutoff timestamps, batch limit validation (1–500), and regression that preserves all events at or after the cutoff. Test snapshot source commit: `f0aadd82318865c92481a6c5b86ed48999ae955c`.
