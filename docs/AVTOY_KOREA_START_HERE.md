@@ -198,3 +198,10 @@ Supersedes older status notes above.
 - Factory run **43751714424** passed **74/74**; report https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43751714424.md . Snapshot `5361ed131fe40808e581a60337272eacc27b4678`; selected-source suite only.
 - Free tier: 1m RU, 1GB storage, 2 automatic backups; shared across clouds/orgs under one billing account; usage overage billable. No account or resource created.
 - Next: validate YQL/ACL and account eligibility; no payment/provisioning without explicit approval.
+
+
+## Latest provider/onboarding note — 2026-11-15 19:20 UTC
+- GitLab HEAD `a3916cac63a81dd1c1e268dd2abdcd426221f619`.
+- Yandex Cloud billing route depends on payer residency: RF resident pays RUB with Russian-issued bank card; non-resident of RF/KZ can use USD, non-Russian card or bank transfer, subject to manager verification up to 3 business days and country restrictions. +49 phone acceptance not guaranteed by docs. User must choose their actual residency; do not infer. A Russian contact is not currently required for the documented non-resident route.
+- Updated `standby/docs/YDB_PROVIDER_SELECTION_2026-11-15.md`.
+- Last selected-source suite: 74/74 passed (`43751714424`); not live YDB.
