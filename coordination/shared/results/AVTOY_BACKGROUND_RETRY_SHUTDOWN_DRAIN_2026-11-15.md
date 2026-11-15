@@ -1,0 +1,39 @@
+# AVTOY KOREA — background retry shutdown drain (2026-11-15)
+
+## Change
+- Project: `sokfrut/avtoY-korea-auto` (GitLab project ID `88934554`)
+- Branch: `deploy/russian-tuqo-static-2026-11-15`
+- Commit: `659f52b83e3160e6eab84178c1c958f02782a469`
+- Parent: `10ce21465f1b08e0aebf01f0b5b62af201c65666`
+- Commit URL: https://gitlab.com/sokfrut/avtoY-korea-auto/-/commit/659f52b83e3160e6eab84178c1c958f02782a469
+
+## Defect addressed
+The process previously cleared the retry interval and drained HTTP connections before closing YDB, but it did not wait for a retry cycle already started by the interval. A SIGTERM during a background delivery could therefore close the YDB driver while that retry was still using it.
+
+## Implementation
+- Track the active retry-cycle promise in the process entry point.
+- Prevent overlapping timer-driven retry cycles while one is active.
+- Pass a drain callback to `createGracefulShutdown`.
+- Shutdown order is now: stop retry timer -> drain HTTP -> await active background retry cycle -> close YDB driver.
+- Preserve the first shutdown error while still attempting the retry drain and driver close.
+- Added two regression tests: successful retry drain ordering and driver closure when the drain callback fails.
+
+## Verification performed
+A standalone Node.js 22.16.0 harness executed the exact shutdown-helper control flow and the six shutdown scenarios:
+- idempotent shutdown and HTTP-before-YDB ordering;
+- forced connection close waits for the server close callback;
+- grace deadline validation;
+- YDB closes after HTTP close callback error;
+- retry drain completes after HTTP and before YDB close;
+- YDB still closes if the retry drain reports an error.
+
+Result: **6/6 passed**.
+
+## Verification limits
+- This was an isolated helper-level harness, not the repository's actual `node --test` suite.
+- Full `npm run check`, full `npm test`, Docker build/start, real YDB concurrency/integration, and live HTTP+YDB shutdown were not run.
+- GitLab CI was not used as a verification source in this change; the known account/provider identity-verification block occurs before jobs start.
+- No production service, YDB instance, MAX bot/group, webhook, DNS/TLS, or cloud resource was provisioned or changed.
+
+## Next recommended verification
+Run the repository's actual shutdown tests and then the complete standby suite in a trusted Node/npm environment with the project dependencies installed. Separately exercise a real in-flight retry cycle against a disposable YDB instance before production approval.
