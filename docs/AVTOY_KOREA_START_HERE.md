@@ -31,3 +31,11 @@ For every new ChatGPT conversation about AVTOY KOREA, read these files in order 
 
 ## Working policy
 ChatGPT remains the default executor and does not wait for external agents or GitLab CI. Use Factory runners where possible. Save each meaningful state change and exact evidence back to Universal-AI-Factory. Never claim a copied test harness is a full branch test. Keep primary production unchanged.
+
+
+## Latest verified continuation point — 2026-11-15
+- GitLab branch `deploy/russian-tuqo-static-2026-11-15`, latest known commit `32bbfa30613a3740dce5a6924ba0205652cb3473`.
+- MAX outbound failover is implemented in standby code; 31/31 isolated regression tests passed: https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/43693100303
+- Read latest GitLab source `standby/docs/RUSSIA_AUTONOMOUS_BOT_ARCHITECTURE.md` and report `coordination/shared/results/AVTOY_STANDBY_TESTS_43693100303.md`.
+- Next: independent code review; then implement a MAX webhook receiver only with documented `X-Max-Bot-Api-Secret` validation after the Russian HTTPS backend/domain exists. Continue provisioning Russian API/database/admin panel separately. Do not merge or deploy production without explicit user approval.
+
