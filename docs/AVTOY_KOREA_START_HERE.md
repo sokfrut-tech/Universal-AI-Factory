@@ -188,3 +188,13 @@ Supersedes older status notes above.
 - Factory selected-source suite **43750579755**: **72/72 passed**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43750579755.md
 - Snapshot commit `8fbe54ec54d44510733dfeda4f83132bc31f17f8`; not full GitLab CI or live YDB.
 - Preferred provider candidate: Yandex Managed YDB Serverless in Russia / `ru-central1`. No account/payment/database created. Next: validate YQL/DDL and account eligibility, then provision only after explicit user action.
+
+
+## Newest continuation checkpoint — 2026-11-15 19:18 UTC
+Supersedes older status notes above.
+- GitLab branch HEAD `04d1cc0eed5de79c87bd9415eb508e8ae6bf5acb`.
+- Production startup now refuses local JSON storage: requires `INBOX_STORE=v2`, YDB connection and complete durable request store/schema verification.
+- Least-privilege YDB grant template: `standby/docs/YDB_LEAST_PRIVILEGE_RUNTIME_GRANTS_2026-11-15.md` (not applied; validate on live DB). Runtime identity gets row operations + CONNECT only; migration identity separate.
+- Factory run **43751714424** passed **74/74**; report https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43751714424.md . Snapshot `5361ed131fe40808e581a60337272eacc27b4678`; selected-source suite only.
+- Free tier: 1m RU, 1GB storage, 2 automatic backups; shared across clouds/orgs under one billing account; usage overage billable. No account or resource created.
+- Next: validate YQL/ACL and account eligibility; no payment/provisioning without explicit approval.
