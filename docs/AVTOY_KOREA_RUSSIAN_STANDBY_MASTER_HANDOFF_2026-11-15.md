@@ -274,3 +274,12 @@ Latest GitLab branch HEAD: `206cce5e8d6cb8ae602d6e0a11ff57dd72c4dae8`. `MAX_OPER
 - Factory run **43748653690** passed **63/63**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748653690.md
 - Snapshot HEAD `fd4a27c4a851eec9c4030860e13719f7534a26db`; selected-source suite only.
 - Remaining: distributed rate limiting, live YDB DDL/query verification, secure operator credential provisioning/rotation, multi-instance tests, Russian no-VPN acceptance. No Russian host/YDB or MAX bot/group provisioned; no MR/merge/deploy.
+
+
+## 15. Durable admin startup gate verified (2026-11-15 18:50 UTC)
+- Latest GitLab branch HEAD observed: `252306bed729c85eb47b210ff9368a960dea300a` (`deploy/russian-tuqo-static-2026-11-15`).
+- Added `assertDurableAdminRuntime`: if per-operator administration or MAX webhook is configured, startup requires the durable YDB request store; per-operator administration additionally requires the audit-schema capability. Startup creates the audit table before listening. This prevents a configured admin panel/webhook from silently running with ephemeral/local storage.
+- Factory run **43748987700** passed **64/64**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748987700.md
+- Exact selected-source snapshot commit: `2043f6973173afcfcf74f931c935c12e2c38cabc`. This is selected-file regression testing only; GitLab CI still blocked by provider identity verification; no live YDB/MAX/Russian host E2E.
+- Current `/ops` route auth and audit are now wired to per-operator config and durable audit store in the feature branch; legacy shared token is accepted only in explicit `NODE_ENV=test` fixtures. Still not production-ready: no live YDB permission/append-only enforcement, no rate limit persistence across instances, no actual operators provisioned, no Russian runtime, no MAX bot/group.
+- Next: test and tighten production data-store permissions, multi-instance rate limiting, audit retention/backups, and verify panel privacy/no-store headers; then customer identity/reply-channel adapters. No MR merge or deployment.
