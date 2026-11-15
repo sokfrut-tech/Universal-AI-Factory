@@ -163,3 +163,13 @@ GitLab pipeline был остановлен до создания jobs из-за
 - An earlier run `43693439005` exposed a test-harness defect (missing exposed fake YDB event map), not a production failure; harness fixed and latest 41/41 passes.
 - GitLab pipeline remains blocked by identity verification. No MR created for this branch; MR !76 remains a different older research branch. No production deploy, MAX bot/group, domain, Russian host, YDB instance, DNS or payment has been provisioned.
 - Next: inspect/verify final code diff; implement individual operator authorization and sender allowlist + event retention; then safe command workflow and customer-channel mapping. Russian HTTPS:443 runtime must exist before registering MAX webhook.
+
+
+## Latest checkpoint — MAX operator allowlist (2026-11-15 08:17 UTC)
+- Latest GitLab feature branch `deploy/russian-tuqo-static-2026-11-15` HEAD: `206cce5e8d6cb8ae602d6e0a11ff57dd72c4dae8`.
+- Added mandatory `MAX_OPERATOR_USER_IDS` allowlist. Only listed sender IDs from the configured private operator group are accepted; `message_callback` correctly authenticates `callback.user.user_id` rather than the bot message sender. Bot self-echo ignored.
+- Latest Factory run **43693780039** passed **43/43 tests**, 0 failed, Node.js 22. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43693780039.md
+- Test snapshot branch `factory/max-failover-test-2026-11-15` HEAD: `e9c30d34beddc0864d305e75fbf61979ea98f7c4`. Selected-file CI only, not full repo/GitLab/production E2E.
+- Operator panel MVP `/ops`: secure Bearer token in tab memory, list/refresh/retry, tap-to-call/SMS. Not automated replies.
+- MAX webhook only persists metadata; no command processing or client chat. Needs Russian HTTPS:443 + YDB provision before subscribing. Individual sender allowlist is code-ready but actual IDs cannot be configured until the private MAX group and bot exist.
+- Still no MAX bot/group, Russian host/domain, YDB instance, real webhook, production deployment, or MR for this branch.
