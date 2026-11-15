@@ -39,3 +39,7 @@ ChatGPT remains the default executor and does not wait for external agents or Gi
 - Read latest GitLab source `standby/docs/RUSSIA_AUTONOMOUS_BOT_ARCHITECTURE.md` and report `coordination/shared/results/AVTOY_STANDBY_TESTS_43693100303.md`.
 - Next: independent code review; then implement a MAX webhook receiver only with documented `X-Max-Bot-Api-Secret` validation after the Russian HTTPS backend/domain exists. Continue provisioning Russian API/database/admin panel separately. Do not merge or deploy production without explicit user approval.
 
+
+
+## GitLab branch mapping correction
+MR !76 is an older research branch (`research/russia-migration-assessment-2026-11-14`), not the current working branch. Current MAX feature branch `deploy/russian-tuqo-static-2026-11-15` at `32bbfa30613a3740dce5a6924ba0205652cb3473` has no MR yet. Do not use MR !76 pipeline status as evidence for the MAX code.
