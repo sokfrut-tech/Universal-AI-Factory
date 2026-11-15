@@ -79,3 +79,13 @@ Supersedes older status notes above.
 - Exact test snapshot HEAD `4bc657537730199b0713015a03db7d1cae49fe54`. Selected files only, not GitLab CI or production E2E.
 - Auth primitives are not yet wired to HTTP routes; `/ops` still uses shared MVP token. Next: YDB audit store and fail-closed route auth integration. Keep panel off public production.
 - Russian runtime, YDB instance, MAX bot/group and webhook remain unprovisioned. No merge/deploy.
+
+
+## Newest continuation checkpoint — 2026-11-15 18:40 UTC
+Supersedes older status notes above.
+- GitLab branch `deploy/russian-tuqo-static-2026-11-15`, HEAD `f19f21b2481e95269eaa4572031a1b948fed0f45`.
+- Per-operator auth is now wired to `/ops/inbox` and `/ops/retry`; roles enforced server-side. YDB audit event is written before protected reads/retries; audit failure blocks the action. Shared token works only under explicit test/development environment.
+- Factory run **43748005666**: **58/58 passed**. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748005666.md
+- Snapshot HEAD `86ec8fe442fdae187ae068fef9b83f7c1cedf11b`; selected files only, not live YDB/production E2E.
+- Remaining auth work: audit read endpoint, failed-auth audit/rate limits, live YDB validation, secure production operator digests and multi-instance checks. `/ops` is not ready for public exposure.
+- No Russian runtime/YDB instance, MAX bot/group, webhook subscription, MR, merge or deployment.
