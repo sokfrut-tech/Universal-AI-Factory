@@ -198,3 +198,14 @@ MR !76 actually targets source branch `research/russia-migration-assessment-2026
 
 ## Latest source checkpoint
 Latest GitLab feature branch HEAD is `61900daacb638d9211ecc206acaaa3d026991c02`. The MAX outbound notification/failover slice is tested 31/31 in Factory run `43693103183`. This does **not** mean MAX is operational: no bot/group, inbound webhook, Russian runtime, or operator web panel has been provisioned. MR !76 is a separate older research branch; current feature branch has no MR yet.
+
+
+## 11. MAX inbound webhook + operator inbox MVP — 2026-11-15
+Latest GitLab feature branch HEAD: `ce1792b743612c343be9570d3a8c31d7731f7398`.
+- Authenticated MAX webhook route `POST /api/max/webhook` verifies `X-Max-Bot-Api-Secret`, exact configured operator group, supported message/callback types, bounded body and durable persistence before HTTP 200.
+- YDB stores SHA-256 deduplicated event metadata only; no raw message body/text.
+- `/ops` mobile operator inbox panel lists requests, refreshes, retries queued notifications, and offers tel/SMS actions for phone-only contacts. Admin token remains in tab memory and is not persisted.
+- Factory selected-snapshot run `43693667994`: 41/41 tests passed, 0 failed, Node 22. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43693667994.md
+- This is not full-repository CI, GitLab CI, production, or live MAX E2E. No bot/group or Russian hosting provisioned.
+- Current limits: event receipt only, no command execution, per-operator authentication/allowlist, retention policy, customer reply sending or message history. Panel is an inbox MVP.
+- Next gates: sender allowlist and individual operator roles/audit; retention; customer channel mapping/reply adapters; Russian HTTPS:443 + YDB provision; only then real MAX webhook subscription.
