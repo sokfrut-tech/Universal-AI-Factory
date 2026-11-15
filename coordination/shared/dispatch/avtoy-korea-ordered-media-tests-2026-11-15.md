@@ -4,7 +4,7 @@ Purpose: use the public Universal-AI-Factory GitHub-hosted runner to execute tes
 
 Target repository: `sokfrut-tech/avtoy-korea-auto`
 Target branch: `fix/ordered-media-sequence-main-2026-11-15`
-Expected target commit: `140c5330fe0517474be6f80ebe77acdc30ead78c`
+Expected target commit: `5fa3ed820b11cc7148a8901352e74f913c0d4570`
 
 Required commands:
 - `node --check worker.js`
