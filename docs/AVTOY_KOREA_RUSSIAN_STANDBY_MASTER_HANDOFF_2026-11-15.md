@@ -230,3 +230,13 @@ Latest GitLab branch HEAD: `206cce5e8d6cb8ae602d6e0a11ff57dd72c4dae8`. `MAX_OPER
 - Factory run **43747665597** passed **51/51**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43747665597.md
 - Snapshot HEAD `4bc657537730199b0713015a03db7d1cae49fe54`; selected-source suite only.
 - Important boundary: auth helper is not yet wired into `/ops/inbox` or `/ops/retry`; HTTP panel still uses shared MVP token. Do not expose publicly. Durable YDB audit table/store and fail-closed route integration are next; no production deployment.
+
+
+## 15. Per-operator RBAC + YDB audit wired into HTTP routes (2026-11-15 18:40 UTC)
+- GitLab branch HEAD: `f19f21b2481e95269eaa4572031a1b948fed0f45`.
+- `/ops/inbox` now requires `inbox:read`; `/ops/retry` requires `notifications:retry`. Operators are individually identified by SHA-256 bearer-token digest in strict `STANDBY_OPERATORS_JSON`; constant-time comparison; disabled/unknown credentials denied.
+- YDB store creates `standby_operator_audit_events` and records minimal allowlisted audit events before inbox access or retry work. If audit write fails, protected route returns 503 before proceeding. Audit metadata excludes customer PII; target IDs are restricted.
+- Legacy shared token is accepted only with explicit `NODE_ENV=test` or `development`; unset/production fails closed.
+- Factory run **43748005666** passed **58/58**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748005666.md
+- Snapshot HEAD `86ec8fe442fdae187ae068fef9b83f7c1cedf11b`; selected-file tests only, not GitLab CI, live YDB, multi-instance or production E2E.
+- Remaining: audit read endpoint, denied-auth audit/rate limiting, live YDB DDL validation, secure production token provisioning, multi-instance tests, panel operator identity/role UX. Keep `/ops` off public production until these gates pass.
