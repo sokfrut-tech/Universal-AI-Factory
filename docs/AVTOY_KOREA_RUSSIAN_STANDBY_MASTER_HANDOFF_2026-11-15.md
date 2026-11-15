@@ -309,3 +309,11 @@ Latest GitLab branch HEAD: `206cce5e8d6cb8ae602d6e0a11ff57dd72c4dae8`. `MAX_OPER
 - Snapshot commit `e098866b64f8867767bfadd959068fe06eeb63ed`; selected-file suite only.
 - Previous run 43749560660 failed because test fixture did not create `ops.html` (404); fixture corrected and rerun passed. No production failure observed.
 - Next: YDB live integration, DB role separation, backup/restore and a controlled retention maintenance plan. Russian runtime remains unprovisioned; no deployment.
+
+
+## 19. YDB backup/restore runbook (2026-11-15 18:58 UTC)
+- GitLab branch HEAD `2206b15426ed2e56f907db78c929992719d9d04d`.
+- Added `standby/docs/YDB_BACKUP_RESTORE_RUNBOOK_2026-11-15.md`: inventory of request/idempotency/MAX/audit/rate-limit tables, Russian-only off-cluster destination requirement, proposed retention (not approved), YDB CLI backup/restore options, documented limitations, and mandatory isolated restore drill/RPO/RTO evidence.
+- Official YDB docs reviewed: database dump/restore, tools dump/restore, S3 export/import. Current YDB docs warn that database restore does not restore column-table data or secrets; current standby schema uses row tables.
+- No actual backup was created; no Russian YDB or backup target exists. Recoverability must not be claimed until a clean restore drill passes.
+- 70/70 code tests remain the latest run; run 43749661826 report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43749661826.md
