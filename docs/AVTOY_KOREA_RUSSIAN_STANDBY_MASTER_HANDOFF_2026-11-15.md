@@ -256,3 +256,13 @@ Latest GitLab branch HEAD: `206cce5e8d6cb8ae602d6e0a11ff57dd72c4dae8`. `MAX_OPER
 - Factory run **43748317816** passed **61/61**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748317816.md
 - Snapshot HEAD `70f3c94cc624fe1f46d52cd5dd5ae7af72958b26`; selected-source tests only.
 - Remaining: failed-auth audit, distributed rate limiting, credential rotation workflow, live YDB validation, multi-instance and Russian network acceptance. No Russian runtime/YDB or MAX bot/group; no merge/deploy.
+
+
+## 18. Failed-auth audit and throttling (2026-11-15 18:45 UTC)
+- GitLab branch HEAD after docs: `c40894a262a115f966edbbbc9a55333c771b8ee8`.
+- Unknown credentials and forbidden role actions create privacy-safe `auth.denied` / `auth.forbidden` audit events. Tokens, Authorization headers and customer PII are not logged.
+- Per-process throttle: 10 failed attempts/IP/10 minutes, then HTTP 429. Forwarded IP is trusted only with `TRUST_PROXY=true`. Denial remains denial if audit write fails.
+- Production caveat: in-memory throttle is not shared across instances; distributed rate limiting at Russian edge/reverse proxy is mandatory before multi-instance production.
+- Factory run **43748471412** passed **62/62**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748471412.md
+- Snapshot HEAD `6a2d0c2b6c36010a5e586410e33a87758d4487fb`; selected-source suite only.
+- No Russian host/YDB or MAX bot/group provisioned; no MR/merge/deployment. Next: review audit/security edge cases, then Russian runtime provisioning feasibility and live YDB integration.
