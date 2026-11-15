@@ -266,3 +266,11 @@ Latest GitLab branch HEAD: `206cce5e8d6cb8ae602d6e0a11ff57dd72c4dae8`. `MAX_OPER
 - Factory run **43748471412** passed **62/62**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748471412.md
 - Snapshot HEAD `6a2d0c2b6c36010a5e586410e33a87758d4487fb`; selected-source suite only.
 - No Russian host/YDB or MAX bot/group provisioned; no MR/merge/deployment. Next: review audit/security edge cases, then Russian runtime provisioning feasibility and live YDB integration.
+
+
+## 19. Strict test-only legacy credential gate (2026-11-15 18:47 UTC)
+- GitLab branch HEAD after docs: `4e5589c917c3f432f945f7c9afbb3e755dfb339f`.
+- Shared `STANDBY_ADMIN_TOKEN` is now accepted only with explicit `NODE_ENV=test`; development, unset and production all deny it. Production requires per-operator `STANDBY_OPERATORS_JSON` plus YDB audit.
+- Factory run **43748653690** passed **63/63**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748653690.md
+- Snapshot HEAD `fd4a27c4a851eec9c4030860e13719f7534a26db`; selected-source suite only.
+- Remaining: distributed rate limiting, live YDB DDL/query verification, secure operator credential provisioning/rotation, multi-instance tests, Russian no-VPN acceptance. No Russian host/YDB or MAX bot/group provisioned; no MR/merge/deploy.
