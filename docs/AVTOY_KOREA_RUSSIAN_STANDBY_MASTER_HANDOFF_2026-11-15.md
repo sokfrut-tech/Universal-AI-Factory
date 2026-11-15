@@ -194,3 +194,7 @@ The user wants the Russian standby mirror completed quickly, but safely and with
 
 ## GitLab branch/MR mapping correction — 2026-11-15
 MR !76 actually targets source branch `research/russia-migration-assessment-2026-11-14` at `2fe182560e35175bb1438fded60bcc1d5a74ff91`; it is not the current working branch. Its pipeline status does not describe the MAX work. The current feature branch `deploy/russian-tuqo-static-2026-11-15` is at `32bbfa30613a3740dce5a6924ba0205652cb3473` and currently has no associated MR. Do not conflate MR !76 with the MAX implementation; its test evidence is Factory run `43693100303` (31/31 on selected-source snapshot).
+
+
+## Latest source checkpoint
+Latest GitLab feature branch HEAD is `61900daacb638d9211ecc206acaaa3d026991c02`. The MAX outbound notification/failover slice is tested 31/31 in Factory run `43693103183`. This does **not** mean MAX is operational: no bot/group, inbound webhook, Russian runtime, or operator web panel has been provisioned. MR !76 is a separate older research branch; current feature branch has no MR yet.
