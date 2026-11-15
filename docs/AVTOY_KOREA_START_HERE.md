@@ -135,3 +135,12 @@ Supersedes older status notes above.
 - Snapshot commit `2043f6973173afcfcf74f931c935c12e2c38cabc`; selected files only, not GitLab CI/live YDB/production E2E.
 - Remaining gates: enforce DB least privilege/append-only audit, persistent cross-instance auth rate limiting, audit retention/backups, verify admin no-store/privacy headers, provision actual Russian runtime/YDB/MAX only after eligibility/identity steps.
 - No MAX bot/group, Russian server, domain, YDB instance, webhook subscription, MR merge or production deployment.
+
+
+## Newest continuation checkpoint — 2026-11-15 18:54 UTC
+Supersedes older status notes above.
+- GitLab feature branch HEAD `5c5805ad8f7ec249e2034975a6c3ca1533148bf8`.
+- Shared auth limiter implemented in YDB using SHA-256 source-IP digest, serializable 10-minute window, 10-failure threshold, fail-closed on store error, and bounded stale-row cleanup.
+- Factory rerun **43749293947** passed **68/68**. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43749293947.md
+- Snapshot commit `458d8f27984b643d067d09f10e17b89aebc43a1a`; selected-file tests only. Previous 67/68 run was a fake-SQL fixture bug and was corrected.
+- Remaining gates: live YDB DDL/transaction verification, approved cleanup cadence, backup/restore, DB least privilege, Russian host and MAX registration. No live infrastructure, MR merge or deployment.
