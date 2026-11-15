@@ -150,3 +150,16 @@ GitLab pipeline был остановлен до создания jobs из-за
 - Important branch correction: MR !76 is an older separate research branch, not the current feature branch. Current feature branch has no MR as of the latest query.
 - Remaining functional gaps: no real MAX bot/group yet; no MAX inbound webhook receiver; no Russian-hosted runtime/domain/DB provisioned; no full operator web panel yet. The MAX sender is only the outbound notification/failover slice.
 - Continue by designing/implementing durable MAX webhook event ingestion and operator panel only when storage/schema/security contracts are defined; no production activation before Russian HTTPS endpoint, persistent event idempotency and real MAX credentials/group ID exist.
+
+
+## Progress checkpoint — MAX inbound + operator inbox MVP (2026-11-15 08:16 UTC)
+- Latest GitLab branch `deploy/russian-tuqo-static-2026-11-15` HEAD: `ce1792b743612c343be9570d3a8c31d7731f7398`.
+- Implemented `POST /api/max/webhook`: mandatory `X-Max-Bot-Api-Secret` validation using timing-safe compare; config validation for secret and numeric operator group ID; 64 KB body cap; accepts only `message_created` and `message_callback` from the configured group (`chat_type=chat)); ignores bot self-echo; returns 200 only after durable event persistence; returns 503 on missing/failing store so MAX retries.
+- Added YDB table `standby_max_webhook_events`, SHA-256 event digest idempotency, and metadata-only persistence (event type/timestamp/chat/message/sender IDs/received time). Raw body and message text are not stored.
+- Added mobile-first `standby/public/ops.html` served at `/ops`: Bearer-token login (token held only in tab memory, password input cleared), request list, refresh, retry due notifications, tap-to-call/SMS for phone contacts, DOM `textContent` rendering. Existing APIs remain token-protected.
+- Important limits: webhook only records metadata; it does not execute commands, authenticate each sender, or process replies. Panel is an inbox MVP, not automated customer reply. No customer messaging adapter or conversation history exists yet.
+- Factory run **43693667994** passed **41/41**, 0 failed, Node.js 22. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43693667994.md
+- Exact test snapshot branch `factory/max-failover-test-2026-11-15` HEAD: `815956464d5beeb77919f0e11af7c58e89ae70e4`. This is selected-source snapshot CI only, not full repository CI, GitLab CI, live MAX webhook, or production E2E.
+- An earlier run `43693439005` exposed a test-harness defect (missing exposed fake YDB event map), not a production failure; harness fixed and latest 41/41 passes.
+- GitLab pipeline remains blocked by identity verification. No MR created for this branch; MR !76 remains a different older research branch. No production deploy, MAX bot/group, domain, Russian host, YDB instance, DNS or payment has been provisioned.
+- Next: inspect/verify final code diff; implement individual operator authorization and sender allowlist + event retention; then safe command workflow and customer-channel mapping. Russian HTTPS:443 runtime must exist before registering MAX webhook.
