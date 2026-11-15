@@ -248,3 +248,11 @@ Latest GitLab branch HEAD: `206cce5e8d6cb8ae602d6e0a11ff57dd72c4dae8`. `MAX_OPER
 - Factory run **43748164089** passed **60/60**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748164089.md
 - Snapshot HEAD `feea43f5d3c5e266295dc64eeb032c82bce9e7fa`; selected-file tests only, not live YDB or production E2E.
 - Remaining: failed-auth audit, distributed rate limiting, mobile panel audit view, live YDB DDL/query validation, production operator credential provisioning, multi-instance testing. No Russian runtime/YDB instance or MAX bot/group exists; no merge/deploy.
+
+
+## 17. Role-aware mobile audit panel (2026-11-15 18:43 UTC)
+- GitLab branch HEAD after docs: `ac1ca3b744a6900ee7927e3f8ab410547f716550`.
+- `/ops` now displays operator ID/role, hides retry unless `notifications:retry`, shows audit control only for `audit:read`, and renders audit entries via `textContent`. Token remains in tab memory; no browser storage.
+- Factory run **43748317816** passed **61/61**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748317816.md
+- Snapshot HEAD `70f3c94cc624fe1f46d52cd5dd5ae7af72958b26`; selected-source tests only.
+- Remaining: failed-auth audit, distributed rate limiting, credential rotation workflow, live YDB validation, multi-instance and Russian network acceptance. No Russian runtime/YDB or MAX bot/group; no merge/deploy.
