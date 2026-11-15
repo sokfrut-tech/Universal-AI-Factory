@@ -190,3 +190,11 @@ GitLab pipeline был остановлен до создания jobs из-за
 - Factory run `43747665597`: **51/51 passed**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43747665597.md
 - Snapshot HEAD `4bc657537730199b0713015a03db7d1cae49fe54`; selected-source tests only.
 - Auth helper is not yet connected to `/ops` endpoints; shared MVP token remains. Next slice: YDB durable audit store and fail-closed per-operator route integration. No production deploy.
+
+
+## Newest handoff checkpoint — 2026-11-15 18:40 UTC
+- GitLab feature branch HEAD `f19f21b2481e95269eaa4572031a1b948fed0f45`.
+- Per-operator bearer auth and role checks now protect inbox/retry routes; YDB audit event is durably appended before protected operations. Audit-store failure blocks action. Shared token fallback only explicit test/development.
+- Factory run `43748005666`: **58/58 passed**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748005666.md
+- Test snapshot HEAD `86ec8fe442fdae187ae068fef9b83f7c1cedf11b`; selected-file suite only.
+- Remaining: audit read endpoint, denied-auth audit/rate limiting, live YDB DDL test, secure operator config provisioning, multi-instance tests. No Russian host/YDB or MAX bot/group; no MR/merge/deployment.
