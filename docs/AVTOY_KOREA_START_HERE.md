@@ -170,3 +170,12 @@ Supersedes older status notes above.
 - Added YDB backup/restore runbook at `standby/docs/YDB_BACKUP_RESTORE_RUNBOOK_2026-11-15.md`. It defines Russia-only off-cluster backup, table inventory, YDB CLI paths, documented limitations, restore-drill steps and RPO/RTO evidence.
 - Latest code test run: **70/70 passed**, report https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43749661826.md
 - No database, backup bucket, export, restore or production resource exists. No live restore drill. Next gate is Russian YDB provisioning, then live DDL/transactions and restore test.
+
+
+## Newest continuation checkpoint — 2026-11-15 19:02 UTC
+Supersedes older status notes above.
+- GitLab branch HEAD `18251cea75bf34adf077cf331849da73d58d7332`.
+- Production runtime gate strengthened in `fdcd94c4`: complete durable enquiry lifecycle, MAX idempotent receipt writer and operator audit/rate-limit/list/read/write capabilities required at startup.
+- Factory run **43750064228** passed **70/70**; report https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43750064228.md. Snapshot commit `b0c24bb817b570a1ffe22d16a01aa8b70c382a97`; selected-source tests only.
+- Preferred YDB candidate documented: Yandex Managed YDB Serverless, Russia / `ru-central1`; free tier is limited (1m RU, 1 GB, 2 automatic backups) and overage is billable. See `standby/docs/YDB_PROVIDER_SELECTION_2026-11-15.md`.
+- No account/payment/database/service account/resource exists; +49 registration acceptance unverified. Next: user's own onboarding check only when ready, no payment; then bounded provision and live validation.
