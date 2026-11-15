@@ -300,3 +300,12 @@ Latest GitLab branch HEAD: `206cce5e8d6cb8ae602d6e0a11ff57dd72c4dae8`. `MAX_OPER
 - Factory run **43749431381** passed **69/69**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43749431381.md
 - Exact snapshot commit `b6c37e23ee1e83c7bfc533a8867918ee8a2371bc`; selected-source tests only, no live YDB execution.
 - Next: review no-store/cache/security headers and backup/restore procedure; verify YDB DDL/DELETE/transactions against a real Russian instance before any deployment. Retention duration requires explicit legal/business approval.
+
+
+## 18. Operator panel cache hardening (2026-11-15 18:57 UTC)
+- GitLab branch HEAD `a2b9669940e9ffbc02717b92337006c19508c175`.
+- `/ops` HTML now sends `Cache-Control: no-store, max-age=0`, `Cross-Origin-Resource-Policy: same-origin`, `Permissions-Policy` denying camera/microphone/location, plus existing `nosniff`, frame denial and CSP. JSON API responses already use no-store.
+- Factory run **43749661826** passed **70/70**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43749661826.md
+- Snapshot commit `e098866b64f8867767bfadd959068fe06eeb63ed`; selected-file suite only.
+- Previous run 43749560660 failed because test fixture did not create `ops.html` (404); fixture corrected and rerun passed. No production failure observed.
+- Next: YDB live integration, DB role separation, backup/restore and a controlled retention maintenance plan. Russian runtime remains unprovisioned; no deployment.
