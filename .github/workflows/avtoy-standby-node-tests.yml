@@ -66,7 +66,9 @@ jobs:
           node --check standby/channels/max-adapter.mjs
           node --check standby/channels/max-adapter.test.mjs
           node --check standby/test/server.test.mjs
-          node --test standby/channels/*.test.mjs standby/test/server.test.mjs
+          node --check standby/storage/ydb-request-store.mjs
+          node --check standby/storage/ydb-request-store.test.mjs
+          node --test standby/channels/*.test.mjs standby/test/server.test.mjs standby/storage/ydb-request-store.test.mjs
 
       - name: Save execution report in factory
         if: always()
@@ -88,7 +90,7 @@ jobs:
             echo "- Target commit: ${TARGET_SHA}"
             echo "- Checkout: ${TARGET_OUTCOME}"
             echo "- Tests: ${TEST_OUTCOME}"
-            echo "- Scope: MAX adapter tests + standby HTTP server regression tests"
+            echo "- Scope: MAX adapter tests + standby HTTP server + YDB request-store regression tests"
             echo "- This is a test snapshot of selected source files; it is not a GitLab pipeline or production deployment."
           } > "${REPORT}"
           cd factory
