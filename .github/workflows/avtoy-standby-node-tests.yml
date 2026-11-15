@@ -1,0 +1,111 @@
+name: AVTOY Russian Standby Node Tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'coordination/shared/dispatch/avtoy-standby-node-tests-2026-11-15.md'
+      - '.github/workflows/avtoy-standby-node-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: avtoy-standby-node-tests
+  cancel-in-progress: false
+
+jobs:
+  test-standby:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout factory
+        uses: actions/checkout@v4
+        with:
+          path: factory
+          persist-credentials: true
+
+      - name: Require private repository read token
+        shell: bash
+        env:
+          FACTORY_PAT: ${{ secrets.FACTORY_PAT_CANDIDATE }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${FACTORY_PAT}" ]]; then
+            echo "::error::FACTORY_PAT_CANDIDATE is missing."
+            exit 1
+          fi
+          echo "Repository credential is present; value is not displayed."
+
+      - name: Checkout exact standby test snapshot
+        id: target
+        uses: actions/checkout@v4
+        with:
+          repository: sokfrut-tech/avtoy-korea-auto
+          ref: factory/max-failover-test-2026-11-15
+          token: ${{ secrets.FACTORY_PAT_CANDIDATE }}
+          path: target
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run standby syntax and regression tests
+        id: tests
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd target
+          node --version
+          node --check standby/server.mjs
+          node --check standby/channels/max-adapter.mjs
+          node --check standby/channels/max-adapter.test.mjs
+          node --check standby/test/server.test.mjs
+          node --test standby/channels/*.test.mjs standby/test/server.test.mjs
+
+      - name: Save execution report in factory
+        if: always()
+        shell: bash
+        env:
+          TARGET_OUTCOME: ${{ steps.target.outcome || 'not_started' }}
+          TEST_OUTCOME: ${{ steps.tests.outcome || 'not_started' }}
+          TARGET_SHA: ${{ steps.target.outputs.commit || 'unavailable' }}
+        run: |
+          set -euo pipefail
+          mkdir -p factory/coordination/shared/results
+          REPORT="factory/coordination/shared/results/AVTOY_STANDBY_TESTS_${GITHUB_RUN_ID}.md"
+          {
+            echo "# AVTOY Russian standby test run"
+            echo
+            echo "- Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo "- Target repository: sokfrut-tech/avtoy-korea-auto"
+            echo "- Target branch: factory/max-failover-test-2026-11-15"
+            echo "- Target commit: ${TARGET_SHA}"
+            echo "- Checkout: ${TARGET_OUTCOME}"
+            echo "- Tests: ${TEST_OUTCOME}"
+            echo "- Scope: MAX adapter tests + standby HTTP server regression tests"
+            echo "- This is a test snapshot of selected source files; it is not a GitLab pipeline or production deployment."
+          } > "${REPORT}"
+          cd factory
+          git config user.name "Universal AI Factory Test Executor"
+          git config user.email "factory-bot@users.noreply.github.com"
+          git add "coordination/shared/results/AVTOY_STANDBY_TESTS_${GITHUB_RUN_ID}.md"
+          git commit -m "test(factory): record AVTOY standby run ${GITHUB_RUN_ID} [skip ci]"
+          git push origin HEAD:main
+
+      - name: Enforce test result
+        if: always()
+        shell: bash
+        env:
+          TEST_OUTCOME: ${{ steps.tests.outcome || 'not_started' }}
+        run: |
+          if [[ "${TEST_OUTCOME}" != "success" ]]; then
+            echo "::error::AVTOY standby tests did not pass. See the saved report and logs."
+            exit 1
+          fi
+          echo "All standby regression tests passed."
