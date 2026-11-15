@@ -277,3 +277,11 @@ GitLab pipeline был остановлен до создания jobs из-за
 - Factory selected-source suite `43750064228`: **70/70 passed**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43750064228.md
 - Preferred provider candidate documented: Yandex Managed YDB Serverless in Russia / `ru-central1`, with limited monthly free tier and billable overages. See `standby/docs/YDB_PROVIDER_SELECTION_2026-11-15.md`.
 - Account eligibility, +49 phone/payment, live YDB, Russian ISP connectivity and restore drill not tested. No resource created or payment. Next: non-billable onboarding eligibility check, then strictly capped provision if approved.
+
+
+## Newest handoff checkpoint — 2026-11-15 19:06 UTC
+- GitLab branch HEAD `73d213031c0605e6a8f8d5465fd79325a4feee71`.
+- YDB runtime now supports external schema management: separate migration identity applies v2 + v3; app runtime skips DDL and performs read-only table/index probes. Production requires `YDB_SCHEMA_MANAGED_EXTERNALLY=true`.
+- Factory run `43750579755`: **72/72 passed**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43750579755.md
+- Snapshot `8fbe54ec54d44510733dfeda4f83132bc31f17f8`; selected files only. Earlier failures were test-fixture defects corrected before successful run.
+- Provider candidate Yandex Managed YDB Serverless / `ru-central1`; no account, payment or resources provisioned. Live validation remains pending.
