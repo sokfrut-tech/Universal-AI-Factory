@@ -7,3 +7,5 @@ Target branch: `sokfrut-tech/avtoy-korea-auto:factory/max-failover-test-2026-11-
 Scope: `standby/server.mjs`, MAX adapter, and the standby HTTP server regression tests.
 
 This is isolated test execution only. It does not merge the GitLab branch or deploy production.
+
+Second dispatch: include YDB request-store source and regression tests.
