@@ -31,3 +31,5 @@ Eleventh dispatch: verify HTTP integration of per-operator credentials and RBAC,
 Twelfth dispatch: verify supervisor retry authorization with durable audit recorded before queue processing; validate YDB audit event primary-key declaration and strict target identifier allowlist.
 
 Thirteenth dispatch: verify legacy shared-token access is permitted only under explicit `NODE_ENV=test|development`; an unset or production environment must fail closed even when `STANDBY_ADMIN_TOKEN` is present.
+
+Fourteenth dispatch: verify role-protected `/ops/audit` endpoint, supervisor-only audit listing, durable audit append-before-read ordering, and YDB audit-list decoding/limit behavior.
