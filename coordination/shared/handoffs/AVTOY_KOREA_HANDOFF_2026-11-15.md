@@ -214,3 +214,11 @@ GitLab pipeline был остановлен до создания jobs из-за
 - Factory run `43748317816`: **61/61 passed**. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748317816.md
 - Snapshot HEAD `70f3c94cc624fe1f46d52cd5dd5ae7af72958b26`; selected-file tests only.
 - Remaining: failed-auth audit, rate limits, token rotation, live YDB, multi-instance and Russian network checks. No production resources changed.
+
+
+## Newest handoff checkpoint — 2026-11-15 18:45 UTC
+- GitLab branch HEAD `c40894a262a115f966edbbbc9a55333c771b8ee8`.
+- Failed and forbidden auth attempts are audited without secrets/PII; 10 failed attempts/IP/10 minutes produce 429. Forwarded IP trusted only behind explicit `TRUST_PROXY=true`.
+- Factory run `43748471412`: **62/62 passed**. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748471412.md
+- Limitation: limiter is process-local; distributed rate limiting at Russian edge needed before multi-instance production.
+- No live YDB, Russian runtime, MAX bot/group or deployment.
