@@ -350,3 +350,11 @@ Latest GitLab branch HEAD: `206cce5e8d6cb8ae602d6e0a11ff57dd72c4dae8`. `MAX_OPER
 - Official YDB docs confirm `VIEW IndexName` for secondary index reads, `DELETE FROM ... ON SELECT` for bounded deletion, granular `SELECT ROW`/`UPDATE ROW`/`ERASE ROW` and database `CONNECT`. See least-privilege doc.
 - Provider update: free tier applies at payment-account level across all attached clouds/orgs; YDB allowance 1m RU, 1 GB/month storage and two recent full backups; overage billed. Source: https://yandex.cloud/ru/docs/billing/concepts/serverless-free-tier . Serverless default storage cap 50 GB; configure a lower cap after measuring and before traffic.
 - No account/payment/database/resource provisioned. No real YDB test, Russian ISP test, restore drill or production deployment. No MR merge.
+
+
+## 23. Yandex payer residency path clarified (2026-11-15 19:20 UTC)
+- GitLab branch HEAD `a3916cac63a81dd1c1e268dd2abdcd426221f619`.
+- Provider decision doc now distinguishes payer residency routes using official Yandex Cloud docs: RF resident -> RUB and card issued by Russian bank; non-resident of RF/KZ -> USD, non-Russian card or bank transfer, manual manager approval (up to 3 business days), and some countries unsupported for technical reasons. Official flow asks for current phone/email but does not guarantee +49 acceptance. The user's actual payer residency must be chosen by the user; do not infer from location/IP.
+- Consequence: a contact in Russia is not currently required for the documented non-resident route. Only reconsider if a concrete provider verification step makes it necessary. No signup/payment/resource initiated.
+- Free tier is shared across all clouds/orgs linked to one billing account; allowance 1m RU, 1GB stored data and 2 recent full automatic backups; overage billed. Storage cap defaults to 50GB and must be reduced/controlled before traffic.
+- Production fail-closed code test: Factory run `43751714424`, 74/74 passed. This is selected-source test only, not full CI or live YDB.
