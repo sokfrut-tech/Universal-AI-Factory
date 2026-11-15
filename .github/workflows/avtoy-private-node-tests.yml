@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'coordination/shared/dispatch/avtoy-korea-ordered-media-tests-2026-11-15.md'
+      - '.github/workflows/avtoy-private-node-tests.yml'
   workflow_dispatch:
 
 permissions:
@@ -32,11 +33,11 @@ jobs:
       - name: Require private-repository read token without exposing it
         shell: bash
         env:
-          FACTORY_PAT: ${{ secrets.FACTORY_PAT }}
+          FACTORY_PAT: ${{ secrets.FACTORY_PAT_CANDIDATE }}
         run: |
           set -euo pipefail
           if [[ -z "${FACTORY_PAT}" ]]; then
-            echo "::error::FACTORY_PAT is not configured in Universal-AI-Factory. Add a fine-grained read-only token with Contents: read for sokfrut-tech/avtoy-korea-auto."
+            echo "::error::FACTORY_PAT_CANDIDATE is not configured. Add the candidate token as a repository secret."
             exit 1
           fi
           echo "Private repository credential is present (value is not displayed)."
@@ -47,7 +48,7 @@ jobs:
         with:
           repository: ${{ env.TARGET_REPOSITORY }}
           ref: ${{ env.TARGET_REF }}
-          token: ${{ secrets.FACTORY_PAT }}
+          token: ${{ secrets.FACTORY_PAT_CANDIDATE }}
           path: target
           fetch-depth: 1
           retry-fetches: 0
