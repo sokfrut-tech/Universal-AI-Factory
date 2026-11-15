@@ -39,3 +39,5 @@ Fifteenth dispatch: test the role-aware mobile operator panel, including operato
 Sixteenth dispatch: verify denied-auth and forbidden-role audit records, ensure bearer secrets are never included, and confirm the per-process throttle returns 429 after 10 failed operator attempts in a 10-minute window.
 
 Seventeenth dispatch: verify legacy shared admin token is accepted only when `NODE_ENV=test`; development, unset and production environments must all reject it.
+
+Eleventh dispatch: run the updated standby snapshot with `assertDurableAdminRuntime` and its regression tests. Startup must refuse configured per-operator administration or MAX webhook when the durable YDB request store is absent; per-operator mode must also require the durable audit schema capability. Snapshot target branch `factory/max-failover-test-2026-11-15`, server commit `e1a28ebd2bc1c32f4d0c15111cb1d35ac0731e3c`, server-test commit `12710a83d18d12f0770ca51c7a40fd2297baedc`, YDB-test commit `2043f6973173afcfcf74f931c935c12c2e38cabc`.
