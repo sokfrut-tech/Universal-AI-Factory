@@ -10,6 +10,8 @@ For every new ChatGPT conversation about AVTOY KOREA, read these files in order 
 
 - [SourceCraft compatibility audit (repo/PR source evidence)](https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_SOURCECRAFT_COMPATIBILITY_AUDIT_2026-11-15.md)
 
+- [Static mirror pipeline source review and test gaps](https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STATIC_MIRROR_PIPELINE_SOURCE_REVIEW_2026-11-15.md)
+
 ## Current next actions
 - First try SourceCraft with the user's own Yandex ID; no Russian helper has been shown to be necessary.
 - Inspect the AVTOY frontend for Service Worker, custom-domain and API CORS dependencies before choosing SourceCraft.
