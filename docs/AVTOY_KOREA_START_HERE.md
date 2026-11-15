@@ -144,3 +144,12 @@ Supersedes older status notes above.
 - Factory rerun **43749293947** passed **68/68**. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43749293947.md
 - Snapshot commit `458d8f27984b643d067d09f10e17b89aebc43a1a`; selected-file tests only. Previous 67/68 run was a fake-SQL fixture bug and was corrected.
 - Remaining gates: live YDB DDL/transaction verification, approved cleanup cadence, backup/restore, DB least privilege, Russian host and MAX registration. No live infrastructure, MR merge or deployment.
+
+
+## Newest continuation checkpoint — 2026-11-15 18:55 UTC
+Supersedes older status notes above.
+- GitLab branch HEAD `9ffabe82130b4526135a8685ba9f3e71b57a94d7`.
+- Added bounded audit deletion method requiring explicit cutoff, max batch 500, no automatic schedule.
+- Factory run **43749431381**: **69/69 passed**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43749431381.md
+- Snapshot commit `b6c37e23ee1e83c7bfc533a8867918ee8a2371bc`; selected-file tests only.
+- Next: cache/privacy header review, backup/restore, live YDB verification and owner-approved audit retention duration. No Russian runtime or production deployment.
