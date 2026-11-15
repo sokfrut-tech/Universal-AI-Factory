@@ -28,7 +28,7 @@
 - No external Claude/Gemini review response was received. The factory dispatcher creates technical receipts only; it does not execute an agent. This report is therefore explicitly a self-review.
 - No live Telegram album was imported, approved, and fetched through the production Worker. Tests use mocked Telegram API and in-memory KV.
 - Production Worker deployment, KV contents, DNS, and public site were not changed.
-- The latest workflow run exposed an unsupported `retry-fetches` input on `actions/checkout`; removed it in factory commit `421e77399f5221d06e96d450c792513c64ad2073`. A clean rerun is pending at time of this report.
+- The workflow initially exposed an unsupported `retry-fetches` input on `actions/checkout`; removed it in factory commit `421e77399f5221d06e96d450c792513c64ad2073`. Clean rerun [43688335641](https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/43688335641) passed on the same target head: syntax checks passed, 152 passed, 0 failed, and the invalid-input warning is gone.
 
 ## Decision
 
