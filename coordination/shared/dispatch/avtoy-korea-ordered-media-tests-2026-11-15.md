@@ -7,13 +7,14 @@ Target branch: `fix/ordered-media-sequence-main-2026-11-15`
 Expected target commit: `e5924ad5b13cd19c752deb0c06086b7644002343`
 
 Required commands:
-- `node --check worker.js`
+- `node --input-type=module --check < worker.js`
 - `node --check media-order.js`
-- `node --test worker.test.mjs media-order.test.mjs`
+- `node --test worker.test.mjs` (exact project CI command)
+- `node --test worker.test.mjs media-order.test.mjs` (complete regression suite)
 
 Safety:
 - Checkout only the named private repository and branch.
-- Use FACTORY_PAT only for checkout; do not print, persist, or expose its value.
+- Use FACTORY_PAT_CANDIDATE only for checkout; do not print, persist, or expose its value.
 - Do not modify or push to the target repository.
 - Do not deploy, merge PR #78, access production KV, or export user data.
 - Save only the sanitized run outcome and target commit SHA in the factory outbox/results folder.
