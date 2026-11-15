@@ -222,3 +222,11 @@ GitLab pipeline был остановлен до создания jobs из-за
 - Factory run `43748471412`: **62/62 passed**. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748471412.md
 - Limitation: limiter is process-local; distributed rate limiting at Russian edge needed before multi-instance production.
 - No live YDB, Russian runtime, MAX bot/group or deployment.
+
+
+## Newest handoff checkpoint — 2026-11-15 18:47 UTC
+- GitLab feature branch HEAD `4e5589c917c3f432f945f7c9afbb3e755dfb339f`.
+- Legacy shared token accepted only in explicit test environment; production/dev/unset fail closed.
+- Factory run `43748653690`: **63/63 passed**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748653690.md
+- Snapshot HEAD `fd4a27c4a851eec9c4030860e13719f7534a26db`; selected-file tests only.
+- Remaining: distributed edge rate limits, live YDB, operator token rotation, multi-instance and Russian no-VPN checks. No runtime resources provisioned.
