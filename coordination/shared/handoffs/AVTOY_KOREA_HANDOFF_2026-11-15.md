@@ -108,4 +108,17 @@ GitLab pipeline был остановлен до создания jobs из-за
 - Никаких production ресурсов в ходе описанной работы не меняли.
 
 ## Правило возобновления
+
+## Progress update — 2026-11-15 08:08 UTC
+- Rechecked GitLab branch; latest at the moment of this update: `79a7d8cc60b320ae884cf70735b8533cfdef7587`.
+- Added `standby/channels/max-adapter.mjs` and unit tests (commit `45204622`): official MAX API host, Authorization header, configured operator chat only, 4,000-character bound, timeout, retry classification, no customer PII in group message.
+- Integrated outbound fallback in `standby/server.mjs` (commit `90c82b0f`): Telegram first; if incomplete/unavailable, MAX private operator group; request is marked delivered if all configured Telegram admins received it OR MAX group received it. If both fail, durable queue stays pending.
+- Fixed escaped-regex issue in notification parsing (commit `0ecc9455`); YDB completion now uses stable receipt `operators`.
+- Added MAX fallback, both-channels-failed, and YDB receipt tests in `standby/test/server.test.mjs`; package test/check scripts include MAX tests.
+- Updated `standby/docs/RUSSIA_AUTONOMOUS_BOT_ARCHITECTURE.md` (commit `79a7d8cc`).
+- Official MAX webhook contract checked: HTTPS endpoint on port 443, secret configured on POST /subscriptions is echoed as `X-Max-Bot-Api-Secret`, endpoint must answer HTTP 200 within 30 seconds; MAX retries delivery. Do not add webhook until Russian backend/domain exists.
+- Created isolated GitHub test snapshot branch `sokfrut-tech/avtoy-korea-auto:factory/max-failover-test-2026-11-15` (latest copied file commit `f4f1870e3d40ca249a5a694bb899765f6f3c0741`) containing the exact current server, MAX adapter, adapter tests and server regression tests.
+- Added Factory workflow `.github/workflows/avtoy-standby-node-tests.yml`; run `43692987243` is currently in progress: https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/43692987243
+- Isolated local harness for MAX adapter: 5/5 tests passed. This is not a full repo test. Await Factory run for integrated server regression results.
+- GitLab MR !76 still not merged; no production resources touched.
 При сообщении пользователя «Далее» начать с проверки свежего GitLab HEAD и raw source файлов, затем реализовывать MAX adapter и tests. Не просить пользователя повторять историю. Если состояние репозиториев изменилось, сверить diff и аккуратно обновить handoff.
