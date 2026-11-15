@@ -167,4 +167,14 @@ Preferred low-cost split architecture:
 
 ## 8. User-facing summary
 
+## 9. Progress update — MAX outbound failover (2026-11-15)
+GitLab feature branch `deploy/russian-tuqo-static-2026-11-15` has advanced to `79a7d8cc60b320ae884cf70735b8533cfdef7587`.
+- Added MAX operator sender `standby/channels/max-adapter.mjs` with fixed official API origin, Authorization header, one configured operator group destination, timeout/retry classification, and privacy-safe message text.
+- Integrated Telegram-first / MAX-fallback delivery in standby server. The durable request is complete if Telegram delivered to all configured admins OR MAX operator group accepted the notification. If both channels fail, it remains queued.
+- Added regression tests for MAX success fallback, both channels failing, and stable YDB operator receipt. Corrected escaped regex parsing in Telegram admin IDs.
+- Updated bot architecture doc with the current implementation and official MAX webhook secret header contract.
+- Factory runner is executing isolated server + MAX test files at https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/43692987243 . Do not claim full tests until it completes and the report is reviewed.
+- GitLab MR !76 remains unmerged; GitLab pipeline still has the identity-verification blocker. No production deployment, MAX registration, domain, Russian host or paid resources have been created.
+
+
 The user wants the Russian standby mirror completed quickly, but safely and without unnecessary spending. The key unresolved question is not simply “which host is best”; it is whether a viable Russian static host/media store can be used for free with verification only. Investigate that first. Cloud.ru with a possible 100 ₽ initial balance is the leading media-storage fallback, not a decision to spend. A person in Russia is a contingency only if the chosen provider's legitimate signup/payment rules make their help necessary.
