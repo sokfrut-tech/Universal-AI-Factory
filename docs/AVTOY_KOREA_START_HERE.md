@@ -55,3 +55,7 @@ Latest GitLab branch HEAD: `61900daacb638d9211ecc206acaaa3d026991c02`. MAX outbo
 - Factory run **43693667994** passed **41/41** selected tests: https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/43693667994
 - Read `standby/docs/RUSSIA_AUTONOMOUS_BOT_ARCHITECTURE.md` and the latest report.
 - Not production-ready: no Russian HTTPS host/YDB instance, no actual MAX bot/group/webhook subscription, no operator sender allowlist or automated client replies. No merge/deploy performed.
+
+
+## Current source checkpoint — 2026-11-15
+Latest GitLab branch HEAD: `206cce5e8d6cb8ae602d6e0a11ff57dd72c4dae8`. MAX sender allowlist and callback actor checks added. Factory selected-snapshot test run 43693780039: **43/43 passed**. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43693780039.md. Continue from `standby/docs/RUSSIA_AUTONOMOUS_BOT_ARCHITECTURE.md`; do not claim MAX operational until bot/group and Russian HTTPS/YDB are provisioned.
