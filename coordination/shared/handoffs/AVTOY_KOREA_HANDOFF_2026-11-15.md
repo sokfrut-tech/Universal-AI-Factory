@@ -141,3 +141,12 @@ GitLab pipeline был остановлен до создания jobs из-за
 - The current working branch `deploy/russian-tuqo-static-2026-11-15` at `32bbfa30613a3740dce5a6924ba0205652cb3473` has no associated merge request (filtered GitLab MR query returned none).
 - Therefore do not state that the MAX commits are inside MR !76 or that MR !76 pipeline tested them. The MAX code was verified using Factory runner snapshot run `43693100303` (31/31), not GitLab CI.
 - No MR was created for the current feature branch yet; keep it unmerged until review and explicit user decision.
+
+
+## Final checkpoint — 2026-11-15 08:10 UTC
+- Latest GitLab feature branch HEAD: `61900daacb638d9211ecc206acaaa3d026991c02`.
+- Latest architecture note: https://gitlab.com/sokfrut/avtoY-korea-auto/-/blob/deploy/russian-tuqo-static-2026-11-15/standby/docs/RUSSIA_AUTONOMOUS_BOT_ARCHITECTURE.md
+- Latest passing Factory run: `43693103183`, **31/31 passed**, 0 failed; report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43693103183.md
+- Important branch correction: MR !76 is an older separate research branch, not the current feature branch. Current feature branch has no MR as of the latest query.
+- Remaining functional gaps: no real MAX bot/group yet; no MAX inbound webhook receiver; no Russian-hosted runtime/domain/DB provisioned; no full operator web panel yet. The MAX sender is only the outbound notification/failover slice.
+- Continue by designing/implementing durable MAX webhook event ingestion and operator panel only when storage/schema/security contracts are defined; no production activation before Russian HTTPS endpoint, persistent event idempotency and real MAX credentials/group ID exist.
