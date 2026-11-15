@@ -62,13 +62,15 @@ jobs:
           set -euo pipefail
           cd target
           node --version
+          node --check standby/security/operator-auth.mjs
+          node --check standby/security/operator-auth.test.mjs
           node --check standby/server.mjs
           node --check standby/channels/max-adapter.mjs
           node --check standby/channels/max-adapter.test.mjs
           node --check standby/test/server.test.mjs
           node --check standby/storage/ydb-request-store.mjs
           node --check standby/storage/ydb-request-store.test.mjs
-          node --test standby/channels/*.test.mjs standby/test/server.test.mjs standby/storage/ydb-request-store.test.mjs | tee "${RUNNER_TEMP}/avtoy-standby-tests.log"
+          node --test standby/security/*.test.mjs standby/channels/*.test.mjs standby/test/server.test.mjs standby/storage/ydb-request-store.test.mjs | tee "${RUNNER_TEMP}/avtoy-standby-tests.log"
           TEST_COUNT=$(awk '/^# tests / {print $3}' "${RUNNER_TEMP}/avtoy-standby-tests.log")
           PASS_COUNT=$(awk '/^# pass / {print $3}' "${RUNNER_TEMP}/avtoy-standby-tests.log")
           FAIL_COUNT=$(awk '/^# fail / {print $3}' "${RUNNER_TEMP}/avtoy-standby-tests.log")
@@ -99,7 +101,7 @@ jobs:
             echo "- Target commit: ${TARGET_SHA}"
             echo "- Checkout: ${TARGET_OUTCOME}"
             echo "- Tests: ${TEST_OUTCOME} (${PASS_COUNT}/${TEST_COUNT} passed; ${FAIL_COUNT} failed)"
-            echo "- Scope: MAX adapter tests + standby HTTP server + YDB request-store regression tests"
+            echo "- Scope: operator auth/RBAC + MAX adapter + standby HTTP server + YDB request-store regression tests"
             echo "- This is a test snapshot of selected source files; it is not a GitLab pipeline or production deployment."
           } > "${REPORT}"
           cd factory
