@@ -153,3 +153,12 @@ Supersedes older status notes above.
 - Factory run **43749431381**: **69/69 passed**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43749431381.md
 - Snapshot commit `b6c37e23ee1e83c7bfc533a8867918ee8a2371bc`; selected-file tests only.
 - Next: cache/privacy header review, backup/restore, live YDB verification and owner-approved audit retention duration. No Russian runtime or production deployment.
+
+
+## Newest continuation checkpoint — 2026-11-15 18:57 UTC
+Supersedes older status notes above.
+- GitLab branch HEAD `a2b9669940e9ffbc02717b92337006c19508c175`.
+- `/ops` now explicitly non-cacheable and has same-origin resource policy, restrictive permissions policy, existing CSP/nosniff/frame protection.
+- Factory run **43749661826**: **70/70 passed**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43749661826.md
+- Snapshot commit `e098866b64f8867767bfadd959068fe06eeb63ed`; selected-source tests only.
+- Next: live YDB validation, DB least privilege, backup/restore and explicit retention maintenance. No Russian runtime or production deploy.
