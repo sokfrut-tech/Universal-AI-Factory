@@ -222,3 +222,11 @@ Latest GitLab branch HEAD: `206cce5e8d6cb8ae602d6e0a11ff57dd72c4dae8`. `MAX_OPER
 - Exact selected-source snapshot branch `factory/max-failover-test-2026-11-15` HEAD: `f0aadd82318865c92481a6c5b86ed48999ae955c`. This is selected-file regression testing only, not GitLab CI, full repository CI, live YDB, MAX E2E or production.
 - Latest GitLab branch HEAD after documentation: `f43c6865fcf67ac0da36ee12c346468e4360d281`. No MR, merge, or deployment. MAX bot/group and Russian runtime remain unprovisioned.
 - Next: individual operator authentication/roles and audit design; then customer channel mapping/reply adapters. Do not enable MAX commands or subscribe webhook before Russian HTTPS:443 + YDB and verified operator accounts exist.
+
+
+## 14. Per-operator auth primitives (2026-11-15 18:36 UTC)
+- GitLab branch HEAD: `4ff95a79f48b4dbcbe8073ef5f449da5d03d406e`.
+- Added `standby/security/operator-auth.mjs` and tests: strict `STANDBY_OPERATORS_JSON` parsing, independent SHA-256 bearer-token identities, constant-time digest comparison, disabled/unknown credential rejection, and viewer/operator/supervisor/owner permission matrix.
+- Factory run **43747665597** passed **51/51**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43747665597.md
+- Snapshot HEAD `4bc657537730199b0713015a03db7d1cae49fe54`; selected-source suite only.
+- Important boundary: auth helper is not yet wired into `/ops/inbox` or `/ops/retry`; HTTP panel still uses shared MVP token. Do not expose publicly. Durable YDB audit table/store and fail-closed route integration are next; no production deployment.
