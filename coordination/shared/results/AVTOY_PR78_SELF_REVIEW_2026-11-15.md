@@ -33,3 +33,10 @@
 ## Decision
 
 **HOLD — do not merge or deploy yet.** The self-review found no confirmed blocking defect in the inspected ordered-media path, but this is not an independent external review and live publication/media delivery remains unverified. Recheck the clean factory workflow run, obtain a genuine independent review if an agent becomes available, and perform an explicitly approved non-production/live acceptance test before release.
+
+## Project-repository Actions runner incident
+- Exact-head PR workflows observed on commit `e5924ad5b13cd19c752deb0c06086b7644002343`: Worker tests, Cloudflare Worker checks, Deploy Worker (PR validation path only), Factory Review, and Factory Security Baseline all concluded failure.
+- Job metadata for all five runs showed `runner_id: 0`, empty `runner_name`, and `steps: []`; jobs completed within seconds without executing a step. Downloaded job logs returned BlobNotFound. This is evidence of failure before runner allocation, **not evidence that the code tests failed**. The exact infrastructure/account cause is not exposed by the available GitHub response.
+- Retried failed jobs for all five runs. Four repeated the same immediate pre-run failure; Security Baseline was queued at the last observation.
+- To avoid depending on the private repository's runner, the public factory workflow is being expanded to run both the exact project CI command (`node --test worker.test.mjs`) and the full media suite (`node --test worker.test.mjs media-order.test.mjs`), with Worker-compatible syntax validation. The rerun is pending.
+- No production deployment occurred: the Deploy Worker workflow was triggered by a pull_request event, whose workflow conditions do not authorize the Cloudflare deployment steps.
