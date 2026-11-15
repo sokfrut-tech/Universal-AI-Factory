@@ -35,5 +35,5 @@ Result: **6/6 passed** on the strengthened harness, including a deferred in-flig
 - GitLab CI did not execute any jobs for this change; pipeline #550 has zero jobs and no start timestamp. The account/provider identity-verification block remains unresolved.
 - No production service, YDB instance, MAX bot/group, webhook, DNS/TLS, or cloud resource was provisioned or changed.
 
-## Next recommended verification
+## Dependency-lock generation blocker\nThe GitHub repository `sokfrut-tech/avtoy-korea-auto` is private, and its `main` branch does not contain `standby/package.json` or `standby/package-lock.json`. Therefore its existing GitHub runner cannot safely generate a lockfile for the newer GitLab-only standby branch without first synchronizing source and arranging a secure private-source fetch. No workflow, token, or secret was added to attempt this. The local Node/npm environment still lacks the required YDB packages in its cache and has no registry network access.\n\n## Next recommended verification
 Run the repository's actual shutdown tests and then the complete standby suite in a trusted Node/npm environment with the project dependencies installed. Separately exercise a real in-flight retry cycle against a disposable YDB instance before production approval.
