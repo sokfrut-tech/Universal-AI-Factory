@@ -29,10 +29,10 @@ A standalone Node.js 22.16.0 harness executed the exact shutdown-helper control 
 
 Result: **6/6 passed** on the strengthened harness, including a deferred in-flight retry promise.
 
-## CI status\nA push-triggered GitLab pipeline for the earlier implementation commit `659f52b8` failed before any job started: `started_at=null`, zero jobs. This is consistent with the existing provider/account identity-verification block and is not a test failure. The latest test-only follow-up commit was pushed after that pipeline; no successful CI run is claimed.\n\n## Verification limits
+## CI status\nA push-triggered GitLab pipeline for the latest commit `2e491c5b` (pipeline #550) failed before any job started: `started_at=null`, zero jobs. The preceding commits also produced pre-job failures (#548 and #549). This is consistent with the existing provider/account identity-verification block and is not a test failure. No successful CI run is claimed.\n\n## Verification limits
 - This was an isolated helper-level harness, not the repository's actual `node --test` suite.
 - Full `npm run check`, full `npm test`, Docker build/start, real YDB concurrency/integration, and live HTTP+YDB shutdown were not run.
-- GitLab CI was not used as a verification source in this change; the known account/provider identity-verification block occurs before jobs start.
+- GitLab CI did not execute any jobs for this change; pipeline #550 has zero jobs and no start timestamp. The account/provider identity-verification block remains unresolved.
 - No production service, YDB instance, MAX bot/group, webhook, DNS/TLS, or cloud resource was provisioned or changed.
 
 ## Next recommended verification
