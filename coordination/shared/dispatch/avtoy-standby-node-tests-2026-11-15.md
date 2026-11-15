@@ -35,3 +35,5 @@ Thirteenth dispatch: verify legacy shared-token access is permitted only under e
 Fourteenth dispatch: verify role-protected `/ops/audit` endpoint, supervisor-only audit listing, durable audit append-before-read ordering, and YDB audit-list decoding/limit behavior.
 
 Fifteenth dispatch: test the role-aware mobile operator panel, including operator identity/role display, retry visibility based on `notifications:retry`, and supervisor/owner audit button calling `/ops/audit`; verify safe text rendering and no browser storage.
+
+Sixteenth dispatch: verify denied-auth and forbidden-role audit records, ensure bearer secrets are never included, and confirm the per-process throttle returns 429 after 10 failed operator attempts in a 10-minute window.
