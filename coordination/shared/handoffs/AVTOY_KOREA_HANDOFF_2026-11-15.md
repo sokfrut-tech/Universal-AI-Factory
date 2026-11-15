@@ -269,3 +269,11 @@ GitLab pipeline был остановлен до создания jobs из-за
 - YDB backup/restore runbook created, with Russia-only off-cluster backup, supported YDB CLI options, limitations, mandatory restore drill and RPO/RTO evidence.
 - Latest code suite 70/70 passed: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43749661826.md
 - No Russian YDB, backup destination, production resources or restore evidence yet. No deploy.
+
+
+## Newest handoff checkpoint — 2026-11-15 19:02 UTC
+- GitLab branch HEAD `18251cea75bf34adf077cf331849da73d58d7332`.
+- Runtime gate fix `fdcd94c4` requires all durable YDB request lifecycle capabilities, MAX receipt persistence and operator audit/rate-limit capabilities according to configured features.
+- Factory selected-source suite `43750064228`: **70/70 passed**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43750064228.md
+- Preferred provider candidate documented: Yandex Managed YDB Serverless in Russia / `ru-central1`, with limited monthly free tier and billable overages. See `standby/docs/YDB_PROVIDER_SELECTION_2026-11-15.md`.
+- Account eligibility, +49 phone/payment, live YDB, Russian ISP connectivity and restore drill not tested. No resource created or payment. Next: non-billable onboarding eligibility check, then strictly capped provision if approved.
