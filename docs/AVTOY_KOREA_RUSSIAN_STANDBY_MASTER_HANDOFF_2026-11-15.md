@@ -213,3 +213,12 @@ Latest GitLab feature branch HEAD: `ce1792b743612c343be9570d3a8c31d7731f7398`.
 
 ## 12. MAX operator sender allowlist
 Latest GitLab branch HEAD: `206cce5e8d6cb8ae602d6e0a11ff57dd72c4dae8`. `MAX_OPERATOR_USER_IDS` is now mandatory; only allowlisted users in the configured private group can produce accepted message/callback receipts. Callback actor is taken from `callback.user.user_id`. Factory run `43693780039` passed 43/43 selected tests. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43693780039.md. Still no actual MAX bot/group or Russian runtime; webhook must remain unsubscribed until HTTPS:443 and durable YDB exist.
+
+
+## 13. Bounded MAX webhook event retention (2026-11-15 18:34 UTC)
+- GitLab branch `deploy/russian-tuqo-static-2026-11-15`: commit `22fcd4dabf8e1242d6abb9f4a0468af4d1de0708` adds `pruneMaxWebhookEvents({ before, limit })` to the YDB request store; docs follow in `f43c6865fcf67ac0da36ee12c346468e4360d281`.
+- Cleanup requires an explicit valid cutoff and a batch size 1–500; only `received_at < cutoff` is eligible. YQL deletes selected primary keys using `DELETE FROM ... ON SELECT ... LIMIT`. No automatic schedule or implicit retention duration is configured.
+- Factory run **43747461090** passed **45/45**, 0 failed, Node.js 22. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43747461090.md
+- Exact selected-source snapshot branch `factory/max-failover-test-2026-11-15` HEAD: `f0aadd82318865c92481a6c5b86ed48999ae955c`. This is selected-file regression testing only, not GitLab CI, full repository CI, live YDB, MAX E2E or production.
+- Latest GitLab branch HEAD after documentation: `f43c6865fcf67ac0da36ee12c346468e4360d281`. No MR, merge, or deployment. MAX bot/group and Russian runtime remain unprovisioned.
+- Next: individual operator authentication/roles and audit design; then customer channel mapping/reply adapters. Do not enable MAX commands or subscribe webhook before Russian HTTPS:443 + YDB and verified operator accounts exist.
