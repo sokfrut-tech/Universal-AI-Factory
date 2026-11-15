@@ -373,3 +373,13 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - For high-risk changes, run a distinct self-review pass and label it **self-review**. Never describe it as independent external review.
 - Release gates are evidence-based: exact commit, required tests, security checks, and runtime acceptance where applicable. Missing external review alone is not a blocker when the owner has chosen agent-independent execution; unresolved technical risks remain blockers.
 - Keep factory handoffs, decisions and evidence in GitHub so work can resume across chats and agents.
+
+
+## AVTOY KOREA — Russian standby mirror master handoff (2026-11-15)
+
+**Always read this brief first when a new chat resumes AVTOY KOREA or the Russian mirror:**
+
+- [AVTOY_KOREA_RUSSIAN_STANDBY_MASTER_HANDOFF_2026-11-15.md](https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/docs/AVTOY_KOREA_RUSSIAN_STANDBY_MASTER_HANDOFF_2026-11-15.md)
+- It consolidates the project goal and safety constraints, PR #78 ordered-media test evidence (152/152 on Factory runner), GitLab CI identity-verification/pre-job incident, Russian mirror implementation and test gaps, hosting candidates, the free-verification-only-first decision, the Cloud.ru 100 ₽ fallback, and the ordered next-step plan.
+- New-chat rule: do not ask the user to repeat prior decisions. Read the master handoff, recheck live repository/provider state, then continue at the first incomplete P0 item. The brief is the durable handoff; chat history is supplementary.
+- Latest handoff commit: `a14e2c043b3914c498c088c38a2426d5e840684e`.
