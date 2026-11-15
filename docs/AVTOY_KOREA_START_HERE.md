@@ -162,3 +162,11 @@ Supersedes older status notes above.
 - Factory run **43749661826**: **70/70 passed**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43749661826.md
 - Snapshot commit `e098866b64f8867767bfadd959068fe06eeb63ed`; selected-source tests only.
 - Next: live YDB validation, DB least privilege, backup/restore and explicit retention maintenance. No Russian runtime or production deploy.
+
+
+## Newest continuation checkpoint — 2026-11-15 18:58 UTC
+Supersedes older status notes above.
+- GitLab branch HEAD `2206b15426ed2e56f907db78c929992719d9d04d`.
+- Added YDB backup/restore runbook at `standby/docs/YDB_BACKUP_RESTORE_RUNBOOK_2026-11-15.md`. It defines Russia-only off-cluster backup, table inventory, YDB CLI paths, documented limitations, restore-drill steps and RPO/RTO evidence.
+- Latest code test run: **70/70 passed**, report https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43749661826.md
+- No database, backup bucket, export, restore or production resource exists. No live restore drill. Next gate is Russian YDB provisioning, then live DDL/transactions and restore test.
