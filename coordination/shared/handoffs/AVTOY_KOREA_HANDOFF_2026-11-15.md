@@ -122,3 +122,14 @@ GitLab pipeline был остановлен до создания jobs из-за
 - Isolated local harness for MAX adapter: 5/5 tests passed. This is not a full repo test. Await Factory run for integrated server regression results.
 - GitLab MR !76 still not merged; no production resources touched.
 При сообщении пользователя «Далее» начать с проверки свежего GitLab HEAD и raw source файлов, затем реализовывать MAX adapter и tests. Не просить пользователя повторять историю. Если состояние репозиториев изменилось, сверить diff и аккуратно обновить handoff.
+
+
+## Progress update — 2026-11-15 08:09 UTC
+- Latest GitLab feature branch commit: `32bbfa30613a3740dce5a6924ba0205652cb3473`.
+- Factory Runner final verified run: **31/31 passed, 0 failed**, Node.js 22, syntax checks successful. Run: https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/43693100303
+- Durable report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43693100303.md
+- Tested snapshot commit: `f83526794bccc3235284ac5d4c686ea48aeb53e2` on GitHub branch `factory/max-failover-test-2026-11-15`. This snapshot contains exact selected source files copied from GitLab feature branch; it is not a full GitLab CI run or live/production test.
+- Workflow report-push concurrency was fixed; final run completed all workflow steps successfully.
+- GitLab architecture doc commit `32bbfa30` now records the verified test result.
+- MAX outbound failover code remains feature-branch only; no bot, chat, token, webhook, domain, Russian hosting or production service has been provisioned.
+- Next implementation priority: after code review, prepare secure MAX webhook receiver using documented `X-Max-Bot-Api-Secret`, event ID idempotency and configured private chat allowlist. Do not enable it until Russian HTTPS backend/domain and durable event storage exist. In parallel continue Russian runtime/API/admin panel design.
