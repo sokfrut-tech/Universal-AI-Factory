@@ -19,3 +19,5 @@ Fifth dispatch: rerun after fixing the YDB fake event map assertion; include lat
 Sixth dispatch: verify the mobile operator inbox panel, route security and latest MAX webhook receiver snapshot.
 
 Seventh dispatch: verify final mobile phone/SMS actions and operator panel source checks.
+
+Eighth dispatch: test MAX sender allowlist and callback actor identity handling.
