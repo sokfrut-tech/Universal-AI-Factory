@@ -327,3 +327,13 @@ Latest GitLab branch HEAD: `206cce5e8d6cb8ae602d6e0a11ff57dd72c4dae8`. `MAX_OPER
 - Provider selection: documented Yandex Managed YDB Serverless in Russia / `ru-central1` as preferred candidate. Official free tier lists 1m RU, 1 GB stored data, and two recent full automatic backups per month; usage beyond the tier is billed. This is not guaranteed zero-cost. Storage cap and billing alerts must be configured.
 - Provider selection doc: `standby/docs/YDB_PROVIDER_SELECTION_2026-11-15.md`. Official source says managed YDB is distributed across three `ru-central1` availability zones. User account eligibility (+49 phone/payment acceptance) remains unverified; no account, card, payment, DB or service account created.
 - Next: when user is ready, test their own Yandex ID/billing onboarding without paying or enabling billable resources; if successful, provision only Serverless in ru-central1 with strict caps and least privilege. Then live YDB DDL/transactions, Russia ISP checks and restore drill.
+
+
+## 21. YDB schema/runtime privilege separation (2026-11-15 19:06 UTC)
+- GitLab branch HEAD `73d213031c0605e6a8f8d5465fd79325a4feee71`.
+- Production `INBOX_STORE=v2` now requires `YDB_SCHEMA_MANAGED_EXTERNALLY=true`. With this mode, runtime skips all `CREATE TABLE` DDL and performs read-only startup probes for required tables and both queue indexes. Missing schema/index causes startup failure.
+- Added `standby/storage/ydb-schema-v3-operator-security.sql` for MAX webhook receipts, operator audit events and shared auth rate limits. Apply schema v2 then v3 with a separate migration identity; runtime identity should not receive CREATE/ALTER/DROP permissions. Documented in README, provider selection and backup runbook.
+- Factory run **43750579755** passed **72/72**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43750579755.md
+- Exact selected-source snapshot commit `8fbe54ec54d44510733dfeda4f83132bc31f17f8`; selected files only, not GitLab CI or live YDB. Earlier runs 43750286136 and 43750452377 failed on stale test fixtures (fake SQL call shape and partial mock missing new capability); corrected and rerun 72/72. No production failure observed.
+- YDB provider candidate remains Yandex Managed YDB Serverless in Russia / `ru-central1`, not provisioned. Free tier limits and billing guardrails documented. No Yandex account, payment or resource created.
+- Next: independent review of YQL/DDL against official syntax, then user-owned Yandex Cloud onboarding only when ready, without payment; live YDB + Russian ISP + restore drill remain gates.
