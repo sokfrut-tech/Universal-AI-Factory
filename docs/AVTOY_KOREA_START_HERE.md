@@ -59,3 +59,13 @@ Latest GitLab branch HEAD: `61900daacb638d9211ecc206acaaa3d026991c02`. MAX outbo
 
 ## Current source checkpoint — 2026-11-15
 Latest GitLab branch HEAD: `206cce5e8d6cb8ae602d6e0a11ff57dd72c4dae8`. MAX sender allowlist and callback actor checks added. Factory selected-snapshot test run 43693780039: **43/43 passed**. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43693780039.md. Continue from `standby/docs/RUSSIA_AUTONOMOUS_BOT_ARCHITECTURE.md`; do not claim MAX operational until bot/group and Russian HTTPS/YDB are provisioned.
+
+
+## Newest continuation checkpoint — 2026-11-15 18:34 UTC
+The newest checkpoint supersedes older status notes above.
+- GitLab feature branch: `deploy/russian-tuqo-static-2026-11-15`, latest HEAD `f43c6865fcf67ac0da36ee12c346468e4360d281`.
+- Added bounded MAX webhook receipt retention: `pruneMaxWebhookEvents({ before, limit })`; explicit cutoff, max 500 keys per call, exclusive cutoff, no automatic scheduler/retention period.
+- Factory run **43747461090**: **45/45 passed**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43747461090.md
+- Exact selected-file snapshot branch HEAD: `f0aadd82318865c92481a6c5b86ed48999ae955c`. Not GitLab CI, full-repository CI, live YDB or production E2E.
+- No Russian host/YDB, MAX bot/group, webhook subscription, MR, merge or production deployment exists. Keep webhook unsubscribed.
+- Next engineering slice: individual operator accounts/roles/audit; then customer channel mapping and reply adapters. Russian autonomous runtime remains the primary product requirement.
