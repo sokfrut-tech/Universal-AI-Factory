@@ -240,3 +240,11 @@ Latest GitLab branch HEAD: `206cce5e8d6cb8ae602d6e0a11ff57dd72c4dae8`. `MAX_OPER
 - Factory run **43748005666** passed **58/58**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748005666.md
 - Snapshot HEAD `86ec8fe442fdae187ae068fef9b83f7c1cedf11b`; selected-file tests only, not GitLab CI, live YDB, multi-instance or production E2E.
 - Remaining: audit read endpoint, denied-auth audit/rate limiting, live YDB DDL validation, secure production token provisioning, multi-instance tests, panel operator identity/role UX. Keep `/ops` off public production until these gates pass.
+
+
+## 16. Role-protected audit read endpoint (2026-11-15 18:41 UTC)
+- GitLab branch HEAD: `97d3cec66a6e281321d981abd730dca53cb696ff`.
+- Added `GET /ops/audit`, restricted to `audit:read` (supervisor/owner). It writes an `audit.read` event before listing recent audit records. YDB listing returns only event/operator/action/target/outcome and sanitized metadata fields.
+- Factory run **43748164089** passed **60/60**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748164089.md
+- Snapshot HEAD `feea43f5d3c5e266295dc64eeb032c82bce9e7fa`; selected-file tests only, not live YDB or production E2E.
+- Remaining: failed-auth audit, distributed rate limiting, mobile panel audit view, live YDB DDL/query validation, production operator credential provisioning, multi-instance testing. No Russian runtime/YDB instance or MAX bot/group exists; no merge/deploy.
