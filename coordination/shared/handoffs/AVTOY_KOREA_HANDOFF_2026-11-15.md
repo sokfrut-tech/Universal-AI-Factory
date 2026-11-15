@@ -262,3 +262,10 @@ GitLab pipeline был остановлен до создания jobs из-за
 - Factory run `43749661826`: **70/70 passed**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43749661826.md
 - Snapshot `e098866b64f8867767bfadd959068fe06eeb63ed`; selected-file regression suite only.
 - Next: live YDB verification, backup/restore and DB least privilege. No deploy.
+
+
+## Newest handoff checkpoint — 2026-11-15 18:58 UTC
+- GitLab branch HEAD `2206b15426ed2e56f907db78c929992719d9d04d`.
+- YDB backup/restore runbook created, with Russia-only off-cluster backup, supported YDB CLI options, limitations, mandatory restore drill and RPO/RTO evidence.
+- Latest code suite 70/70 passed: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43749661826.md
+- No Russian YDB, backup destination, production resources or restore evidence yet. No deploy.
