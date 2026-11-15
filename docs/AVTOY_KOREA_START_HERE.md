@@ -125,3 +125,13 @@ Supersedes older status notes above.
 - Factory run **43748653690**: **63/63 passed**. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748653690.md
 - Snapshot HEAD `fd4a27c4a851eec9c4030860e13719f7534a26db`; selected-file tests only.
 - Still no Russian host/YDB, MAX bot/group, live integration or production. Multi-instance/distributed rate limit and no-VPN acceptance remain required.
+
+
+## Newest continuation checkpoint — 2026-11-15 18:50 UTC
+Supersedes older status notes above.
+- GitLab feature branch HEAD `252306bed729c85eb47b210ff9368a960dea300a`.
+- `/ops` now uses per-operator credentials/RBAC and durable audit interfaces; startup gate refuses operator administration or MAX webhook without durable YDB request store, and refuses operator mode without audit schema support.
+- Factory run **43748987700**: **64/64 passed**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748987700.md
+- Snapshot commit `2043f6973173afcfcf74f931c935c12e2c38cabc`; selected files only, not GitLab CI/live YDB/production E2E.
+- Remaining gates: enforce DB least privilege/append-only audit, persistent cross-instance auth rate limiting, audit retention/backups, verify admin no-store/privacy headers, provision actual Russian runtime/YDB/MAX only after eligibility/identity steps.
+- No MAX bot/group, Russian server, domain, YDB instance, webhook subscription, MR merge or production deployment.
