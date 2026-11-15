@@ -69,3 +69,13 @@ The newest checkpoint supersedes older status notes above.
 - Exact selected-file snapshot branch HEAD: `f0aadd82318865c92481a6c5b86ed48999ae955c`. Not GitLab CI, full-repository CI, live YDB or production E2E.
 - No Russian host/YDB, MAX bot/group, webhook subscription, MR, merge or production deployment exists. Keep webhook unsubscribed.
 - Next engineering slice: individual operator accounts/roles/audit; then customer channel mapping and reply adapters. Russian autonomous runtime remains the primary product requirement.
+
+
+## Newest continuation checkpoint — 2026-11-15 18:36 UTC
+Supersedes older status notes above.
+- GitLab branch `deploy/russian-tuqo-static-2026-11-15`, HEAD `4ff95a79f48b4dbcbe8073ef5f449da5d03d406e`.
+- Added strict per-operator auth primitives and role matrix in `standby/security/operator-auth.mjs`; tests cover distinct identities, disabled/unknown credentials, malformed/duplicate config and role permissions.
+- Factory run **43747665597** passed **51/51**. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43747665597.md
+- Exact test snapshot HEAD `4bc657537730199b0713015a03db7d1cae49fe54`. Selected files only, not GitLab CI or production E2E.
+- Auth primitives are not yet wired to HTTP routes; `/ops` still uses shared MVP token. Next: YDB audit store and fail-closed route auth integration. Keep panel off public production.
+- Russian runtime, YDB instance, MAX bot/group and webhook remain unprovisioned. No merge/deploy.
