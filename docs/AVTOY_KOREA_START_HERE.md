@@ -43,3 +43,7 @@ ChatGPT remains the default executor and does not wait for external agents or Gi
 
 ## GitLab branch mapping correction
 MR !76 is an older research branch (`research/russia-migration-assessment-2026-11-14`), not the current working branch. Current MAX feature branch `deploy/russian-tuqo-static-2026-11-15` at `32bbfa30613a3740dce5a6924ba0205652cb3473` has no MR yet. Do not use MR !76 pipeline status as evidence for the MAX code.
+
+
+## Latest source SHA and remaining work
+Latest GitLab branch HEAD: `61900daacb638d9211ecc206acaaa3d026991c02`. MAX outbound sender/failover tests: 31/31 passed in run https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/43693103183. Still unprovisioned: MAX bot/group, inbound webhook, Russian hosting/runtime, persistent webhook event storage, operator web panel. Current feature branch has no MR; MR !76 is a separate older research branch.
