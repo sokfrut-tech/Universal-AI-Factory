@@ -68,7 +68,13 @@ jobs:
           node --check standby/test/server.test.mjs
           node --check standby/storage/ydb-request-store.mjs
           node --check standby/storage/ydb-request-store.test.mjs
-          node --test standby/channels/*.test.mjs standby/test/server.test.mjs standby/storage/ydb-request-store.test.mjs
+          node --test standby/channels/*.test.mjs standby/test/server.test.mjs standby/storage/ydb-request-store.test.mjs | tee "${RUNNER_TEMP}/avtoy-standby-tests.log"
+          TEST_COUNT=$(awk '/^# tests / {print $3}' "${RUNNER_TEMP}/avtoy-standby-tests.log")
+          PASS_COUNT=$(awk '/^# pass / {print $3}' "${RUNNER_TEMP}/avtoy-standby-tests.log")
+          FAIL_COUNT=$(awk '/^# fail / {print $3}' "${RUNNER_TEMP}/avtoy-standby-tests.log")
+          echo "test_count=${TEST_COUNT:-unknown}" >> "${GITHUB_OUTPUT}"
+          echo "pass_count=${PASS_COUNT:-unknown}" >> "${GITHUB_OUTPUT}"
+          echo "fail_count=${FAIL_COUNT:-unknown}" >> "${GITHUB_OUTPUT}"
 
       - name: Save execution report in factory
         if: always()
@@ -77,6 +83,9 @@ jobs:
           TARGET_OUTCOME: ${{ steps.target.outcome || 'not_started' }}
           TEST_OUTCOME: ${{ steps.tests.outcome || 'not_started' }}
           TARGET_SHA: ${{ steps.target.outputs.commit || 'unavailable' }}
+          TEST_COUNT: ${{ steps.tests.outputs.test_count || 'unknown' }}
+          PASS_COUNT: ${{ steps.tests.outputs.pass_count || 'unknown' }}
+          FAIL_COUNT: ${{ steps.tests.outputs.fail_count || 'unknown' }}
         run: |
           set -euo pipefail
           mkdir -p factory/coordination/shared/results
@@ -89,7 +98,7 @@ jobs:
             echo "- Target branch: factory/max-failover-test-2026-11-15"
             echo "- Target commit: ${TARGET_SHA}"
             echo "- Checkout: ${TARGET_OUTCOME}"
-            echo "- Tests: ${TEST_OUTCOME}"
+            echo "- Tests: ${TEST_OUTCOME} (${PASS_COUNT}/${TEST_COUNT} passed; ${FAIL_COUNT} failed)"
             echo "- Scope: MAX adapter tests + standby HTTP server + YDB request-store regression tests"
             echo "- This is a test snapshot of selected source files; it is not a GitLab pipeline or production deployment."
           } > "${REPORT}"
@@ -98,6 +107,7 @@ jobs:
           git config user.email "factory-bot@users.noreply.github.com"
           git add "coordination/shared/results/AVTOY_STANDBY_TESTS_${GITHUB_RUN_ID}.md"
           git commit -m "test(factory): record AVTOY standby run ${GITHUB_RUN_ID} [skip ci]"
+          git pull --rebase origin main
           git push origin HEAD:main
 
       - name: Enforce test result
