@@ -116,3 +116,12 @@ Supersedes older status notes above.
 - Factory run **43748471412**: **62/62 passed**. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748471412.md
 - Snapshot HEAD `6a2d0c2b6c36010a5e586410e33a87758d4487fb`; selected-file suite only.
 - Live YDB, multi-instance rate limiting, Russian no-VPN acceptance, hosting and MAX registration remain unverified/unprovisioned.
+
+
+## Newest continuation checkpoint — 2026-11-15 18:47 UTC
+Supersedes older status notes above.
+- GitLab branch `deploy/russian-tuqo-static-2026-11-15`, HEAD `4e5589c917c3f432f945f7c9afbb3e755dfb339f`.
+- Shared admin token fallback is test-only (`NODE_ENV=test`); development/unset/production deny. Production needs individual operator hashes and YDB audit.
+- Factory run **43748653690**: **63/63 passed**. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748653690.md
+- Snapshot HEAD `fd4a27c4a851eec9c4030860e13719f7534a26db`; selected-file tests only.
+- Still no Russian host/YDB, MAX bot/group, live integration or production. Multi-instance/distributed rate limit and no-VPN acceptance remain required.
