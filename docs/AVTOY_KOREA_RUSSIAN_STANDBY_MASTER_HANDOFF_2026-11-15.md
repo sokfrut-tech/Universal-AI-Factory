@@ -292,3 +292,11 @@ Latest GitLab branch HEAD: `206cce5e8d6cb8ae602d6e0a11ff57dd72c4dae8`. `MAX_OPER
 - Rerun **43749293947** passed **68/68**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43749293947.md
 - Exact selected-source snapshot commit `458d8f27984b643d067d09f10e17b89aebc43a1a`; selected tests only, not live YDB concurrency or GitLab CI.
 - Next: verify YDB DDL/YQL against a real Russian YDB instance, establish a scheduled but bounded cleanup policy and backup/restore, then review database roles/permissions. No server provisioned or data deployed.
+
+
+## 17. Bounded operator audit retention (2026-11-15 18:55 UTC)
+- GitLab branch HEAD `9ffabe82130b4526135a8685ba9f3e71b57a94d7`.
+- Added `pruneOperatorAuditEvents({ before, limit })`: explicit UTC cutoff, exclusive comparison, max 500 primary keys per invocation. No public endpoint, implicit retention period or scheduler.
+- Factory run **43749431381** passed **69/69**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43749431381.md
+- Exact snapshot commit `b6c37e23ee1e83c7bfc533a8867918ee8a2371bc`; selected-source tests only, no live YDB execution.
+- Next: review no-store/cache/security headers and backup/restore procedure; verify YDB DDL/DELETE/transactions against a real Russian instance before any deployment. Retention duration requires explicit legal/business approval.
