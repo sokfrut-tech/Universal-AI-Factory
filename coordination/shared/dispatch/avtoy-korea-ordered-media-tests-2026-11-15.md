@@ -18,3 +18,4 @@ Safety:
 - Do not deploy, merge PR #78, access production KV, or export user data.
 - Save only the sanitized run outcome and target commit SHA in the factory outbox/results folder.
 - If FACTORY_PAT is missing or checkout fails, report that exact blocker. Do not request or print the token in chat.
+- Execution profile: exact project Worker CI command plus full media-order regression suite (Node 22).
