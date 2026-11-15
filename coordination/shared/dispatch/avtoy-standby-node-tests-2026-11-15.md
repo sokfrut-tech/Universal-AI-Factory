@@ -29,3 +29,5 @@ Tenth dispatch: test the new strict per-operator bearer-auth parser and role per
 Eleventh dispatch: verify HTTP integration of per-operator credentials and RBAC, YDB durable audit writes, audit-failure fail-closed behavior, and production rejection of the legacy shared token. Snapshot includes updated server, YDB store/tests, and server route tests.
 
 Twelfth dispatch: verify supervisor retry authorization with durable audit recorded before queue processing; validate YDB audit event primary-key declaration and strict target identifier allowlist.
+
+Thirteenth dispatch: verify legacy shared-token access is permitted only under explicit `NODE_ENV=test|development`; an unset or production environment must fail closed even when `STANDBY_ADMIN_TOKEN` is present.
