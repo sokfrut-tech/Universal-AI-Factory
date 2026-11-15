@@ -25,3 +25,5 @@ Eighth dispatch: test MAX sender allowlist and callback actor identity handling.
 Ninth dispatch: verify bounded MAX webhook event retention using explicit cutoff timestamps, batch limit validation (1–500), and regression that preserves all events at or after the cutoff. Test snapshot source commit: `f0aadd82318865c92481a6c5b86ed48999ae955c`.
 
 Tenth dispatch: test the new strict per-operator bearer-auth parser and role permission matrix (viewer/operator/supervisor/owner), including disabled/unknown credentials, duplicate config, and fail-closed parsing. Target snapshot now includes `standby/security/operator-auth.mjs` and its test suite.
+
+Eleventh dispatch: verify HTTP integration of per-operator credentials and RBAC, YDB durable audit writes, audit-failure fail-closed behavior, and production rejection of the legacy shared token. Snapshot includes updated server, YDB store/tests, and server route tests.
