@@ -89,3 +89,12 @@ Supersedes older status notes above.
 - Snapshot HEAD `86ec8fe442fdae187ae068fef9b83f7c1cedf11b`; selected files only, not live YDB/production E2E.
 - Remaining auth work: audit read endpoint, failed-auth audit/rate limits, live YDB validation, secure production operator digests and multi-instance checks. `/ops` is not ready for public exposure.
 - No Russian runtime/YDB instance, MAX bot/group, webhook subscription, MR, merge or deployment.
+
+
+## Newest continuation checkpoint — 2026-11-15 18:41 UTC
+Supersedes older status notes above.
+- GitLab branch `deploy/russian-tuqo-static-2026-11-15`, HEAD `97d3cec66a6e281321d981abd730dca53cb696ff`.
+- Added role-protected `GET /ops/audit` for supervisor/owner; durable audit event is written before listing. The endpoint returns sanitized audit fields only.
+- Factory run **43748164089**: **60/60 passed**. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748164089.md
+- Snapshot HEAD `feea43f5d3c5e266295dc64eeb032c82bce9e7fa`; selected-file suite only.
+- Remaining: failed-auth audit/rate limiting, audit view in mobile panel, live YDB validation, production credential provisioning and multi-instance tests. No Russian runtime/YDB, MAX bot/group or deployment.
