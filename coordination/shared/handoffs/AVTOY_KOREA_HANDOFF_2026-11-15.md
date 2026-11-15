@@ -254,3 +254,11 @@ GitLab pipeline был остановлен до создания jobs из-за
 - Factory run `43749431381`: **69/69 passed**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43749431381.md
 - Snapshot commit `b6c37e23ee1e83c7bfc533a8867918ee8a2371bc`; selected-file suite only, not live YDB.
 - Next: review privacy/cache headers and backups; live YDB verification is mandatory before deploy.
+
+
+## Newest handoff checkpoint — 2026-11-15 18:57 UTC
+- GitLab branch HEAD `a2b9669940e9ffbc02717b92337006c19508c175`.
+- `/ops` HTML gets no-store, same-origin resource policy and restrictive permissions policy; API JSON already no-store.
+- Factory run `43749661826`: **70/70 passed**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43749661826.md
+- Snapshot `e098866b64f8867767bfadd959068fe06eeb63ed`; selected-file regression suite only.
+- Next: live YDB verification, backup/restore and DB least privilege. No deploy.
