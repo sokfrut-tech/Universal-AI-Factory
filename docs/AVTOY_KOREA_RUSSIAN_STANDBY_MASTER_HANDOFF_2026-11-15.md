@@ -190,3 +190,7 @@ The user wants the Russian standby mirror completed quickly, but safely and with
 - GitLab CI remains blocked by account identity verification. MR !76 remains unmerged.
 - MAX webhook is not implemented yet; official secret header is documented as `X-Max-Bot-Api-Secret`. Do not enable webhook before Russian HTTPS endpoint and durable event storage exist.
 - No production changes, account registration, bot creation, payment, DNS or deployment performed.
+
+
+## GitLab branch/MR mapping correction — 2026-11-15
+MR !76 actually targets source branch `research/russia-migration-assessment-2026-11-14` at `2fe182560e35175bb1438fded60bcc1d5a74ff91`; it is not the current working branch. Its pipeline status does not describe the MAX work. The current feature branch `deploy/russian-tuqo-static-2026-11-15` is at `32bbfa30613a3740dce5a6924ba0205652cb3473` and currently has no associated MR. Do not conflate MR !76 with the MAX implementation; its test evidence is Factory run `43693100303` (31/31 on selected-source snapshot).
