@@ -15,6 +15,11 @@ For every new ChatGPT conversation about AVTOY KOREA, read these files in order 
 - [Static frontend + Object Storage integration blocker](https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STATIC_OBJECT_STORAGE_INTEGRATION_BLOCKER_2026-11-15.md)
 
 ## Current next actions
+
+- **New continuation point (2026-11-15):** outbound MAX failover code is now in GitLab branch `deploy/russian-tuqo-static-2026-11-15`, latest known commit `79a7d8cc60b320ae884cf70735b8533cfdef7587`. Read `standby/docs/RUSSIA_AUTONOMOUS_BOT_ARCHITECTURE.md`.
+- Factory regression run for the isolated standby source snapshot: https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/43692987243 . Review its result/report before further changes.
+- Next: if tests pass, add the actual MAX webhook receiver using documented `X-Max-Bot-Api-Secret` validation only after Russian HTTPS backend/domain are provisioned; then continue Russian host + durable admin panel work.
+
 - First try SourceCraft with the user's own Yandex ID; no Russian helper has been shown to be necessary.
 - Inspect the AVTOY frontend for Service Worker, custom-domain and API CORS dependencies before choosing SourceCraft.
 - Check SpaceWeb again later; its free 1 GB plan currently shows sold out, despite phone-only identity being documented.
