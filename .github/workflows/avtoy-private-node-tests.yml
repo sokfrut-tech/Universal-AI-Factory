@@ -1,0 +1,112 @@
+name: AVTOY KOREA Private Node Test Executor
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'coordination/shared/dispatch/avtoy-korea-ordered-media-tests-2026-11-15.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: avtoy-private-node-tests
+  cancel-in-progress: false
+
+jobs:
+  test-private-target:
+    name: Test private AVTOY KOREA branch on public factory runner
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      TARGET_REPOSITORY: sokfrut-tech/avtoy-korea-auto
+      TARGET_REF: fix/ordered-media-sequence-main-2026-11-15
+    steps:
+      - name: Checkout public factory
+        uses: actions/checkout@v4
+        with:
+          path: factory
+          persist-credentials: true
+
+      - name: Require private-repository read token without exposing it
+        shell: bash
+        env:
+          FACTORY_PAT: ${{ secrets.FACTORY_PAT }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${FACTORY_PAT}" ]]; then
+            echo "::error::FACTORY_PAT is not configured in Universal-AI-Factory. Add a fine-grained read-only token with Contents: read for sokfrut-tech/avtoy-korea-auto."
+            exit 1
+          fi
+          echo "Private repository credential is present (value is not displayed)."
+
+      - name: Checkout exact private PR branch
+        id: target
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.TARGET_REPOSITORY }}
+          ref: ${{ env.TARGET_REF }}
+          token: ${{ secrets.FACTORY_PAT }}
+          path: target
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run syntax and complete regression suites
+        id: tests
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd target
+          node --version
+          node --check worker.js
+          node --check media-order.js
+          node --test worker.test.mjs media-order.test.mjs
+
+      - name: Save durable execution report in factory
+        if: always()
+        shell: bash
+        env:
+          TARGET_OUTCOME: ${{ steps.target.outcome || 'not_started' }}
+          TEST_OUTCOME: ${{ steps.tests.outcome || 'not_started' }}
+          TARGET_SHA: ${{ steps.target.outputs.commit || 'unavailable' }}
+        run: |
+          set -euo pipefail
+          mkdir -p factory/coordination/shared/results
+          REPORT="factory/coordination/shared/results/AVTOY_NODE_TESTS_${GITHUB_RUN_ID}.md"
+          {
+            echo "# AVTOY KOREA isolated Node test run"
+            echo
+            echo "- Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo "- Target repository: ${TARGET_REPOSITORY}"
+            echo "- Target ref: ${TARGET_REF}"
+            echo "- Target checkout: ${TARGET_OUTCOME}"
+            echo "- Target commit: ${TARGET_SHA}"
+            echo "- Node tests: ${TEST_OUTCOME}"
+            echo "- Runner: public Universal-AI-Factory GitHub-hosted ubuntu-latest"
+            echo "- Source code and credentials are not copied into this report."
+          } > "${REPORT}"
+          cd factory
+          git config user.name "Universal AI Factory Test Executor"
+          git config user.email "factory-bot@users.noreply.github.com"
+          git add "coordination/shared/results/AVTOY_NODE_TESTS_${GITHUB_RUN_ID}.md"
+          git commit -m "test(factory): record AVTOY Node test run ${GITHUB_RUN_ID} [skip ci]"
+          git push origin HEAD:main
+
+      - name: Enforce test result
+        if: always()
+        shell: bash
+        env:
+          TEST_OUTCOME: ${{ steps.tests.outcome || 'not_started' }}
+        run: |
+          if [[ "${TEST_OUTCOME}" != "success" ]]; then
+            echo "::error::AVTOY KOREA Node test execution did not pass. See the saved factory report and this run's logs."
+            exit 1
+          fi
+          echo "All requested AVTOY KOREA Node checks passed."
