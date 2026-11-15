@@ -283,3 +283,12 @@ Latest GitLab branch HEAD: `206cce5e8d6cb8ae602d6e0a11ff57dd72c4dae8`. `MAX_OPER
 - Exact selected-source snapshot commit: `2043f6973173afcfcf74f931c935c12e2c38cabc`. This is selected-file regression testing only; GitLab CI still blocked by provider identity verification; no live YDB/MAX/Russian host E2E.
 - Current `/ops` route auth and audit are now wired to per-operator config and durable audit store in the feature branch; legacy shared token is accepted only in explicit `NODE_ENV=test` fixtures. Still not production-ready: no live YDB permission/append-only enforcement, no rate limit persistence across instances, no actual operators provisioned, no Russian runtime, no MAX bot/group.
 - Next: test and tighten production data-store permissions, multi-instance rate limiting, audit retention/backups, and verify panel privacy/no-store headers; then customer identity/reply-channel adapters. No MR merge or deployment.
+
+
+## 16. Shared YDB authentication throttling (2026-11-15 18:54 UTC)
+- GitLab branch HEAD `5c5805ad8f7ec249e2034975a6c3ca1533148bf8`.
+- Added YDB table `standby_operator_auth_rate_limits`: SHA-256 digest of source IP only, serializable 10-minute failure counter, block after 10 failed attempts; if shared limiter fails, authentication denial path fails closed. Added bounded stale-bucket cleanup method (max 500 rows) with no automatic schedule.
+- First Factory run `43749160893` exposed a fake-SQL test adapter issue: it did not model the literal initial counter `1`, resulting in 67/68. Production YQL uses literal `1`; test adapter corrected to default the omitted parameter to 1.
+- Rerun **43749293947** passed **68/68**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43749293947.md
+- Exact selected-source snapshot commit `458d8f27984b643d067d09f10e17b89aebc43a1a`; selected tests only, not live YDB concurrency or GitLab CI.
+- Next: verify YDB DDL/YQL against a real Russian YDB instance, establish a scheduled but bounded cleanup policy and backup/restore, then review database roles/permissions. No server provisioned or data deployed.
