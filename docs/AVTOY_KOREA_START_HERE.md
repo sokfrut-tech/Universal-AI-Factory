@@ -179,3 +179,12 @@ Supersedes older status notes above.
 - Factory run **43750064228** passed **70/70**; report https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43750064228.md. Snapshot commit `b0c24bb817b570a1ffe22d16a01aa8b70c382a97`; selected-source tests only.
 - Preferred YDB candidate documented: Yandex Managed YDB Serverless, Russia / `ru-central1`; free tier is limited (1m RU, 1 GB, 2 automatic backups) and overage is billable. See `standby/docs/YDB_PROVIDER_SELECTION_2026-11-15.md`.
 - No account/payment/database/service account/resource exists; +49 registration acceptance unverified. Next: user's own onboarding check only when ready, no payment; then bounded provision and live validation.
+
+
+## Newest continuation checkpoint — 2026-11-15 19:06 UTC
+Supersedes older status notes above.
+- GitLab branch HEAD `73d213031c0605e6a8f8d5465fd79325a4feee71`.
+- Production YDB runtime schema separation added: `YDB_SCHEMA_MANAGED_EXTERNALLY=true`, read-only startup checks for tables/indexes, no DDL at runtime. Apply v2 + `standby/storage/ydb-schema-v3-operator-security.sql` using a separate migration identity.
+- Factory selected-source suite **43750579755**: **72/72 passed**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43750579755.md
+- Snapshot commit `8fbe54ec54d44510733dfeda4f83132bc31f17f8`; not full GitLab CI or live YDB.
+- Preferred provider candidate: Yandex Managed YDB Serverless in Russia / `ru-central1`. No account/payment/database created. Next: validate YQL/DDL and account eligibility, then provision only after explicit user action.
