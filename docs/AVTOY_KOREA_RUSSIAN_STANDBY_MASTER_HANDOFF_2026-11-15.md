@@ -337,3 +337,16 @@ Latest GitLab branch HEAD: `206cce5e8d6cb8ae602d6e0a11ff57dd72c4dae8`. `MAX_OPER
 - Exact selected-source snapshot commit `8fbe54ec54d44510733dfeda4f83132bc31f17f8`; selected files only, not GitLab CI or live YDB. Earlier runs 43750286136 and 43750452377 failed on stale test fixtures (fake SQL call shape and partial mock missing new capability); corrected and rerun 72/72. No production failure observed.
 - YDB provider candidate remains Yandex Managed YDB Serverless in Russia / `ru-central1`, not provisioned. Free tier limits and billing guardrails documented. No Yandex account, payment or resource created.
 - Next: independent review of YQL/DDL against official syntax, then user-owned Yandex Cloud onboarding only when ready, without payment; live YDB + Russian ISP + restore drill remain gates.
+
+
+## 22. Production durable-storage fail-closed + least privilege (2026-11-15 19:18 UTC)
+- GitLab branch HEAD `04d1cc0eed5de79c87bd9415eb508e8ae6bf5acb`.
+- Critical guard added: `assertProductionRequestStore` makes production refuse startup unless `INBOX_STORE=v2`, `YDB_CONNECTION_STRING` is configured and a connected YDB request store exposes schema verification plus the full durable enquiry lifecycle. Production can no longer silently accept customer enquiries into local JSON when v2 is omitted.
+- Runtime DDL nullability aligned with reviewed v3 migration; duplicate exported object property removed. Production schema remains externally managed, no DDL at runtime.
+- Added `standby/docs/YDB_LEAST_PRIVILEGE_RUNTIME_GRANTS_2026-11-15.md`: separate owner, migration and runtime identities; per-table `SELECT ROW`, `UPDATE ROW`, `ERASE ROW` + database `CONNECT`; no broad ydb.editor/USE/INSERT/ALL for runtime; check inherited ACLs and owner status. This is a reviewed template, not applied.
+- README now documents production storage fail-closed gate.
+- Factory run **43751714424** passed **74/74**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43751714424.md
+- Exact selected-source snapshot commit `5361ed131fe40808e581a60337272eacc27b4678`; selected files only, not GitLab CI or live YDB. Previous failure 43751609705 was a missing test import, fixed before 74/74.
+- Official YDB docs confirm `VIEW IndexName` for secondary index reads, `DELETE FROM ... ON SELECT` for bounded deletion, granular `SELECT ROW`/`UPDATE ROW`/`ERASE ROW` and database `CONNECT`. See least-privilege doc.
+- Provider update: free tier applies at payment-account level across all attached clouds/orgs; YDB allowance 1m RU, 1 GB/month storage and two recent full backups; overage billed. Source: https://yandex.cloud/ru/docs/billing/concepts/serverless-free-tier . Serverless default storage cap 50 GB; configure a lower cap after measuring and before traffic.
+- No account/payment/database/resource provisioned. No real YDB test, Russian ISP test, restore drill or production deployment. No MR merge.
