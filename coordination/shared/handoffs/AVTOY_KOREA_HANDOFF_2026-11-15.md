@@ -173,3 +173,12 @@ GitLab pipeline был остановлен до создания jobs из-за
 - Operator panel MVP `/ops`: secure Bearer token in tab memory, list/refresh/retry, tap-to-call/SMS. Not automated replies.
 - MAX webhook only persists metadata; no command processing or client chat. Needs Russian HTTPS:443 + YDB provision before subscribing. Individual sender allowlist is code-ready but actual IDs cannot be configured until the private MAX group and bot exist.
 - Still no MAX bot/group, Russian host/domain, YDB instance, real webhook, production deployment, or MR for this branch.
+
+
+## Newest handoff checkpoint — 2026-11-15 18:34 UTC
+- GitLab branch `deploy/russian-tuqo-static-2026-11-15` HEAD: `f43c6865fcf67ac0da36ee12c346468e4360d281`.
+- MAX webhook YDB event receipt cleanup added: explicit cutoff; batch size 1–500; deletes only records older than cutoff; no automatic schedule or implicit retention period.
+- Factory run `43747461090`: **45/45 passed**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43747461090.md
+- Snapshot branch HEAD `f0aadd82318865c92481a6c5b86ed48999ae955c`; selected-file suite only, not live YDB/production E2E.
+- No MAX bot/group, Russian host/YDB, webhook subscription, MR, merge or deployment. Russian-only no-VPN runtime requirement remains mandatory.
+- Next: design and implement per-operator authentication, roles and audit; do not enable commands until real group membership and identities are verified.
