@@ -285,3 +285,12 @@ GitLab pipeline был остановлен до создания jobs из-за
 - Factory run `43750579755`: **72/72 passed**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43750579755.md
 - Snapshot `8fbe54ec54d44510733dfeda4f83132bc31f17f8`; selected files only. Earlier failures were test-fixture defects corrected before successful run.
 - Provider candidate Yandex Managed YDB Serverless / `ru-central1`; no account, payment or resources provisioned. Live validation remains pending.
+
+
+## Newest handoff checkpoint — 2026-11-15 19:18 UTC
+- GitLab branch HEAD `04d1cc0eed5de79c87bd9415eb508e8ae6bf5acb`.
+- Production guard requires `INBOX_STORE=v2`, configured YDB and full durable request-store lifecycle; local JSON fallback is prohibited in production.
+- Least-privilege YDB grant plan documented separately; runtime is not to receive ydb.editor/USE/INSERT/ALL or ownership. Migration identity separate. Not applied.
+- Factory selected-source suite **43751714424**: **74/74 passed**. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43751714424.md
+- Snapshot `5361ed131fe40808e581a60337272eacc27b4678`; not full CI/live YDB.
+- Yandex YDB free tier 1m RU + 1GB + 2 recent full backups; shared at billing-account level; excess billed. No account, payment, database, resource or deployment exists.
