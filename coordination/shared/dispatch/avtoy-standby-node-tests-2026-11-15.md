@@ -33,3 +33,5 @@ Twelfth dispatch: verify supervisor retry authorization with durable audit recor
 Thirteenth dispatch: verify legacy shared-token access is permitted only under explicit `NODE_ENV=test|development`; an unset or production environment must fail closed even when `STANDBY_ADMIN_TOKEN` is present.
 
 Fourteenth dispatch: verify role-protected `/ops/audit` endpoint, supervisor-only audit listing, durable audit append-before-read ordering, and YDB audit-list decoding/limit behavior.
+
+Fifteenth dispatch: test the role-aware mobile operator panel, including operator identity/role display, retry visibility based on `notifications:retry`, and supervisor/owner audit button calling `/ops/audit`; verify safe text rendering and no browser storage.
