@@ -11,3 +11,5 @@ This is isolated test execution only. It does not merge the GitLab branch or dep
 Second dispatch: include YDB request-store source and regression tests.
 
 Third dispatch: verify concurrency-safe report persistence and capture TAP counts.
+
+Fourth dispatch: test authenticated MAX operator webhook receiver, YDB event deduplication and regression suite.
