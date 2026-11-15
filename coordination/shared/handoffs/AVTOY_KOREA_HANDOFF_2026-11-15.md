@@ -182,3 +182,11 @@ GitLab pipeline был остановлен до создания jobs из-за
 - Snapshot branch HEAD `f0aadd82318865c92481a6c5b86ed48999ae955c`; selected-file suite only, not live YDB/production E2E.
 - No MAX bot/group, Russian host/YDB, webhook subscription, MR, merge or deployment. Russian-only no-VPN runtime requirement remains mandatory.
 - Next: design and implement per-operator authentication, roles and audit; do not enable commands until real group membership and identities are verified.
+
+
+## Newest handoff checkpoint — 2026-11-15 18:36 UTC
+- GitLab branch HEAD `4ff95a79f48b4dbcbe8073ef5f449da5d03d406e`.
+- Per-operator auth helper created: SHA-256 bearer digest, constant-time compare, strict config validation, independent operator IDs, disabled-token rejection and role permission matrix.
+- Factory run `43747665597`: **51/51 passed**, 0 failed. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43747665597.md
+- Snapshot HEAD `4bc657537730199b0713015a03db7d1cae49fe54`; selected-source tests only.
+- Auth helper is not yet connected to `/ops` endpoints; shared MVP token remains. Next slice: YDB durable audit store and fail-closed per-operator route integration. No production deploy.
