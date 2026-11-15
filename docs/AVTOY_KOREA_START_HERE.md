@@ -47,3 +47,11 @@ MR !76 is an older research branch (`research/russia-migration-assessment-2026-1
 
 ## Latest source SHA and remaining work
 Latest GitLab branch HEAD: `61900daacb638d9211ecc206acaaa3d026991c02`. MAX outbound sender/failover tests: 31/31 passed in run https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/43693103183. Still unprovisioned: MAX bot/group, inbound webhook, Russian hosting/runtime, persistent webhook event storage, operator web panel. Current feature branch has no MR; MR !76 is a separate older research branch.
+
+
+## Latest continuation point — 2026-11-15
+- Current GitLab branch: `deploy/russian-tuqo-static-2026-11-15`, HEAD `ce1792b743612c343be9570d3a8c31d7731f7398`.
+- MAX inbound webhook + YDB idempotent metadata receipt implemented; `/ops` mobile operator inbox MVP added (list/refresh/retry/tel/SMS).
+- Factory run **43693667994** passed **41/41** selected tests: https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/43693667994
+- Read `standby/docs/RUSSIA_AUTONOMOUS_BOT_ARCHITECTURE.md` and the latest report.
+- Not production-ready: no Russian HTTPS host/YDB instance, no actual MAX bot/group/webhook subscription, no operator sender allowlist or automated client replies. No merge/deploy performed.
