@@ -98,3 +98,12 @@ Supersedes older status notes above.
 - Factory run **43748164089**: **60/60 passed**. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748164089.md
 - Snapshot HEAD `feea43f5d3c5e266295dc64eeb032c82bce9e7fa`; selected-file suite only.
 - Remaining: failed-auth audit/rate limiting, audit view in mobile panel, live YDB validation, production credential provisioning and multi-instance tests. No Russian runtime/YDB, MAX bot/group or deployment.
+
+
+## Newest continuation checkpoint — 2026-11-15 18:43 UTC
+Supersedes older status notes above.
+- GitLab branch `deploy/russian-tuqo-static-2026-11-15`, HEAD `ac1ca3b744a6900ee7927e3f8ab410547f716550`.
+- Mobile `/ops` now displays operator identity/role, hides retry for non-supervisors, and exposes audit only to supervisor/owner. Server-side permission checks remain authoritative.
+- Factory run **43748317816**: **61/61 passed**. Report: https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/coordination/shared/results/AVTOY_STANDBY_TESTS_43748317816.md
+- Snapshot HEAD `70f3c94cc624fe1f46d52cd5dd5ae7af72958b26`; selected-file suite only.
+- Remaining: denied-auth audit/rate limiting, credential rotation, live YDB/multi-instance validation and Russian no-VPN acceptance. No Russian host/YDB or MAX bot/group.
