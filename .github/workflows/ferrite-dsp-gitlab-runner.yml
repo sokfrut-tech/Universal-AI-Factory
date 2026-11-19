@@ -1,0 +1,169 @@
+name: Ferrite DSP — GitLab external verification
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: "GitLab branch to verify"
+        required: true
+        default: "feat/ferrite-neon-vad"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ferrite-dsp-gitlab-runner
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Generate, host-test and Android cross-compile Ferrite
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      SOURCE_REPO: https://gitlab.com/sokfrut-tech/russsearchoppo.git
+      SOURCE_REF: ${{ inputs.source_ref }}
+      WHISPER_SHA: 482279b8a18855ba741d7b88c30fcb3874691f59
+      FERRITE_DIR: tools/ferrite
+      GENERATED_C: app/src/main/cpp/ferrite/ferritecore.c
+      GENERATED_KT: app/src/main/java/ru/russsearch/oppo/VoiceCore.kt
+      LIB_NAME: ferritecore
+      ANDROID_MIN_API: "24"
+
+    steps:
+      - name: Validate access and input
+        env:
+          GITLAB_READ_TOKEN: ${{ secrets.GITLAB_READ_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "$GITLAB_READ_TOKEN" ]; then
+            echo "::error::Missing repository secret GITLAB_READ_TOKEN. It must have read_repository access to sokfrut-tech/russsearchoppo."
+            exit 1
+          fi
+          if [[ ! "$SOURCE_REF" =~ ^[A-Za-z0-9._/-]+$ ]]; then
+            echo "::error::Invalid source_ref."
+            exit 1
+          fi
+
+      - name: Checkout private GitLab source branch
+        env:
+          GITLAB_READ_TOKEN: ${{ secrets.GITLAB_READ_TOKEN }}
+        run: |
+          set -euo pipefail
+          git -c "http.extraheader=PRIVATE-TOKEN: $GITLAB_READ_TOKEN" clone --depth 1 --branch "$SOURCE_REF" "$SOURCE_REPO" source
+          cd source
+          echo "Source branch: $(git branch --show-current)"
+          echo "Source commit: $(git rev-parse HEAD)"
+          git status --short
+
+      - name: Restore pinned whisper.cpp dependency
+        run: |
+          set -euo pipefail
+          mkdir -p source/app/src/main/cpp
+          git clone --filter=blob:none https://github.com/ggml-org/whisper.cpp.git source/app/src/main/cpp/whisper.cpp
+          git -C source/app/src/main/cpp/whisper.cpp checkout "$WHISPER_SHA"
+          git -C source/app/src/main/cpp/whisper.cpp submodule update --init --recursive
+          test "$(git -C source/app/src/main/cpp/whisper.cpp rev-parse HEAD)" = "$WHISPER_SHA"
+          echo "whisper.cpp pinned commit: $WHISPER_SHA"
+
+      - name: Install host compiler tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends clang llvm ca-certificates unzip
+
+      - name: Compile Ferrite compiler and generate C/Kotlin
+        working-directory: source
+        run: |
+          set -euo pipefail
+          rustc --version
+          rustc -O "$FERRITE_DIR/ferritec.rs" -o /tmp/ferritec
+          mkdir -p "$(dirname "$GENERATED_C")" "$(dirname "$GENERATED_KT")"
+          mapfile -t FE_FILES < <(LC_ALL=C find "$FERRITE_DIR" -maxdepth 1 -name '*.fe' | sort)
+          test "${#FE_FILES[@]}" -gt 0
+          /tmp/ferritec "${FE_FILES[@]}" --out "$GENERATED_C" --kotlin "$GENERATED_KT" --lib "$LIB_NAME"
+          test -s "$GENERATED_C"
+          test -s "$GENERATED_KT"
+
+      - name: Host tests under ASan and UBSan
+        working-directory: source
+        run: |
+          set -euo pipefail
+          clang -std=c11 -O1 -g -fno-omit-frame-pointer \
+            -fsanitize=address,undefined -Wall -Wextra -Werror \
+            -Wno-parentheses-equality -Wno-unknown-pragmas \
+            -Iapp/src/main/cpp/ferrite -I"$FERRITE_DIR/test_stubs" \
+            "$FERRITE_DIR/test_ferrite.c" -o /tmp/test_ferrite_asan
+          ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 \
+          UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1 \
+            /tmp/test_ferrite_asan --no-bench
+          clang -std=c11 -O3 -Wall -Wextra -Werror \
+            -Wno-parentheses-equality -Wno-unknown-pragmas \
+            -Iapp/src/main/cpp/ferrite -I"$FERRITE_DIR/test_stubs" \
+            "$FERRITE_DIR/test_ferrite.c" -o /tmp/test_ferrite_o3
+          /tmp/test_ferrite_o3 | tee /tmp/ferrite-benchmark.txt
+
+      - name: Install Android NDK r27d
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 \
+            https://dl.google.com/android/repository/android-ndk-r27d-linux.zip \
+            --output /tmp/android-ndk-r27d-linux.zip
+          unzip -q /tmp/android-ndk-r27d-linux.zip -d /tmp
+          test -x /tmp/android-ndk-r27d/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android24-clang
+          test -x /tmp/android-ndk-r27d/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android24-clang
+
+      - name: Cross-compile ARM64 and x86_64; verify SIMD, JNI and 16KB ELF
+        working-directory: source
+        run: |
+          set -euo pipefail
+          NDK_BIN=/tmp/android-ndk-r27d/toolchains/llvm/prebuilt/linux-x86_64/bin
+          ART_DIR="$GITHUB_WORKSPACE/ferrite-artifacts"
+          mkdir -p "$ART_DIR/logs" "$ART_DIR/jniLibs/arm64-v8a" "$ART_DIR/jniLibs/x86_64"
+          cp /tmp/ferrite-benchmark.txt "$ART_DIR/"
+          : > "$ART_DIR/sha256sums.txt"
+
+          build_abi() {
+            ABI="$1"; TRIPLE="$2"; SIMD_REGEX="$3"; SIMD_LABEL="$4"
+            CC="$NDK_BIN/${TRIPLE}${ANDROID_MIN_API}-clang"
+            SO="$ART_DIR/jniLibs/$ABI/lib${LIB_NAME}.so"
+            LOG="$ART_DIR/logs/${ABI}_vectorize.log"
+            SYMS="$ART_DIR/logs/${ABI}_jni_symbols.txt"
+
+            "$CC" -c -fPIC -std=c11 -Os -Wall -Wextra -Werror \
+              -Wno-parentheses-equality -Wno-unknown-pragmas \
+              -Rpass=loop-vectorize -Rpass-missed=loop-vectorize \
+              "$GENERATED_C" -o "/tmp/ferrite-$ABI.o" 2>&1 | tee "$LOG"
+            VEC_COUNT="$(grep -c "remark: vectorized loop" "$LOG" || true)"
+            test "$VEC_COUNT" -ge 3
+
+            "$CC" -shared -fPIC -std=c11 -Os -flto \
+              -Wl,--gc-sections -Wl,-z,max-page-size=16384 \
+              -Wall -Wextra -Werror -Wno-parentheses-equality -Wno-unknown-pragmas \
+              "$GENERATED_C" -o "$SO"
+
+            SIMD_COUNT="$("$NDK_BIN/llvm-objdump" -d "$SO" | grep -cE "$SIMD_REGEX" || true)"
+            test "$SIMD_COUNT" -gt 0
+            "$NDK_BIN/llvm-nm" -D --defined-only "$SO" \
+              | awk '$NF ~ /^Java_ru_russsearch_oppo_VoiceCore_/ {print $NF}' | sort > "$SYMS"
+            JNI_COUNT="$(wc -l < "$SYMS" | tr -d ' ')"
+            test "$JNI_COUNT" -ge 4
+            "$NDK_BIN/llvm-readelf" -lW "$SO" \
+              | awk '$1 == "LOAD" { found=1; if ($NF != "0x4000") bad=1 } END { exit !(found && !bad) }'
+            sha256sum "$SO" >> "$ART_DIR/sha256sums.txt"
+            echo "$ABI: vectorized_loops=$VEC_COUNT SIMD=$SIMD_COUNT ($SIMD_LABEL) JNI=$JNI_COUNT"
+          }
+
+          build_abi arm64-v8a aarch64-linux-android '\\.(8h|4s|2d)' NEON
+          build_abi x86_64 x86_64-linux-android 'xmm[0-9]|ymm[0-9]' SSE/AVX
+          diff -u "$ART_DIR/logs/arm64-v8a_jni_symbols.txt" "$ART_DIR/logs/x86_64_jni_symbols.txt"
+
+      - name: Upload verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ferrite-dsp-verification
+          path: |
+            ferrite-artifacts/
+            source/app/src/main/cpp/whisper.cpp/.git
+          if-no-files-found: warn
+          retention-days: 7
