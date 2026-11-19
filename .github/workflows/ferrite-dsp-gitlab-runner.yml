@@ -50,7 +50,8 @@ jobs:
           GITLAB_READ_TOKEN: ${{ secrets.GITLAB_READ_TOKEN }}
         run: |
           set -euo pipefail
-          git -c "http.extraheader=PRIVATE-TOKEN: $GITLAB_READ_TOKEN" clone --depth 1 --branch "$SOURCE_REF" "$SOURCE_REPO" source
+          AUTH_HEADER="$(printf 'oauth2:%s' "$GITLAB_READ_TOKEN" | base64 -w0)"
+          git -c "http.extraheader=Authorization: Basic $AUTH_HEADER" clone --depth 1 --branch "$SOURCE_REF" "$SOURCE_REPO" source
           cd source
           echo "Source branch: $(git branch --show-current)"
           echo "Source commit: $(git rev-parse HEAD)"
@@ -64,6 +65,7 @@ jobs:
           git -C source/app/src/main/cpp/whisper.cpp checkout "$WHISPER_SHA"
           git -C source/app/src/main/cpp/whisper.cpp submodule update --init --recursive
           test "$(git -C source/app/src/main/cpp/whisper.cpp rev-parse HEAD)" = "$WHISPER_SHA"
+          printf '%s\n' "$WHISPER_SHA" > source/whisper-pinned-commit.txt
           echo "whisper.cpp pinned commit: $WHISPER_SHA"
 
       - name: Install host compiler tools
@@ -164,6 +166,8 @@ jobs:
           name: ferrite-dsp-verification
           path: |
             ferrite-artifacts/
-            source/app/src/main/cpp/whisper.cpp/.git
+            source/whisper-pinned-commit.txt
+            source/app/src/main/cpp/ferrite/ferritecore.c
+            source/app/src/main/java/ru/russsearch/oppo/VoiceCore.kt
           if-no-files-found: warn
           retention-days: 7
