@@ -155,7 +155,7 @@ jobs:
             echo "$ABI: vectorized_loops=$VEC_COUNT SIMD=$SIMD_COUNT ($SIMD_LABEL) JNI=$JNI_COUNT"
           }
 
-          build_abi arm64-v8a aarch64-linux-android '\\.(8h|4s|2d)' NEON
+          build_abi arm64-v8a aarch64-linux-android '\.(8h|4s|2d)' NEON
           build_abi x86_64 x86_64-linux-android 'xmm[0-9]|ymm[0-9]' SSE/AVX
           diff -u "$ART_DIR/logs/arm64-v8a_jni_symbols.txt" "$ART_DIR/logs/x86_64_jni_symbols.txt"
 
