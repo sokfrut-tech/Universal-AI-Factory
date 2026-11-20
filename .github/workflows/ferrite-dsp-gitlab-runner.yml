@@ -7,6 +7,11 @@ on:
         description: "GitLab branch to verify"
         required: true
         default: "feat/ferrite-neon-vad"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/ferrite-dsp-gitlab-runner.yml"
 
 permissions:
   contents: read
@@ -17,12 +22,13 @@ concurrency:
 
 jobs:
   verify:
+    if: github.event_name != 'pull_request' || github.head_ref == 'ci/ferrite-pr-trigger-2026-11-20'
     name: Generate, host-test and Android cross-compile Ferrite
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
       SOURCE_REPO: https://gitlab.com/sokfrut-tech/russsearchoppo.git
-      SOURCE_REF: ${{ inputs.source_ref }}
+      SOURCE_REF: ${{ inputs.source_ref || 'feat/ferrite-neon-vad' }}
       WHISPER_SHA: 482279b8a18855ba741d7b88c30fcb3874691f59
       FERRITE_DIR: tools/ferrite
       GENERATED_C: app/src/main/cpp/ferrite/ferritecore.c
@@ -155,7 +161,7 @@ jobs:
             echo "$ABI: vectorized_loops=$VEC_COUNT SIMD=$SIMD_COUNT ($SIMD_LABEL) JNI=$JNI_COUNT"
           }
 
-          build_abi arm64-v8a aarch64-linux-android '\.(8h|4s|2d)' NEON
+          build_abi arm64-v8a aarch64-linux-android '\\.(8h|4s|2d)' NEON
           build_abi x86_64 x86_64-linux-android 'xmm[0-9]|ymm[0-9]' SSE/AVX
           diff -u "$ART_DIR/logs/arm64-v8a_jni_symbols.txt" "$ART_DIR/logs/x86_64_jni_symbols.txt"
 
