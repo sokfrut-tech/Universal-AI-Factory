@@ -1,15 +1,14 @@
-﻿# Внимание: Транспорт отключен.
-$geminiPanelEndpoint = $null 
+﻿param(
+    [string]$BasePath = "C:\dr\Universal-AI-Factory\coordination\bridge",
+    [string]$MutexName = "Global\JarvisGeminiBrokerMutex",
+    [switch]$LibraryOnly,
+    [switch]$RunOnce
+)
 
-# --- 1. ЗАЩИТА ОТ ДВОЙНОГО ЗАПУСКА (SINGLETON) ---
-$mutexCreated = $false
-$mutex = New-Object System.Threading.Mutex($true, "Global\JarvisGeminiBrokerMutex", [ref]$mutexCreated)
-if (-not $mutexCreated) {
-    Write-Host "CRITICAL: Брокер уже запущен в другом процессе. Выход." -ForegroundColor Red
-    exit 1
-}
+# Внимание: Транспорт отключен по умолчанию.
+$geminiPanelEndpoint = $null
 
-$basePath = "C:\dr\Universal-AI-Factory\coordination\bridge"
+$basePath = $BasePath
 $ledgerPath = Join-Path $basePath "ledger.json"
 $ledgerBakPath = Join-Path $basePath "ledger.bak.json"
 $logPath = Join-Path $basePath "bridge_sync.log"
@@ -19,7 +18,10 @@ function Write-Log {
     $timestamp = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
     $logLine = "[$timestamp] [$Level] $Message"
     Write-Host $logLine
-    Add-Content -Path $logPath -Value $logLine
+    $logDir = Split-Path -Path $logPath -Parent
+    if ($logDir -and (Test-Path $logDir)) {
+        Add-Content -Path $logPath -Value $logLine -Encoding UTF8
+    }
 }
 
 function Convert-PSObjectToHashtable {
@@ -35,37 +37,56 @@ function Convert-PSObjectToHashtable {
     return $obj
 }
 
-function Load-Ledger {
-    $targetPath = $null
-    if (Test-Path $ledgerPath) {
-        $targetPath = $ledgerPath
-    } elseif (Test-Path $ledgerBakPath) {
-        Write-Log "Используем резервный Ledger (ledger.bak.json)." "WARN"
-        $targetPath = $ledgerBakPath
+function Read-LedgerFile {
+    param([string]$Path)
+    if (-not (Test-Path $Path)) {
+        return $null
     }
-    
-    if ($null -ne $targetPath) {
-        try {
-            $json = Get-Content $targetPath -Raw | ConvertFrom-Json
-            $hash = Convert-PSObjectToHashtable -obj $json
-            if ($hash -is [hashtable]) { 
-                return $hash 
-            }
-        } catch { 
-            Write-Log "Ошибка чтения Ledger: $($_.Exception.Message)" "CRITICAL" 
+    try {
+        $raw = Get-Content -Path $Path -Raw -Encoding UTF8
+        if ([string]::IsNullOrWhiteSpace($raw)) {
+            throw "Файл пуст."
+        }
+        $json = $raw | ConvertFrom-Json
+        $hash = Convert-PSObjectToHashtable -obj $json
+        if ($hash -is [hashtable]) {
+            return $hash
+        }
+        throw "Корень JSON не является объектом."
+    } catch {
+        Write-Log ("Ошибка чтения Ledger ({0}): {1}" -f $Path, $_.Exception.Message) "CRITICAL"
+        return $null
+    }
+}
+
+function Load-Ledger {
+    if (Test-Path $ledgerPath) {
+        $primary = Read-LedgerFile -Path $ledgerPath
+        if ($null -ne $primary) {
+            return $primary
+        }
+        Write-Log "Основной Ledger поврежден. Пробуем резервный Ledger (ledger.bak.json)." "WARN"
+    }
+
+    if (Test-Path $ledgerBakPath) {
+        Write-Log "Используем резервный Ledger (ledger.bak.json)." "WARN"
+        $backup = Read-LedgerFile -Path $ledgerBakPath
+        if ($null -ne $backup) {
+            return $backup
         }
     }
+
     return @{}
 }
 
 function Save-Ledger {
     param($Ledger)
     $tmpPath = "$ledgerPath.tmp"
-    
-    if (Test-Path $ledgerPath) { 
-        Copy-Item -Path $ledgerPath -Destination $ledgerBakPath -Force 
+
+    if (Test-Path $ledgerPath) {
+        Copy-Item -Path $ledgerPath -Destination $ledgerBakPath -Force
     }
-    
+
     $Ledger | ConvertTo-Json -Depth 5 | Out-File -FilePath $tmpPath -Encoding UTF8 -Force
     Move-Item -Path $tmpPath -Destination $ledgerPath -Force
 }
@@ -76,7 +97,7 @@ function Parse-Yaml {
         $yamlBlock = $matches[1]
         $body = $matches[2]
         $meta = @{}
-        
+
         $lines = $yamlBlock -split '\r?\n'
         foreach ($line in $lines) {
             if ($line -match '^([a-zA-Z0-9_]+):\s*"?([^"]*)"?$') {
@@ -88,132 +109,157 @@ function Parse-Yaml {
     return @{ Valid = $false }
 }
 
-Write-Log "Message Broker v2.4 (PS 5.1 Strict) инициализирован." "START"
+function Invoke-BrokerStep {
+    $ledger = Load-Ledger
+    $outboxes = @("outbox_jarvis", "outbox_gemini")
+    $processingPath = Join-Path $basePath "processing"
 
-function Invoke-BrokerLoop {
-    while ($true) {
-        $ledger = Load-Ledger
-        $outboxes = @("outbox_jarvis", "outbox_gemini")
-        $processingPath = Join-Path $basePath "processing"
-        
-        # --- ИМПОРТ ---
-        foreach ($outbox in $outboxes) {
-            $files = Get-ChildItem -Path (Join-Path $basePath $outbox) -Filter "*.md"
-            foreach ($file in $files) {
-                try { 
-                    $stream = [IO.File]::Open($file.FullName, 'Open', 'Read', 'None')
-                    $stream.Close() 
-                } catch { 
-                    continue 
-                }
-                
-                $procFile = Join-Path $processingPath $file.Name
-                Move-Item -Path $file.FullName -Destination $procFile -Force
-                
-                $parsed = Parse-Yaml -Content (Get-Content $procFile -Raw)
-                if (-not $parsed.Valid -or -not $parsed.Meta.ContainsKey('task_id')) {
-                    Write-Log "Invalid YAML. Rejected: $($file.Name)" "ERROR"
-                    Move-Item -Path $procFile -Destination (Join-Path $basePath "errors\$($file.Name)") -Force
-                    continue
-                }
+    # --- ИМПОРТ ---
+    foreach ($outbox in $outboxes) {
+        $outboxDir = Join-Path $basePath $outbox
+        if (-not (Test-Path $outboxDir)) {
+            continue
+        }
+        $files = Get-ChildItem -Path $outboxDir -Filter "*.md"
+        foreach ($file in $files) {
+            try {
+                $stream = [IO.File]::Open($file.FullName, 'Open', 'Read', 'None')
+                $stream.Close()
+            } catch {
+                continue
+            }
 
-                $taskId = $parsed.Meta.task_id
-                if (-not $ledger.ContainsKey($taskId)) {
-                    $ledger[$taskId] = @{
-                        Status = "QUEUED"
-                        File = $file.Name
-                        Attempts = 0
-                        Source = $parsed.Meta.from
-                        Target = $parsed.Meta.to
-                    }
-                    Write-Log "Task $taskId QUEUED" "INFO"
-                    Save-Ledger -Ledger $ledger
-                } else {
-                    Write-Log "Дубликат task_id: $taskId. Игнорируем перезапись стейта." "WARN"
+            $procFile = Join-Path $processingPath $file.Name
+            Move-Item -Path $file.FullName -Destination $procFile -Force
+
+            $parsed = Parse-Yaml -Content (Get-Content $procFile -Raw -Encoding UTF8)
+            if (-not $parsed.Valid -or -not $parsed.Meta.ContainsKey('task_id')) {
+                Write-Log "Invalid YAML. Rejected: $($file.Name)" "ERROR"
+                Move-Item -Path $procFile -Destination (Join-Path $basePath "errors\$($file.Name)") -Force
+                continue
+            }
+
+            $taskId = $parsed.Meta.task_id
+            if (-not $ledger.ContainsKey($taskId)) {
+                $ledger[$taskId] = @{
+                    Status = "QUEUED"
+                    File = $file.Name
+                    Attempts = 0
+                    Source = $parsed.Meta.from
+                    Target = $parsed.Meta.to
+                }
+                Write-Log "Task $taskId QUEUED" "INFO"
+                Save-Ledger -Ledger $ledger
+            } else {
+                Write-Log "Дубликат task_id: $taskId. Игнорируем перезапись стейта." "WARN"
+                $origFile = $ledger[$taskId].File
+                if ($origFile -ne $file.Name) {
+                    Move-Item -Path $procFile -Destination (Join-Path $basePath "errors\dup_$($file.Name)") -Force
                 }
             }
         }
+    }
 
-        # --- ОБРАБОТКА ---
-        $keys = @($ledger.Keys)
-        foreach ($k in $keys) {
-            $task = $ledger[$k]
-            $procFile = Join-Path $processingPath $task.File
-            
-            if ($task.Status -eq "QUEUED" -or $task.Status -eq "TRANSPORT_NOT_CONFIGURED") {
-                if (-not (Test-Path $procFile)) { 
-                    continue 
-                }
-                
-                $parsed = Parse-Yaml -Content (Get-Content $procFile -Raw)
-                
-                # Проверка ACK
-                if ($parsed.Meta.ContainsKey("ack_task_id")) {
-                    $ackId = $parsed.Meta.ack_task_id
-                    if ($ledger.ContainsKey($ackId)) {
-                        Write-Log "Получен ACK завершения для $ackId" "INFO"
-                        
-                        $origTask = $ledger[$ackId]
-                        $origProcFile = Join-Path $processingPath $origTask.File
-                        if (Test-Path $origProcFile) {
-                            Move-Item -Path $origProcFile -Destination (Join-Path $basePath "processed\$($origTask.File)") -Force
-                        }
-                        $origTask.Status = "COMPLETED"
-                        
-                        $targetInbox = "inbox_gemini"
-                        if ($task.Target -eq "jarvis") {
-                            $targetInbox = "inbox_jarvis"
-                        }
-                        Move-Item -Path $procFile -Destination (Join-Path $basePath "$targetInbox\$($task.File)") -Force
-                        $task.Status = "COMPLETED"
-                        Save-Ledger -Ledger $ledger
-                        continue
+    # --- ОБРАБОТКА ---
+    $keys = @($ledger.Keys)
+    foreach ($k in $keys) {
+        $task = $ledger[$k]
+        $procFile = Join-Path $processingPath $task.File
+
+        if ($task.Status -eq "QUEUED" -or $task.Status -eq "TRANSPORT_NOT_CONFIGURED") {
+            if (-not (Test-Path $procFile)) {
+                continue
+            }
+
+            $parsed = Parse-Yaml -Content (Get-Content $procFile -Raw -Encoding UTF8)
+
+            # Проверка ACK
+            if ($parsed.Meta.ContainsKey("ack_task_id")) {
+                $ackId = $parsed.Meta.ack_task_id
+                if ($ledger.ContainsKey($ackId)) {
+                    Write-Log "Получен ACK завершения для $ackId" "INFO"
+
+                    $origTask = $ledger[$ackId]
+                    $origProcFile = Join-Path $processingPath $origTask.File
+                    if (Test-Path $origProcFile) {
+                        Move-Item -Path $origProcFile -Destination (Join-Path $basePath "processed\$($origTask.File)") -Force
                     }
-                }
+                    $origTask.Status = "COMPLETED"
 
-                # Транспорт
-                if ($task.Target -eq "gemini") {
-                    if ([string]::IsNullOrEmpty($geminiPanelEndpoint)) {
-                        if ($task.Status -ne "TRANSPORT_NOT_CONFIGURED") {
-                            $task.Status = "TRANSPORT_NOT_CONFIGURED"
-                            Write-Log "Транспорт не задан. Task $k заморожен." "WARN"
-                            Save-Ledger -Ledger $ledger
-                        }
-                        continue
+                    $targetInbox = "inbox_gemini"
+                    if ($task.Target -eq "jarvis") {
+                        $targetInbox = "inbox_jarvis"
                     }
-
-                    $task.Status = "IN_FLIGHT"
-                    $task.Attempts += 1
+                    Move-Item -Path $procFile -Destination (Join-Path $basePath "$targetInbox\$($task.File)") -Force
+                    $task.Status = "COMPLETED"
                     Save-Ledger -Ledger $ledger
-                    
-                    try {
-                        $payload = @{ message = (Get-Content $procFile -Raw) } | ConvertTo-Json
-                        $res = Invoke-RestMethod -Uri $geminiPanelEndpoint -Method Post -Body $payload -ContentType "application/json" -TimeoutSec 10 -ErrorAction Stop
-                        
-                        $task.Status = "WAITING_ACK"
-                        Write-Log "Task $k отправлен (HTTP 200)." "INFO"
-                    } catch {
-                        Write-Log ("Ошибка отправки {0}: {1}" -f $k, $_.Exception.Message) "ERROR"
-                        if ($task.Attempts -ge 3) {
-                            $task.Status = "DEAD_LETTER"
-                            Move-Item -Path $procFile -Destination (Join-Path $basePath "errors\$($task.File)") -Force
-                        } else {
-                            $task.Status = "QUEUED"
-                        }
-                    }
-                    Save-Ledger -Ledger $ledger
+                    continue
                 }
             }
+
+            # Транспорт
+            if ($task.Target -eq "gemini") {
+                if ([string]::IsNullOrEmpty($geminiPanelEndpoint)) {
+                    if ($task.Status -ne "TRANSPORT_NOT_CONFIGURED") {
+                        $task.Status = "TRANSPORT_NOT_CONFIGURED"
+                        Write-Log "Транспорт не задан. Task $k заморожен." "WARN"
+                        Save-Ledger -Ledger $ledger
+                    }
+                    continue
+                }
+
+                $task.Status = "IN_FLIGHT"
+                $task.Attempts += 1
+                Save-Ledger -Ledger $ledger
+
+                try {
+                    $payload = @{ message = (Get-Content $procFile -Raw -Encoding UTF8) } | ConvertTo-Json
+                    $res = Invoke-RestMethod -Uri $geminiPanelEndpoint -Method Post -Body $payload -ContentType "application/json" -TimeoutSec 10 -ErrorAction Stop
+
+                    $task.Status = "WAITING_ACK"
+                    Write-Log "Task $k отправлен (HTTP 200)." "INFO"
+                } catch {
+                    Write-Log ("Ошибка отправки {0}: {1}" -f $k, $_.Exception.Message) "ERROR"
+                    if ($task.Attempts -ge 3) {
+                        $task.Status = "DEAD_LETTER"
+                        Move-Item -Path $procFile -Destination (Join-Path $basePath "errors\$($task.File)") -Force
+                    } else {
+                        $task.Status = "QUEUED"
+                    }
+                }
+                Save-Ledger -Ledger $ledger
+            }
+        }
+    }
+}
+
+function Invoke-BrokerLoop {
+    while ($true) {
+        Invoke-BrokerStep
+        if ($RunOnce) {
+            break
         }
         Start-Sleep -Seconds 3
     }
 }
 
-try {
-    Invoke-BrokerLoop
-} finally {
-    if ($null -ne $mutex) {
-        $mutex.ReleaseMutex()
-        $mutex.Dispose()
+if (-not $LibraryOnly) {
+    # --- 1. ЗАЩИТА ОТ ДВОЙНОГО ЗАПУСКА (SINGLETON) ---
+    $mutexCreated = $false
+    $mutex = New-Object System.Threading.Mutex($true, $MutexName, [ref]$mutexCreated)
+    if (-not $mutexCreated) {
+        Write-Host "CRITICAL: Брокер уже запущен в другом процессе. Выход." -ForegroundColor Red
+        exit 1
+    }
+
+    Write-Log "Message Broker v2.4 (PS 5.1 Strict) инициализирован." "START"
+
+    try {
+        Invoke-BrokerLoop
+    } finally {
+        if ($null -ne $mutex) {
+            $mutex.ReleaseMutex()
+            $mutex.Dispose()
+        }
     }
 }
