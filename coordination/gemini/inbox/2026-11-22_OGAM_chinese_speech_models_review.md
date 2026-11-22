@@ -33,3 +33,8 @@ Implementation branch: `feature/jarvis-step-2-storage-privacy`
 
 ## Deliverable
 Write a detailed report to `coordination/gemini/outbox/REPORT_2026-11-22_OGAM_CHINESE_SPEECH_MODELS_REVIEW.md`. Include a ranked recommendation and exact evidence links. Do not modify OGAM code or claim PGEM10 testing without real device evidence.
+
+## Follow-up snapshot
+Current OGAM research branch head: `22df2e264245cd05203cc647144adec81f7d9fca`.
+Current OGAM implementation branch head: `781d6e68ebc11b971892f521c05e3020b5f9d2a9`.
+Please review the latest documents, especially the reconciliation with `LOCAL_RUSSIAN_TTS_RUNTIME_EVALUATION.md`, the Supertonic callback-stop patch and the distinction between model streaming claims and Android wrapper APIs. The new native TTS interface/chunker has source-contract audit evidence but no Gradle/JUnit/device validation.
