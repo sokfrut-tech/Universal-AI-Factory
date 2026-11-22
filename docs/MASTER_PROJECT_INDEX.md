@@ -1,5 +1,5 @@
 # Universal AI Factory — Master Project Index
-Updated: 2026-11-06
+Updated: 2026-11-22
 
 Purpose: the single entry point for resuming active projects without relying on chat history. Repository state is the durable source of truth.
 
@@ -12,6 +12,7 @@ Purpose: the single entry point for resuming active projects without relying on 
 6. Before merge/deploy inspect the diff, run tests/build/security checks and verify the exact result. Failed required checks must block deployment.
 7. Ask the user only for decisions, credentials, device actions or other steps that cannot safely be done by the agent. User mainly works from Android phone.
 8. Maintain a cross-project technology radar: research useful tools, algorithms and implementation mechanics; adopt only after license, security, compatibility and test review. Research is not integration.
+9. When a required feature or dependency is unavailable, search relevant public/open alternatives across platforms and regions (not GitHub alone), inspect real source and licenses, then adapt or implement clean-room; do not abandon the requirement or use false-success stubs. Follow [the global open-source fallback rule](../coordination/shared/OPEN_SOURCE_FALLBACK_AND_CLEAN_ROOM_RULE.md).
 
 ## Jarvis AI source audit
 - Primary repository: [sokfrut-tech/Gemeni](https://github.com/sokfrut-tech/Gemeni).
@@ -29,10 +30,25 @@ Purpose: the single entry point for resuming active projects without relying on 
 | Factory | sokfrut-tech/Universal-AI-Factory | docs/FACTORY_CONTINUATION_BRIEF.md | Audit dispatcher, workflows and a real end-to-end task |
 | StampCleaner / Neon Club | sokfrut-tech/stamp-cleaner | https://github.com/sokfrut-tech/stamp-cleaner/blob/main/docs/PROJECT_HANDOFF_2026-11-06.md | Inspect PR #4/source; validate cleaning pipeline and dancer animation |
 | Jarvis AI (primary) | sokfrut-tech/Gemeni | https://github.com/sokfrut-tech/Gemeni/blob/main/docs/REPOSITORY_WIDE_AI_AUDIT_2026-11-06.md | Review [PR #78 safe runtime integration](https://github.com/sokfrut-tech/Gemeni/pull/78), then implement [Phase B local reasoning runtime](https://github.com/sokfrut-tech/Gemeni/blob/integration/jarvis-safe-agent-runtime-2026-11-06/docs/agents/BRIEF_LOCAL_REASONING_RUNTIME_PHASE_B_2026-11-06.md) after CI/device gates |
+| OGAM / Jarvis Off Grid AI fork | sokfrut-tech/OGAM | [docs/jarvis/IMPLEMENTATION_HANDOFF_2026-11-22.md](https://github.com/sokfrut-tech/OGAM/blob/feature/jarvis-step-2-storage-privacy/docs/jarvis/IMPLEMENTATION_HANDOFF_2026-11-22.md) | Continue self-contained migration from @offgrid/speech, then @offgrid/sync Half A; keep PR #1 and PR #2 drafts until build/device gates pass |
 | RussSearchOPPO (voice/translation baseline) | sokfrut-tech/RussSearchOPPO | https://github.com/sokfrut-tech/RussSearchOPPO/blob/main/docs/PROJECT_HANDOFF_2026-11-06.md | Preserve Vosk, translation and ColorOS modules for Jarvis reuse |
 | Antigravity Mobile | sokfrut-tech/Antigravity-Mobile | https://github.com/sokfrut-tech/Antigravity-Mobile/blob/main/docs/PROJECT_HANDOFF_2026-11-06.md | Inspect APK/source/API; connect UI to real factory state |
 | AVTOY KOREA | sokfrut-tech/avtoy-korea-auto | https://github.com/sokfrut-tech/avtoy-korea-auto/blob/main/docs/PROJECT_HANDOFF_2026-11-06.md | Recheck PR #55/Worker; verify private inquiries and Telegram media |
 | Forest 4G | No dedicated repository confirmed | This document, below | Confirm measurements and create/confirm dedicated repo before implementation |
+
+
+
+## OGAM / Jarvis — separate Off Grid AI fork (2026-11-22)
+
+This is a distinct Android app/fork codebase from the primary `sokfrut-tech/Gemeni` Jarvis agent project above. Keep the two repositories' code, PRs and release status separate while sharing research decisions through handoffs.
+
+- Repository: https://github.com/sokfrut-tech/OGAM
+- Canonical continuation handoff: https://github.com/sokfrut-tech/OGAM/blob/feature/jarvis-step-2-storage-privacy/docs/jarvis/IMPLEMENTATION_HANDOFF_2026-11-22.md
+- Implementation PR #1: https://github.com/sokfrut-tech/OGAM/pull/1 — open, draft, unmerged; includes native Android 12+ assistant source (VoiceInteractionService/Session, RoleManager, token bridge), local model scanner/library, Russian transcription locale, task-plan/skill contracts and existing OGAM feature preservation. Build and PGEM10 runtime remain unverified.
+- Research PR #2: https://github.com/sokfrut-tech/OGAM/pull/2 — open, draft, unmerged; 26 local OPPO/Breeno/ColorOS APK structural analysis, exact build evidence, open-source China/India agent audits, and clean-room transfer plan. Full JADX method decompilation and device runtime tests remain outstanding.
+- Model research: six local candidates registered (Qwen3.5-4B baseline, lower-refusal/abliterated experiments, Gemma 4 E2B/E4B); no weights downloaded or production default selected. Russian 14-case scoring harness requires pinned hashes, license review, at least three runs and human scoring.
+- System assistant status: implemented in source for API 31+, source-contract workflow passed; Gradle/Kotlin tests, APK build, role activation and OPPO Find X6 Pro validation are not yet confirmed.
+- First resume step: finish `@offgrid/speech` standalone migration and contract tests, then `@offgrid/sync` Half A. Follow the detailed project handoff for all remaining dependencies and device gates.
 
 ## Forest 4G connectivity — planning brief
 Goal: reliable 4G deep in a forest, prioritizing reception margin and weather resilience over lowest price. A temporary shelter setup should later be portable to a future forest home. 5G is not required.
