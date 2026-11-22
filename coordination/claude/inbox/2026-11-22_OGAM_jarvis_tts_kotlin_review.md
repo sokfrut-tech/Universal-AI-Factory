@@ -45,3 +45,7 @@ Newer chunker changes since the prior snapshot:
 - Node source-contract test now checks for both regression fixtures and helper branches.
 - A local isolated Kotlin compile/harness passed 7 cases, but Gradle/JUnit is still unverified.
 Review this latest head. The full CI is blocked by private workspace package resolution and Jest load failures; do not attribute those to Kotlin without evidence.
+
+## Final current implementation head for this review
+Latest OGAM implementation branch head: `7b399c5261e09f365ca44d81fb053dbe68af8c08`.
+No Kotlin source changes since the previous review target; the latest commits update TTS evaluation/port plan and handoff docs. Please still review the current Kotlin files at this branch head and include any chunker edge cases around max-length splits and abbreviation boundaries.
