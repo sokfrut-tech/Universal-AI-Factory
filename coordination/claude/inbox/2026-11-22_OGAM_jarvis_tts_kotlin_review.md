@@ -35,3 +35,13 @@ Additional changes since the original request:
 - Fixed the stale assistant launch guard source assertion in `android-assistant-contract.node.test.mjs`.
 - Added Supertonic callback-stop patch under `patches/sherpa-onnx/v2.0.3-supertonic-callback-stop.patch`; it is not applied to a compiled AAR.
 Review the latest branch head, not the earlier snapshot. Gradle/JUnit and device tests are still not verified.
+
+## Latest review target (supersedes earlier head)
+Current OGAM implementation branch head: `ee505f901db3f0ee6a8d0026c333b306b2c45efa`.
+Newer chunker changes since the prior snapshot:
+- Handles closing quotes/brackets when identifying sentence ends.
+- Handles spaced Russian abbreviations such as `т. д.`, `т. п.`, and `и т. д.`.
+- Adds JUnit regression tests `keepsSpacedRussianAbbreviationsInsideTheSameSentence` and `closesQuotedSentenceBeforeStartingTheNextSentence`.
+- Node source-contract test now checks for both regression fixtures and helper branches.
+- A local isolated Kotlin compile/harness passed 7 cases, but Gradle/JUnit is still unverified.
+Review this latest head. The full CI is blocked by private workspace package resolution and Jest load failures; do not attribute those to Kotlin without evidence.
