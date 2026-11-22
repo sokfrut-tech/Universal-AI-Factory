@@ -49,3 +49,7 @@ Review this latest head. The full CI is blocked by private workspace package res
 ## Final current implementation head for this review
 Latest OGAM implementation branch head: `7b399c5261e09f365ca44d81fb053dbe68af8c08`.
 No Kotlin source changes since the previous review target; the latest commits update TTS evaluation/port plan and handoff docs. Please still review the current Kotlin files at this branch head and include any chunker edge cases around max-length splits and abbreviation boundaries.
+
+## Latest review target — 2026-11-22
+Current OGAM implementation branch head: `91996d2013950d3cb85bb60b4899f49c89e1750b` (PR #1 draft/open).
+New docs clarify tiny-voca-ru model/dataset provenance and latest CI evidence. External dependency audit run 45059622374 passed on prior source head `7b399c5261e09f365ca44d81fb053dbe68af8c08`; docs-only commits followed. Full CI run 45059622387 had three failing Jest shards caused broadly by missing private `@offgrid/models` and `pro/sync` modules; Android Gradle result was not available. Please review latest chunker code/tests and advise how to isolate Android Kotlin tests from missing private JS workspace packages.
