@@ -383,3 +383,7 @@ Next step: record operator/SIM, per-band RSRP/RSRQ/SINR, antenna model/cable and
 - It consolidates the project goal and safety constraints, PR #78 ordered-media test evidence (152/152 on Factory runner), GitLab CI identity-verification/pre-job incident, Russian mirror implementation and test gaps, hosting candidates, the free-verification-only-first decision, the Cloud.ru 100 ₽ fallback, and the ordered next-step plan.
 - New-chat rule: do not ask the user to repeat prior decisions. Read the master handoff, recheck live repository/provider state, then continue at the first incomplete P0 item. The brief is the durable handoff; chat history is supplementary.
 - Latest handoff commit: `a14e2c043b3914c498c088c38a2426d5e840684e`.
+
+## Global rule: unavailable components
+
+- Mandatory for every current and future project: [`docs/OPEN_SOURCE_GAP_RECOVERY_POLICY.md`](OPEN_SOURCE_GAP_RECOVERY_POLICY.md). An unavailable dependency or source is a research-and-replacement task, not an automatic stop. Search public implementations, inspect real source/tests, verify licensing, integrate/adapt a compatible solution, and prove it with tests/build/runtime evidence. Preserve features; no fake stubs or unsupported completion claims.
