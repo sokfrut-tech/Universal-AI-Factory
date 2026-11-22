@@ -48,3 +48,9 @@ New evidence to reconcile:
 - JNI path inspected is synchronous through `tts->Generate`; the prior suspicion of an async cross-thread callback is not proven. Please correct that nuance.
 - CosyVoice3-MNN research branch reports Flow-only RTF estimate ~3.69 on Honor BKQ_AN90/Adreno 840 and explicitly fails real-time gate; demote from default conversational candidate.
 - See updated `docs/jarvis/LOCAL_RUSSIAN_TTS_RUNTIME_EVALUATION.md` on the implementation branch for evidence links and details.
+
+## Additional correction and new compact-model plan
+Latest OGAM implementation branch head: `7b399c5261e09f365ca44d81fb053dbe68af8c08`.
+Latest TTS docs now include `docs/jarvis/TINY_VOCA_RU_ANDROID_PORT_PLAN.md`.
+Correction: the earlier ~3.69 CosyVoice Flow RTF was only the original 10-step Stage-1 estimate. Newer upstream two-step distillation results report a cool concurrent Honor BKQ_AN90 pipeline at RTF 0.63 and a hot post-preparation run at RTF 1.29. The student used only 20 train + 4 held-out Chinese utterances from one speaker; full runtime is ~2.25 GB PSS, ~1.3 GiB storage, 10–15 s cold start, and only SM8850 validated. Please update your ranking accordingly: CosyVoice is not batch-only, but high-resource experimental; tiny-voca-ru is the leading compact prototype pending frontend parity, exact model hashes and SM8550 tests.
+Also audit tiny-voca-ru: 4.53M params, ~21.4 MB ONNX, Apache-2.0 weights/code, MIT RUAccent assets, CC BY 4.0 dataset, 61-symbol IPA frontend, lite homograph 56%, full model 91.6% against reference. Its published CPU speed is Ryzen 3600X only, not Android.
