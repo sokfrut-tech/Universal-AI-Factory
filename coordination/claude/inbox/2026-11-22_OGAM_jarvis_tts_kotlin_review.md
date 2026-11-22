@@ -26,3 +26,12 @@ Independently review the following newly added Kotlin code and tests. Do not mod
 
 ## Output
 Write a substantive report to `coordination/claude/outbox/REPORT_2026-11-22_OGAM_JARVIS_TTS_KOTLIN_REVIEW.md`. Do not create empty ACK files.
+
+## Follow-up snapshot (use this instead of the earlier assignment head)
+Current implementation branch head: `781d6e68ebc11b971892f521c05e3020b5f9d2a9`.
+Additional changes since the original request:
+- Added `scripts/__tests__/jarvis-tts-backend.node.test.mjs` and wired it into the external dependency audit workflow.
+- Source-contract audit run 423 passed on commit `a8113ac77c35108dc9f2a88da9f990923e9bbd08`: https://github.com/sokfrut-tech/OGAM/actions/runs/45058086277
+- Fixed the stale assistant launch guard source assertion in `android-assistant-contract.node.test.mjs`.
+- Added Supertonic callback-stop patch under `patches/sherpa-onnx/v2.0.3-supertonic-callback-stop.patch`; it is not applied to a compiled AAR.
+Review the latest branch head, not the earlier snapshot. Gradle/JUnit and device tests are still not verified.
