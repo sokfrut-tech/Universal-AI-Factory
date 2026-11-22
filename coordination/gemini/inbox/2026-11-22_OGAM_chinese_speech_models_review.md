@@ -38,3 +38,13 @@ Write a detailed report to `coordination/gemini/outbox/REPORT_2026-11-22_OGAM_CH
 Current OGAM research branch head: `22df2e264245cd05203cc647144adec81f7d9fca`.
 Current OGAM implementation branch head: `781d6e68ebc11b971892f521c05e3020b5f9d2a9`.
 Please review the latest documents, especially the reconciliation with `LOCAL_RUSSIAN_TTS_RUNTIME_EVALUATION.md`, the Supertonic callback-stop patch and the distinction between model streaming claims and Android wrapper APIs. The new native TTS interface/chunker has source-contract audit evidence but no Gradle/JUnit/device validation.
+
+## Latest research/implementation snapshot (supersedes earlier head)
+Current OGAM research branch head: `22df2e264245cd05203cc647144adec81f7d9fca` (research work remains on that branch).
+Current implementation branch head: `ee505f901db3f0ee6a8d0026c333b306b2c45efa`.
+New evidence to reconcile:
+- sherpa-onnx v2.0.3 is the latest upstream release on 2026-11-22; official Android AAR is 52,411,426 bytes, SHA-256 `4c766e2e74c9d33d595338c21fe3b305c73ba45d47e96a235675c33142a2ec50`.
+- Official Kotlin API emits callback PCM during generation, but Supertonic C++ still ignores callback return; native cancellation patch remains required.
+- JNI path inspected is synchronous through `tts->Generate`; the prior suspicion of an async cross-thread callback is not proven. Please correct that nuance.
+- CosyVoice3-MNN research branch reports Flow-only RTF estimate ~3.69 on Honor BKQ_AN90/Adreno 840 and explicitly fails real-time gate; demote from default conversational candidate.
+- See updated `docs/jarvis/LOCAL_RUSSIAN_TTS_RUNTIME_EVALUATION.md` on the implementation branch for evidence links and details.
