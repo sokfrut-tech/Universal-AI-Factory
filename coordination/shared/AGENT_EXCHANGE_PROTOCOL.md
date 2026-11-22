@@ -81,3 +81,7 @@ GitHub Actions может проверять структуру и формат 
 ## 8. Требование для всех будущих проектов
 
 При старте новой фабрики/репозитория копировать этот протокол или ссылаться на него из README проекта. ChatGPT, Claude и Gemini должны соблюдать один и тот же формат, не требуя от пользователя вручную переносить сообщения, если есть доступный агенту GitHub/API канал.
+
+## 9. Mandatory research fallback for all projects
+
+All agents must follow the global rule in [OPEN_SOURCE_FALLBACK_AND_CLEAN_ROOM_RULE.md](OPEN_SOURCE_FALLBACK_AND_CLEAN_ROOM_RULE.md). If a feature or dependency is unavailable, continue by researching public alternatives across relevant platforms and regions (not GitHub alone), verify source/build/tests/licenses/provenance, then adapt or implement the required behaviour clean-room using public APIs. Do not silently abandon requirements, use false-success/no-op stubs, bypass access controls, or copy proprietary code/assets. Record confirmed, inferred, unverified and blocked evidence plus the chosen alternative in the project's handoff. This applies to every current and future repository and factory.
