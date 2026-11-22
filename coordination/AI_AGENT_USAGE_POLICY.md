@@ -22,3 +22,9 @@ Updated: 2026-11-06
 
 - A configured API key proves only that a secret is present; it does not prove the model request succeeded.
 - Record actual model, API outcome, report path, and any unresolved limitations. Never claim that an agent edited another repository unless it actually had source access and made a verifiable change.
+
+## Unavailable capability recovery — mandatory across all projects
+
+- Follow [`docs/OPEN_SOURCE_GAP_RECOVERY_POLICY.md`](../docs/OPEN_SOURCE_GAP_RECOVERY_POLICY.md) whenever a required source, package, tool, API, service or implementation is unavailable or inaccessible.
+- Do not stop at the blocker or delete the feature. Search public/open implementations, inspect source and tests, verify exact licence/provenance, then select a compatible dependency, vendor/adapt the code, or independently implement the behavior.
+- Preserve behavior and security contracts; add tests and verify the actual integrated result. Never use placeholders or claim research is implementation.
