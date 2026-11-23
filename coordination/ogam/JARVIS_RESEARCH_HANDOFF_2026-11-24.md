@@ -115,3 +115,13 @@ Research-only update. No PR merged.
 - Verification: source review only. No Jest, TypeScript, ESLint, native SQLite, APK or device test has run. The new Jest tests are not evidence of passing until executed.
 - CI trigger diagnosis confirmed: repository `.github/workflows/ci.yml` listens to PRs targeting `main` or `release/*`; PR #4 targets `feature/jarvis-step-2-storage-privacy`, so no PR workflow run is created. Do not retarget PR #4 directly to `main`: its base branch contains a large unrelated feature set (compare against main shows a broad diff). No workflow-dispatch action is available through the current GitHub connection.
 - Next: arrange a clean, isolated validation path against `main` that contains only the M1 files, or obtain a supported workflow-dispatch/runner path; then run focused Jest + typecheck. After that, add a native SQLite probe for runtime version, JSON1, foreign-key enforcement and transaction rollback on the OPPO device. Keep M1 open and do not start M2/scheduler until gates pass.
+
+
+## Isolated CI validation attempt — 2026-11-24
+- To preserve PR #4's correct feature-branch base, created a temporary validation branch from `main`: `verify/jarvis-memory-m1-main-ci-2026-11-24`.
+- Copied only the four M1 production files and four M1 Jest files (8 files total); no unrelated feature-branch commits or files were copied.
+- Opened draft validation PR #5: https://github.com/sokfrut-tech/OGAM/pull/5
+- Validation head commit: `efae5d3f269c890c0d088e36f7f2d9c0002cdd2e`.
+- PR #5 is explicitly validation-only and must not be merged. Its only purpose is to trigger the existing main-target CI.
+- Rechecked the commit workflow runs and combined commit statuses after PR creation: both returned zero runs/statuses. Thus CI has still not started; this is not a passing test result. The current GitHub connector exposes workflow-run reads/retries but no workflow-dispatch action, and its approved fetch endpoint rejected the workflow-list endpoint.
+- Next: determine why the main-target PR event did not create a run (Actions disabled/repository event policy/connector delay), or use a supported runner path. Keep PR #4 and PR #5 unmerged. Do not claim Jest/typecheck success until there is a fresh run with successful jobs.
