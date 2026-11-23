@@ -13,3 +13,11 @@ Append-only. Newest entries first. Timestamps UTC.
 - created UPKB README, operating rules, project registry and document registry in this branch.
 - not done: no tests/build/device operations; no PR merged; no production deployment or secret changes; no exhaustive chat/file audit claimed.
 - next: complete research, decision, queue and search files; link UPKB from master index; verify branch and open draft PR.
+
+## 2026-11-23 — UPKB initial structure completed
+- task_id: UPKB-BOOTSTRAP-20261123-01
+- agent: ChatGPT (GPT-6)
+- added: RESEARCH_REGISTER.md, DECISIONS.md, CONTINUATION_QUEUE.md and SEARCH_INDEX.md; updated docs/MASTER_PROJECT_INDEX.md to make UPKB the mandatory cross-agent entry point.
+- branch: docs/universal-project-knowledge-base-v1-2026-11-23
+- no merge/deploy/test/device action performed. Database remains a first-pass inventory, not a completed exhaustive audit.
+- next: validate files and CSV shape, open draft PR, then continue source-level audit of project handoffs, PR diffs and Actions evidence.
