@@ -62,3 +62,14 @@ Research-only update. No PR merged.
 - Important caveat: SQLCipher/Keystore encryption is a design requirement to evaluate, not an existing verified capability. JSON1 and SQLite runtime capabilities must be checked before adopting the proposed DDL.
 - No production source files changed; no tests executed; no APK built; no device test performed.
 - Next: review design against OGAM's actual DB/migration abstractions and target SQLite runtime, then implement M1 only (schema + migrations + repository tests) in a separate implementation branch/PR. Keep model writes, UI and retrieval out of M1. Do not start scheduler until Step 1 gates pass.
+
+
+## OGAM SQLite compatibility review — 2026-11-24
+- Reviewed `feature/jarvis-step-2-storage-privacy` source: `@op-engineering/op-sqlite` is locked to 15.2.5; current stores use `open({ name })` + `executeSync`.
+- No shared versioned migration framework was found in inspected stores. Documents use a local BEGIN/COMMIT/ROLLBACK helper; RAG performs additive ad-hoc column migrations.
+- `react-native-keychain` 10.0.0 is present in package-lock, but this is not proof that memory encryption/key wrapping is implemented.
+- Android manifest currently has `android:allowBackup="false"`; preserve it, but validate OEM transfer/reinstall/export behavior on device.
+- JSON1/native SQLite compile options are not proven. Updated memory design to require TypeScript JSON validation first and to omit `json_valid()` CHECK until verified.
+- Design update commit: `f05b6eab9ca6e1f2ecb90e4a67333db96c907ce5`.
+- Created isolated M1 branch `feature/jarvis-step-1-memory-m1-2026-11-24` from the existing storage/privacy implementation branch. Intended scope: memory DB schema/migration + typed repository + tests only; no model writes, UI, retrieval or scheduler.
+- Still no tests, APK or PGEM10 runtime probe have been executed. Do not report them as passed.
