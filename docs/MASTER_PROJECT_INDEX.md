@@ -3,6 +3,12 @@ Updated: 2026-11-22
 
 Purpose: the single entry point for resuming active projects without relying on chat history. Repository state is the durable source of truth.
 
+## Mandatory project knowledge base (UPKB)
+- Start every agent session at [knowledge-base/README.md](../tree/main/knowledge-base/README.md).
+- Follow [mandatory operating rules](../tree/main/knowledge-base/OPERATING_RULES.md).
+- Search [project registry](../tree/main/knowledge-base/PROJECTS.csv), [document registry](../tree/main/knowledge-base/DOCUMENTS.csv), [research register](../tree/main/knowledge-base/RESEARCH_REGISTER.md), [activity log](../tree/main/knowledge-base/ACTIVITY_LOG.md), [decisions](../tree/main/knowledge-base/DECISIONS.md), [continuation queue](../tree/main/knowledge-base/CONTINUATION_QUEUE.md) and [search index](../tree/main/knowledge-base/SEARCH_INDEX.md).
+- The database is an initial bootstrap; statuses are evidence-labelled and some are historical. Reconcile live PR/CI/deployment state before acting.
+
 ## Global operating rules
 1. ChatGPT is the default coordinator and implementer. Continue independently when external agents are unavailable.
 2. Gemini is a quota-limited escalation expert only: use for a genuine blocker, difficult architecture choice, or independent high-risk review. Do not trigger on routine inbox pushes. Batch questions; keep retries low.
