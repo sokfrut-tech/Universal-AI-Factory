@@ -85,3 +85,20 @@ Research-only update. No PR merged.
 - Compare against base reports 8 commits ahead / 0 behind and 7 files changed (526 additions at PR creation).
 - GitHub Actions query for this branch currently returns zero workflow runs; tests have not been executed locally or in CI. No APK or device tests.
 - Next gate: inspect the M1 diff for API/type issues, obtain focused Jest + TypeScript CI execution, then run native SQLite capability probes (SQLite version, JSON1, foreign keys and rollback). Do not merge or proceed to M2 until those gates pass.
+
+
+## Ecosystem reconnaissance — 2026-11-24
+- Added OGAM research report: `research/agent-ecosystem/JARVIS_RUSSIAN_AND_ADJACENT_AI_ECOSYSTEM_2026-11-24.md`.
+- Commit: `56b667ff637bd5098df67dc76ef6afa7e5a5af46`.
+- High-value references:
+  - GitVerse/GigaCode docs: Plan/Build separation, read-only explore subagents, allow/ask/deny permissions, repository skills and MCP allowlists — apply to Factory agent contracts, not as embedded proprietary runtime.
+  - ai-forever/giga_agent (MIT) + gigachain (MIT): subagents, tools/MCP, durable tasks, RAG, scheduler, connectors, sandbox and migration patterns. Study and extract narrow patterns; no unrestricted REPL in Android.
+  - sherpa-onnx (Apache-2.0): top-priority offline Android ASR/KWS/VAD/TTS benchmark candidate.
+  - alphacep/vosk-api (Apache-2.0): Russian offline ASR baseline/fallback candidate.
+  - pbakaus/impeccable (Apache-2.0): Compose-aware design critique/audit/adapt and animation principles. Do not enable its live apply fallback or unattended hooks without reviewing; README describes a bypass-approval/sandbox fallback.
+  - OpenMAIC (MIT root, some package-specific licenses): durable agent sessions, leases, replayable events, validated tools and steering; architectural reference only.
+  - MiniMind (Apache-2.0): learning/training pipeline and tool-use/distillation research, not a production on-device model recommendation.
+  - OpenCloud: hosted MCP/app builder; optional companion dashboard only, not Jarvis core.
+  - Golos: Russian ASR corpus; dataset license must be checked before reuse. Silero model repo is CC BY-NC 4.0, so no commercial reuse without resolving rights.
+- No third-party code copied, dependencies added, APKs built or models benchmarked.
+- Next: finish Step 1 M1 first; then prepare PGEM10 Russian ASR/KWS/TTS benchmark Sherpa vs Vosk and manually audit Compose UI using Impeccable-derived criteria. Scheduler remains gated by Step 1.
