@@ -1,0 +1,244 @@
+{
+  "schema_version": "1.0.0",
+  "updated_at": "2026-11-04",
+  "access_states": [
+    "adapter_pending",
+    "agent_enabled",
+    "blocked",
+    "operator_only"
+  ],
+  "default_policy": {
+    "default_access": "operator_only",
+    "default_permission": "read",
+    "project_isolation": true,
+    "approval_required_for": [
+      "production_deploy",
+      "protected_branch_merge",
+      "secret_write",
+      "domain_change",
+      "data_delete",
+      "policy_weakening",
+      "public_release",
+      "paid_usage",
+      "scheduled_external_action"
+    ],
+    "secret_values_in_logs": false,
+    "ack_is_execution": false
+  },
+  "capabilities": [
+    {
+      "id": "github",
+      "family": "source_control",
+      "access_state": "operator_only",
+      "operations": [
+        "repo_read",
+        "branch_read",
+        "file_read",
+        "branch_write",
+        "pull_request_create",
+        "pull_request_review",
+        "actions_read",
+        "artifact_read"
+      ],
+      "write_scope": "allowlisted_repositories_and_feature_branches",
+      "approval": [
+        "protected_branch_merge",
+        "release",
+        "repository_settings",
+        "secret_write"
+      ]
+    },
+    {
+      "id": "files",
+      "family": "knowledge",
+      "access_state": "operator_only",
+      "operations": [
+        "search",
+        "read",
+        "find",
+        "list",
+        "materialize",
+        "library_manage"
+      ],
+      "data_boundary": "explicitly_selected_project_artifacts_only",
+      "approval": [
+        "library_share",
+        "library_delete",
+        "library_move"
+      ]
+    },
+    {
+      "id": "web_research",
+      "family": "research",
+      "access_state": "operator_only",
+      "operations": [
+        "search",
+        "open",
+        "follow_link",
+        "find"
+      ],
+      "data_boundary": "public_web_only"
+    },
+    {
+      "id": "image_generation",
+      "family": "media",
+      "access_state": "operator_only",
+      "operations": [
+        "generate_image",
+        "edit_image"
+      ],
+      "approval": [
+        "commit_generated_assets"
+      ]
+    },
+    {
+      "id": "appdeploy",
+      "family": "deployment",
+      "access_state": "adapter_pending",
+      "operations": [
+        "app_list",
+        "app_status",
+        "source_read",
+        "resource_upload",
+        "deploy",
+        "version_manage",
+        "domain_manage",
+        "secret_manage"
+      ],
+      "approval": [
+        "deploy",
+        "domain_change",
+        "secret_write",
+        "app_delete"
+      ]
+    },
+    {
+      "id": "magicpath",
+      "family": "design",
+      "access_state": "operator_only",
+      "operations": [
+        "project_read",
+        "canvas_read",
+        "component_inspect",
+        "canvas_edit",
+        "code_session",
+        "asset_upload",
+        "project_export"
+      ],
+      "approval": [
+        "shared_project_write",
+        "asset_publish"
+      ]
+    },
+    {
+      "id": "posthog",
+      "family": "analytics",
+      "access_state": "operator_only",
+      "operations": [
+        "analytics_query",
+        "feature_flag_read",
+        "experiment_read",
+        "error_read"
+      ],
+      "approval": [
+        "feature_flag_write",
+        "experiment_write"
+      ]
+    },
+    {
+      "id": "automations",
+      "family": "scheduling",
+      "access_state": "operator_only",
+      "operations": [
+        "automation_list",
+        "automation_read",
+        "automation_run",
+        "automation_create",
+        "automation_update"
+      ],
+      "approval": [
+        "automation_create",
+        "automation_update",
+        "scheduled_external_action"
+      ]
+    },
+    {
+      "id": "openai_platform",
+      "family": "model_platform",
+      "access_state": "operator_only",
+      "operations": [
+        "api_key_setup",
+        "target_list"
+      ],
+      "approval": [
+        "api_key_create",
+        "api_key_rotate",
+        "paid_usage"
+      ]
+    },
+    {
+      "id": "armorcodex",
+      "family": "agent_security",
+      "access_state": "operator_only",
+      "operations": [
+        "policy_read",
+        "intent_plan_register",
+        "policy_update"
+      ],
+      "approval": [
+        "policy_weakening",
+        "policy_update"
+      ]
+    },
+    {
+      "id": "skills",
+      "family": "procedures",
+      "access_state": "operator_only",
+      "operations": [
+        "skill_discover",
+        "skill_read"
+      ],
+      "data_boundary": "instructions_are_not_credentials"
+    },
+    {
+      "id": "personal_context",
+      "family": "user_context",
+      "access_state": "blocked",
+      "operations": [
+        "explicit_context_retrieval"
+      ],
+      "data_boundary": "never_export_sensitive_or_unrelated_personal_context",
+      "blocked_reason": "sensitive_context_is_not_exported_to_factory_agents"
+    },
+    {
+      "id": "python_container",
+      "family": "runtime",
+      "access_state": "operator_only",
+      "operations": [
+        "data_processing",
+        "file_inspection",
+        "test_helpers",
+        "artifact_generation"
+      ],
+      "data_boundary": "ephemeral_operator_runtime_only"
+    },
+    {
+      "id": "claude_provider",
+      "family": "agent_provider",
+      "access_state": "blocked",
+      "operations": [
+        "provider_invoke"
+      ],
+      "blocked_reason": "real_provider_dispatch_not_verified; factory_issue_11"
+    },
+    {
+      "id": "gemini_provider",
+      "family": "agent_provider",
+      "access_state": "blocked",
+      "operations": [
+        "provider_invoke"
+      ],
+      "blocked_reason": "real_provider_dispatch_not_verified; factory_issue_11"
+    }
+  ]
+}
