@@ -21,3 +21,12 @@ Append-only. Newest entries first. Timestamps UTC.
 - branch: docs/universal-project-knowledge-base-v1-2026-11-23
 - no merge/deploy/test/device action performed. Database remains a first-pass inventory, not a completed exhaustive audit.
 - next: validate files and CSV shape, open draft PR, then continue source-level audit of project handoffs, PR diffs and Actions evidence.
+
+## 2026-11-23 — live PR diff spot-check
+- task_id: UPKB-AUDIT-20261123-02
+- agent: ChatGPT (GPT-6)
+- OGAM PR #1 confirmed OPEN, DRAFT, unmerged; head 0f03010df4620e871d3ba510cb223c9dfbe1cc26. Its APK workflow still requires PRO_SUBMODULE_PAT and private off-grid-ai/mobile-pro plus off-grid-ai/shared packages. The external dependency audit workflow runs Node source-contract tests; it is not a Gradle/APK/device verification.
+- Gemeni PR #148 confirmed OPEN, non-draft, unmerged; head 769e50e782aafb2698b9ff31f429725087c22ecc. Diff adds pinned llama.cpp source setup, native library packaging checks and emulator smoke tests for native init, app resume, deterministic query and tab navigation. Exact-head CI result and OPPO runtime remain unverified.
+- Antigravity-Mobile PR #19 confirmed OPEN, DRAFT, unmerged. Diff includes security workflow and candidate Worker deploy path; no production dispatch enablement confirmed.
+- Universal-AI-Factory PR #26 discrepancy resolved: direct PR fetch says OPEN, unmerged, updated 2026-11-21; merge_commit_sha was not evidence of merge. Its diff adds corrupt-ledger fallback, parameterized broker and seven live Windows PowerShell 5.1 tests, but no test was run in this session.
+- no test/build/deploy/device action performed by ChatGPT in this audit.
