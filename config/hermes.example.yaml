@@ -1,0 +1,34 @@
+# Hermes Agent — example configuration for the private factory core.
+# Copy to ~/.hermes/config.yaml; do not put credentials here.
+# Credentials belong only in ~/.hermes/.env or the supported Hermes auth flow.
+# This file intentionally contains no private token or API key.
+
+model:
+  # Auto-detect the provider from credentials configured by the owner.
+  provider: "auto"
+
+# Hermes gateway platform settings.
+# There is no gateway.telegram.enabled key in the upstream schema.
+# The Telegram adapter is activated by running `hermes gateway` with
+# TELEGRAM_BOT_TOKEN available in the process environment.
+platforms:
+  telegram:
+    reply_to_mode: "first"
+    # Access control is enforced with TELEGRAM_ALLOWED_USERS in ~/.hermes/.env.
+    # Use the owner's numeric Telegram user ID only; do not allow all users.
+    extra:
+      drop_pending_on_cold_boot: true
+      disable_link_previews: true
+
+# Restrict the Telegram test bot to non-shell tools.
+# The CLI remains the operator interface for setup and maintenance.
+platform_toolsets:
+  cli: [hermes-cli]
+  telegram: [web, file, todo]
+
+# Local execution is intentionally not enabled for the remote Telegram bot.
+# Select the isolated Docker backend only after Docker is installed and tested.
+terminal:
+  backend: "docker"
+  docker_mount_cwd_to_workspace: false
+  timeout: 180
