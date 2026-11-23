@@ -51,3 +51,14 @@ Research-only update. No PR merged.
 - Commit: `8ebb125938b02ce1927be965c7359bb89fbd3b8f`; recorded in draft PR #3 comment.
 - No production code changed, no tests executed, no APK built, no device test performed.
 - Next: complete memory schema threat model and acceptance criteria, then implement schema + migrations + repository tests as a separate PR/commit; do not proceed to scheduler until Step 1 gates are satisfied.
+
+
+## Step 1 memory design — 2026-11-24
+- Added design-only specification to OGAM research branch: `research/agent-ecosystem/JARVIS_STEP_1_MEMORY_DESIGN_2026-11-24.md`.
+- Commit: `73329111c618c1010f517966f728a82a0715439c`.
+- Defines typed `jarvis_memory.db` schema, constraints, indexes, migration rules, tombstones, lifecycle API, explicit confirmation, provenance and scope isolation.
+- Defines privacy threat model for app-private data, Android Keystore/encryption options, backup/restore, local-only sync policy, prompt injection, logging, export and deletion limits.
+- Adds 28 acceptance tests plus PGEM10 device acceptance checklist.
+- Important caveat: SQLCipher/Keystore encryption is a design requirement to evaluate, not an existing verified capability. JSON1 and SQLite runtime capabilities must be checked before adopting the proposed DDL.
+- No production source files changed; no tests executed; no APK built; no device test performed.
+- Next: review design against OGAM's actual DB/migration abstractions and target SQLite runtime, then implement M1 only (schema + migrations + repository tests) in a separate implementation branch/PR. Keep model writes, UI and retrieval out of M1. Do not start scheduler until Step 1 gates pass.
