@@ -102,3 +102,16 @@ Research-only update. No PR merged.
   - Golos: Russian ASR corpus; dataset license must be checked before reuse. Silero model repo is CC BY-NC 4.0, so no commercial reuse without resolving rights.
 - No third-party code copied, dependencies added, APKs built or models benchmarked.
 - Next: finish Step 1 M1 first; then prepare PGEM10 Russian ASR/KWS/TTS benchmark Sherpa vs Vosk and manually audit Compose UI using Impeccable-derived criteria. Scheduler remains gated by Step 1.
+
+
+## M1 code review follow-up — 2026-11-24
+- Read the complete M1 source and test diff in draft PR #4. Found two API safety gaps and fixed them on the same feature branch:
+  1. `repository.list()` previously allowed an omitted scope and could return records from global/project/conversation scopes together. It now requires an explicit scope; project/conversation listings require a non-empty scope ID, and global listing explicitly constrains `scope_id IS NULL`.
+  2. `confirmProposal()` previously could confirm a proposal after its expiry time. Confirmation now includes a database-side `expires_at IS NULL OR expires_at > now` predicate and takes the approval timestamp from the repository clock, not a caller argument.
+- Added `__tests__/unit/services/jarvisMemory/repositoryGuards.test.ts` covering explicit scope, project isolation, global isolation and expiry confirmation.
+- Fix commit: `9646b7e744fa46a5a4051b79e9e2adb6290b8fee`.
+- Guard-test commit: `67c896cf21cab6f4d0c0ba9118e6013770165252`.
+- PR #4 current head: `67c896cf21cab6f4d0c0ba9118e6013770165252`; PR remains draft and unmerged.
+- Verification: source review only. No Jest, TypeScript, ESLint, native SQLite, APK or device test has run. The new Jest tests are not evidence of passing until executed.
+- CI trigger diagnosis confirmed: repository `.github/workflows/ci.yml` listens to PRs targeting `main` or `release/*`; PR #4 targets `feature/jarvis-step-2-storage-privacy`, so no PR workflow run is created. Do not retarget PR #4 directly to `main`: its base branch contains a large unrelated feature set (compare against main shows a broad diff). No workflow-dispatch action is available through the current GitHub connection.
+- Next: arrange a clean, isolated validation path against `main` that contains only the M1 files, or obtain a supported workflow-dispatch/runner path; then run focused Jest + typecheck. After that, add a native SQLite probe for runtime version, JSON1, foreign-key enforcement and transaction rollback on the OPPO device. Keep M1 open and do not start M2/scheduler until gates pass.
