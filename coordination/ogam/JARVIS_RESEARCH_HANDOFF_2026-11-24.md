@@ -73,3 +73,15 @@ Research-only update. No PR merged.
 - Design update commit: `f05b6eab9ca6e1f2ecb90e4a67333db96c907ce5`.
 - Created isolated M1 branch `feature/jarvis-step-1-memory-m1-2026-11-24` from the existing storage/privacy implementation branch. Intended scope: memory DB schema/migration + typed repository + tests only; no model writes, UI, retrieval or scheduler.
 - Still no tests, APK or PGEM10 runtime probe have been executed. Do not report them as passed.
+
+
+## M1 implementation started — 2026-11-24
+- Created isolated branch: `sokfrut-tech/OGAM:feature/jarvis-step-1-memory-m1-2026-11-24`, based on `feature/jarvis-step-2-storage-privacy`.
+- Draft PR #4: https://github.com/sokfrut-tech/OGAM/pull/4
+- Added `src/services/jarvisMemory/types.ts`, `schema.ts`, `database.ts`, `repository.ts`.
+- Added tests: `__tests__/unit/services/jarvisMemory/schema.test.ts`, `database.test.ts`, `repositoryValidation.test.ts`.
+- Migration uses separate `jarvis_memory.db`, transaction `BEGIN IMMEDIATE/COMMIT/ROLLBACK`, version metadata, future-schema refusal and no JSON1 dependency. Repository validates JSON serialization/16 KiB, scope invariants, expiry and confidence; proposal starts as proposed/local_only and confirmation is a separate method.
+- No model extraction, prompt retrieval, UI, deletion/export UI, sync or encryption added.
+- Compare against base reports 8 commits ahead / 0 behind and 7 files changed (526 additions at PR creation).
+- GitHub Actions query for this branch currently returns zero workflow runs; tests have not been executed locally or in CI. No APK or device tests.
+- Next gate: inspect the M1 diff for API/type issues, obtain focused Jest + TypeScript CI execution, then run native SQLite capability probes (SQLite version, JSON1, foreign keys and rollback). Do not merge or proceed to M2 until those gates pass.
