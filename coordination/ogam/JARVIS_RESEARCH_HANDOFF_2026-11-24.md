@@ -39,3 +39,15 @@ Status: research update committed to OGAM and opened as a draft PR. No productio
 6. Continue source-level audits of LocalIntelligence, Nyral and Open Jarvis; confirm licenses before any code reuse.
 
 Research-only update. No PR merged.
+
+## Step 1 memory audit — 2026-11-24
+- Inspected OGAM's actual persistence and RAG sources on `feature/jarvis-step-2-storage-privacy`.
+- Confirmed durable chat history: Zustand `local-llm-chat-storage`, chunked AsyncStorage and hydration-gated recovery; chat migration schema v2.
+- Confirmed project/document RAG: SQLite `rag.db` membership, `documents.db` pages/chunks/vector BLOBs/FTS5, local llama.rn embeddings, cited retrieval and project-scoped guards.
+- Confirmed no distinct curated long-term personal memory store was found. "Memory" modules/tests largely refer to model RAM residency.
+- Security caveat: inspected code does not establish encryption-at-rest or biometric memory vault.
+- Recommended additive `jarvis_memory.db` with typed facts/preferences/project decisions, explicit user confirmation, provenance, scope, confidence, expiry, conflict handling, inspect/edit/delete/export and local-only-by-default sync.
+- Audit document: https://github.com/sokfrut-tech/OGAM/blob/research/jarvis-agent-ecosystem-2026-11-24/research/agent-ecosystem/JARVIS_STEP_1_MEMORY_AUDIT_2026-11-24.md
+- Commit: `8ebb125938b02ce1927be965c7359bb89fbd3b8f`; recorded in draft PR #3 comment.
+- No production code changed, no tests executed, no APK built, no device test performed.
+- Next: complete memory schema threat model and acceptance criteria, then implement schema + migrations + repository tests as a separate PR/commit; do not proceed to scheduler until Step 1 gates are satisfied.
