@@ -253,3 +253,5 @@ Research-only update. No PR merged.
 - Final workflow branch head at the successful run: `1e42474b5b8e351b9e736bb13ccafbee6f396d36`. Subsequent changes are not needed for this successful run. Do not merge the validation branch into production automatically.
 - Important remaining gate: the APK has been compiled and contains the native module, but it has NOT yet been installed/launched on the user's OPPO Find X6 Pro (PGEM10). The on-device PASS/FAIL screen must be run on that phone; only then can M1 native device acceptance be claimed. Build success alone does not prove runtime success.
 - PR #4 (M1 production implementation) remains draft/open/unmerged. M2 remains blocked until the user/device acceptance result is observed. The standalone probe is deliberately separate from the full OGAM APK build and does not require foreign `off-grid-ai` credentials.
+
+- Opened draft PR #6 in OGAM, targeting the M1 feature branch (not main): https://github.com/sokfrut-tech/OGAM/pull/6. It remains draft/open/unmerged pending installation and runtime acceptance on PGEM10.
