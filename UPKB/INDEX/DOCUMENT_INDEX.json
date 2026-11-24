@@ -27,7 +27,6 @@
       "continuation_point": "Use project table and per-project handoffs as starting points; refresh each repo before relying on historical statuses.",
       "dependencies": [],
       "verification_status": "VERIFIED",
-      "last_verified_at": "2026-11-24T00:00:00Z",
       "evidence": [
         "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/da0053fcc3f0bb898e13cb6ef8ba6f121d52a03a"
       ],
@@ -67,7 +66,6 @@
         "DOC-FACTORY-MASTER-INDEX"
       ],
       "verification_status": "VERIFIED",
-      "last_verified_at": "2026-11-24T00:00:00Z",
       "evidence": [
         "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/5adf3c0a47da0a51ae455b243786de1449cb1744"
       ],
@@ -105,7 +103,6 @@
       "continuation_point": "Refresh current branch/PR/source and identify exact installed APK before diagnosing physical-device launch.",
       "dependencies": [],
       "verification_status": "VERIFIED",
-      "last_verified_at": "2026-11-24T00:00:00Z",
       "evidence": [
         "https://github.com/sokfrut-tech/Gemeni/commit/673c2afe6d1806bd01d9f3890f6a94ce048a026e"
       ],
@@ -144,7 +141,6 @@
         "DOC-JARVIS-CONTINUATION-STATE"
       ],
       "verification_status": "VERIFIED",
-      "last_verified_at": "2026-11-24T00:00:00Z",
       "evidence": [
         "https://github.com/sokfrut-tech/Gemeni/commit/de5b24111da530387db01d3ccaaec3f87aeb1de1"
       ],
@@ -180,7 +176,6 @@
       "continuation_point": "Prefer current docs/jarvis implementation handoff and live PR #7 evidence for OGAM continuation.",
       "dependencies": [],
       "verification_status": "VERIFIED",
-      "last_verified_at": "2026-11-24T00:00:00Z",
       "evidence": [
         "https://github.com/sokfrut-tech/OGAM/commit/6f7111bef27634c129249143ab528a3dc36684c1"
       ],
@@ -216,7 +211,6 @@
       "continuation_point": "Inspect project memory, source tree and relationship to primary Jarvis; do not assume code is already implemented.",
       "dependencies": [],
       "verification_status": "VERIFIED",
-      "last_verified_at": "2026-11-24T00:00:00Z",
       "evidence": [
         "https://github.com/sokfrut-tech/RussSearchOPPO/commit/65ebbe5f95839f95e7480101bfb9ffdd18084abe"
       ],
@@ -255,7 +249,6 @@
         "DOC-FACTORY-CONTINUATION-BRIEF"
       ],
       "verification_status": "VERIFIED",
-      "last_verified_at": "2026-11-24T00:00:00Z",
       "evidence": [
         "https://github.com/sokfrut-tech/Antigravity-Mobile/commit/58afec71752acf05bdf2af9906aca792ced7f81c"
       ],
@@ -292,7 +285,6 @@
       "continuation_point": "Use as historical design evidence; refresh current PR #78/#81, main and deployment state before changes.",
       "dependencies": [],
       "verification_status": "VERIFIED",
-      "last_verified_at": "2026-11-24T00:00:00Z",
       "evidence": [
         "https://github.com/sokfrut-tech/avtoy-korea-auto/commit/083bbd625f3b457bae8b0ffeb201f42f2db96401"
       ],
@@ -330,7 +322,6 @@
       "continuation_point": "Inspect current PR #3/#4/#5 and source to separate core cleaning capability from Neon Club experiments.",
       "dependencies": [],
       "verification_status": "VERIFIED",
-      "last_verified_at": "2026-11-24T00:00:00Z",
       "evidence": [
         "https://github.com/sokfrut-tech/stamp-cleaner/commit/59085a7ebefd6555a2bd495a8a79cf65ff568610"
       ],
@@ -492,7 +483,64 @@
         "proxy",
         "security"
       ]
+    },
+    {
+      "document_id": "DOC-BREENO-APKS-README",
+      "project_id": "BREENO_APKS",
+      "document_type": "other",
+      "title": "breeno-apks — Project Continuation Placeholder",
+      "document_url": "https://github.com/sokfrut-tech/breeno-apks/blob/main/README.md",
+      "repository": "sokfrut-tech/breeno-apks",
+      "branch": "main",
+      "commit_hash": "f3d792ddb1bcdedd811833304203ced0858d3b2c",
+      "affected_area": [
+        "project-scope",
+        "apk-provenance"
+      ],
+      "description": "README says no scope, source, build configuration or user requirements were verified in the 2026-11-04 inventory; do not infer an APK archive or implementation.",
+      "created_at": "2026-11-04T17:38:33Z",
+      "updated_at": "2026-11-04T17:38:33Z",
+      "status": "active",
+      "verification_status": "VERIFIED",
+      "task_id": "UPKB-INV-001",
+      "dependencies": [],
+      "evidence": [
+        "https://github.com/sokfrut-tech/breeno-apks/commit/f3d792ddb1bcdedd811833304203ced0858d3b2c"
+      ],
+      "tags": [
+        "breeno",
+        "placeholder",
+        "unknown-scope"
+      ]
+    },
+    {
+      "document_id": "DOC-SLEEP-BUTTON-README",
+      "project_id": "SLEEP_BUTTON",
+      "document_type": "other",
+      "title": "sleep-button — Project Continuation Placeholder",
+      "document_url": "https://github.com/sokfrut-tech/sleep-button/blob/main/README.md",
+      "repository": "sokfrut-tech/sleep-button",
+      "branch": "main",
+      "commit_hash": "ea36d696ea575bf027f881a26fc6e0dfa02bcbc8",
+      "affected_area": [
+        "project-scope"
+      ],
+      "description": "README says no project scope, source, build configuration or owner requirements have been verified; no implementation should be invented.",
+      "created_at": "2026-11-04T17:38:30Z",
+      "updated_at": "2026-11-04T17:38:30Z",
+      "status": "active",
+      "verification_status": "VERIFIED",
+      "task_id": "UPKB-INV-001",
+      "dependencies": [],
+      "evidence": [
+        "https://github.com/sokfrut-tech/sleep-button/commit/ea36d696ea575bf027f881a26fc6e0dfa02bcbc8"
+      ],
+      "tags": [
+        "sleep-button",
+        "placeholder",
+        "unknown-scope"
+      ]
     }
   ],
-  "note": "Source-backed initial inventory. VERIFIED means the file and cited revision were fetched from GitHub on 2026-11-24; it does not prove implementation claims. Historical handoffs remain historical."
+  "note": "Source-backed initial inventory. VERIFIED means the file and cited revision were fetched from GitHub on 2026-11-24; it does not prove implementation claims. Historical handoffs remain historical. Placeholder READMEs are indexed as explicit unknown-scope evidence."
 }
