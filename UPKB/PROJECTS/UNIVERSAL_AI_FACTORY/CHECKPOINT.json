@@ -1,15 +1,15 @@
 {
   "checkpoint_id": "UPKB_FACTORY_BOOTSTRAP_2026-11-24",
   "project_id": "UNIVERSAL_AI_FACTORY",
-  "last_successful_step": "Document inventory expanded to 16 source-backed records and record validation expanded to seven Draft 2020-12 schemas (document, checkpoint, environment, task, research, agent, pull_request), with positive/negative contract tests.",
-  "last_commit": "ae9ff40b1b7f71f7263f75f2e7587fc257107487",
+  "last_successful_step": "Source-backed inventory contains 16 document records, seven record schemas, nine contract tests and eight additional project checkpoints. CI validated the full index/checkpoint set.",
+  "last_commit": "ff0e2e8224e7b44cebdb65466697ea40de63890e",
   "last_verified_build": null,
-  "last_test_result": "GitHub Actions UPKB validation run #65 SUCCESS on ae9ff40b1b7f71f7263f75f2e7587fc257107487. Runs #56 and #65 also passed inventory and schema checks on their respective commits. Seven schema files passed Draft 2020-12 meta-validation; index records and nine positive/negative contract tests passed.",
+  "last_test_result": "GitHub Actions run #89 (push) and #90 (pull_request) SUCCESS on ff0e2e8224e7b44cebdb65466697ea40de63890e. Validator output: 15 projects, 51 indexed records, 7 JSON Schemas checked; unit/contract tests: 9 passed.",
   "known_problems": [
     "UPKB is not yet integrated into live agent workflows; no read-before-work/write-back end-to-end task has been proven.",
-    "Inventory remains partial. FOREST_LTE and IMAGE_TRANSLATOR_RU have no canonical repository confirmed.",
-    "Research index is empty; environment index is seed-only. Project checkpoints beyond Factory are not yet populated.",
-    "Task, PR, research and agent schemas now exist, but the validator still needs additional cross-reference and real consumer integration tests.",
+    "Inventory remains partial. Canonical repositories for FOREST_LTE and IMAGE_TRANSLATOR_RU are not confirmed; their checkpoints are REPORTED only.",
+    "Research index is empty; environment index is seed-only. Project checkpoints exist for eight projects beyond Factory, but other projects still need refresh/checkpoints.",
+    "Task/PR/research/agent schemas exist; additional consumer integration tests and deeper dependency cross-reference validation remain.",
     "Draft PR #28 remains open and unmerged; local/remote environments and physical devices are not inventoried."
   ],
   "active_tasks": [
@@ -25,7 +25,7 @@
     "Populate research and environment indexes from verified evidence.",
     "Implement end-to-end agent read/context/write-back test after contract review."
   ],
-  "next_action": "Finish remaining repository source records and create project-specific checkpoints from current primary sources; then implement a fail-closed context builder that requires project_id, loads CORE + project + checkpoint + relevant tasks/docs, and records the exact UPKB commit. Keep live agent dispatch disabled.",
+  "next_action": "Continue the missing canonical-project/source investigation and refresh project checkpoints; then implement a fail-closed UPKB context builder requiring project_id, loading CORE + project + checkpoint + relevant tasks/docs, and recording the exact UPKB commit. Keep live agent dispatch disabled until reviewed and E2E tested.",
   "required_files": [
     "UPKB/CORE/AGENT_START_PROTOCOL.md",
     "UPKB/CORE/RULES.md",
@@ -55,9 +55,12 @@
     "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/a427b80027e3d608d78417b199602f0cdf9edd92",
     "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45452470186",
     "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/ae9ff40b1b7f71f7263f75f2e7587fc257107487",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45452947914"
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45452947914",
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/ff0e2e8224e7b44cebdb65466697ea40de63890e",
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45453634896",
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45453652249"
   ],
   "verification_status": "VERIFIED",
-  "updated_at": "2026-11-24T17:52:00Z",
+  "updated_at": "2026-11-24T17:56:00Z",
   "updated_by": "GPT"
 }
