@@ -188,14 +188,31 @@
       "status": "completed",
       "priority": "critical",
       "owner": "GPT",
-      "next_action": "Review and integrate context packet loading into Factory agent execution only after defining write-back ownership, exact commit capture, and controlled end-to-end verification.",
+      "next_action": "Implement strict project/task metadata parsing for explicit Gemini dispatch; validate packet size and report schema, then prepare a separate workflow PR after UPKB merge approval.",
       "evidence": [
         "UPKB/tools/build_context.py",
         "UPKB/tests/test_build_context.py",
         "UPKB/tests/test_upkb_validation.py",
-        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45454496038"
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45454496038",
+        "UPKB/INTEGRATION/FACTORY_AGENT_CONTEXT_INTEGRATION_DESIGN_2026-11-24.md",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45454739417"
       ],
       "verification_status": "VERIFIED"
+    },
+    {
+      "task_id": "UPKB-DISPATCH-001",
+      "project_id": "UNIVERSAL_AI_FACTORY",
+      "title": "Define safe UPKB context contract for explicit Gemini dispatch",
+      "status": "active",
+      "priority": "critical",
+      "owner": "GPT",
+      "next_action": "Implement strict dispatch metadata parsing and tests, context size guard, structured report schema and stubbed-provider E2E contract. Do not change the live main workflow until UPKB PR #28 is reviewed and owner approves the separate integration PR.",
+      "evidence": [
+        "UPKB/INTEGRATION/FACTORY_AGENT_CONTEXT_INTEGRATION_DESIGN_2026-11-24.md",
+        ".github/workflows/real-ai-agent-execution.yml",
+        "coordination/gemini/scripts/resolve-task.sh"
+      ],
+      "verification_status": "PLANNED"
     }
   ]
 }
