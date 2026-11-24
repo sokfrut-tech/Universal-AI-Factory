@@ -1,31 +1,30 @@
 {
   "checkpoint_id": "UPKB_FACTORY_BOOTSTRAP_2026-11-24",
   "project_id": "UNIVERSAL_AI_FACTORY",
-  "last_successful_step": "Source-backed inventory contains 16 document records, seven record schemas, nine contract tests and eight additional project checkpoints. CI validated the full index/checkpoint set.",
-  "last_commit": "ff0e2e8224e7b44cebdb65466697ea40de63890e",
+  "last_successful_step": "Source-backed project context now covers all 15 projects. Fail-closed context builder successfully generated all 15 packets in CI; 19 contract tests passed.",
+  "last_commit": "a8240e7a05967743601e4994ef3519d7199161d8",
   "last_verified_build": null,
-  "last_test_result": "GitHub Actions run #89 (push) and #90 (pull_request) SUCCESS on ff0e2e8224e7b44cebdb65466697ea40de63890e. Validator output: 15 projects, 51 indexed records, 7 JSON Schemas checked; unit/contract tests: 9 passed.",
+  "last_test_result": "GitHub Actions run #116 SUCCESS on a8240e7a05967743601e4994ef3519d7199161d8. Validator: 15 projects, 57 indexed records, 7 JSON Schemas. Context builder: 15 project packets. Unit/contract tests: 19 passed, including unsafe path, missing README, unknown project, missing checkpoint and exact commit checks.",
   "known_problems": [
     "UPKB is not yet integrated into live agent workflows; no read-before-work/write-back end-to-end task has been proven.",
-    "Inventory remains partial. Canonical repositories for FOREST_LTE and IMAGE_TRANSLATOR_RU are not confirmed; their checkpoints are REPORTED only.",
-    "Research index is empty; environment index is seed-only. Project checkpoints exist for eight projects beyond Factory, but other projects still need refresh/checkpoints.",
-    "Task/PR/research/agent schemas exist; additional consumer integration tests and deeper dependency cross-reference validation remain.",
+    "FOREST_LTE and IMAGE_TRANSLATOR_RU have no confirmed canonical repositories; their context is REPORTED only.",
+    "Research index is empty; environment index is seed-only. Source inventory and project dependency map remain partial.",
+    "Task/PR/research/agent schemas and context builder are tested, but broader cross-reference semantics and real consumer integration remain.",
     "Draft PR #28 remains open and unmerged; local/remote environments and physical devices are not inventoried."
   ],
   "active_tasks": [
-    "Complete source-backed repository/document inventory and project checkpoints.",
-    "Design fail-closed UPKB context builder and agent integration contract; no live dispatch until review.",
+    "Complete canonical source investigation for FOREST_LTE and IMAGE_TRANSLATOR_RU.",
+    "Design and implement reviewed Factory agent read-before-work/write-back integration; no live dispatch until review.",
     "Diagnose exact primary Jarvis APK runtime failure on OPPO, separate from OGAM test APKs.",
-    "Verify OGAM memory probe on physical OPPO only after exact artifact identity.",
     "Diagnose AVTOY PR #78/#81 CI failures from detailed logs."
   ],
   "blocked_tasks": [],
   "pending_tasks": [
-    "Find canonical source/repository and original requirements for FOREST_LTE and IMAGE_TRANSLATOR_RU.",
     "Populate research and environment indexes from verified evidence.",
-    "Implement end-to-end agent read/context/write-back test after contract review."
+    "Add end-to-end read/context/write-back test with an actual agent/provider integration.",
+    "Refresh all project checkpoints when source PRs/builds/device evidence change."
   ],
-  "next_action": "Continue the missing canonical-project/source investigation and refresh project checkpoints; then implement a fail-closed UPKB context builder requiring project_id, loading CORE + project + checkpoint + relevant tasks/docs, and recording the exact UPKB commit. Keep live agent dispatch disabled until reviewed and E2E tested.",
+  "next_action": "Review Factory dispatcher and provider execution workflows; design an explicit UPKB context-load and checkpoint/write-back contract. Do not enable live dispatch until a controlled E2E test proves agent consumption and evidence-backed write-back.",
   "required_files": [
     "UPKB/CORE/AGENT_START_PROTOCOL.md",
     "UPKB/CORE/RULES.md",
@@ -58,9 +57,11 @@
     "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45452947914",
     "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/ff0e2e8224e7b44cebdb65466697ea40de63890e",
     "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45453634896",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45453652249"
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45453652249",
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/a8240e7a05967743601e4994ef3519d7199161d8",
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45454496038"
   ],
   "verification_status": "VERIFIED",
-  "updated_at": "2026-11-24T17:56:00Z",
+  "updated_at": "2026-11-24T18:00:00Z",
   "updated_by": "GPT"
 }
