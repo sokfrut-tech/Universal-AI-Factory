@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UPKB Research Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "research_id",
+    "project_id",
+    "title",
+    "source",
+    "source_date",
+    "project_scope",
+    "summary",
+    "adoption_status",
+    "verification_status"
+  ],
+  "properties": {
+    "research_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9][A-Z0-9._:-]+$"
+    },
+    "project_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "type": "string",
+      "format": "uri-reference"
+    },
+    "source_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "project_scope": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "license": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "provenance": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "adoption_status": {
+      "enum": [
+        "planned",
+        "under-review",
+        "adopted",
+        "rejected",
+        "deferred",
+        "unknown"
+      ]
+    },
+    "verification_status": {
+      "enum": [
+        "VERIFIED",
+        "REPORTED",
+        "PLANNED",
+        "UNKNOWN"
+      ]
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
