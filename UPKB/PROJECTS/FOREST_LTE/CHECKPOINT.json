@@ -1,0 +1,32 @@
+{
+  "checkpoint_id": "FOREST_LTE_REPORTED_2026-11-24",
+  "project_id": "FOREST_LTE",
+  "last_successful_step": "User-reported requirements preserved in UPKB project card; no canonical repository or source measurements confirmed.",
+  "last_commit": null,
+  "last_verified_build": null,
+  "last_test_result": null,
+  "known_problems": [
+    "No dedicated repository or measurements store confirmed.",
+    "Existing VARIUS Forester MIMO 2x2 reception is reported as weather-sensitive; no current RF survey data attached."
+  ],
+  "active_tasks": [],
+  "blocked_tasks": [],
+  "pending_tasks": [
+    "Locate original measurements, antenna/router model notes and installation photos.",
+    "Confirm canonical repository or create one only after locating existing project assets."
+  ],
+  "next_action": "Recover the original RF measurements and equipment inventory; preserve B3/B38/B31/B20/B7 band constraints and quality-over-cost objective as REPORTED until source evidence is indexed.",
+  "required_files": [],
+  "required_access": [
+    "User-provided project materials or a confirmed canonical repository."
+  ],
+  "environment_state": [
+    "No router, SIM, mast, antenna or field environment was inspected or changed."
+  ],
+  "evidence": [
+    "User-reported project requirements from prior conversations; no primary repository source confirmed."
+  ],
+  "verification_status": "REPORTED",
+  "updated_at": "2026-11-24T17:55:00Z",
+  "updated_by": "GPT"
+}
