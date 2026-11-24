@@ -51,8 +51,8 @@
       "name": "Antigravity Mobile",
       "repository": "sokfrut-tech/Antigravity-Mobile",
       "status": "VERIFIED",
-      "status_note": "Repository is present in GitHub inventory and master project index.",
-      "next_action": "Refresh current release, PRs, source and factory API integration."
+      "status_note": "README documents Android 7/API24+ Compose Kanban, local persistence, Robolectric tests, Keystore AES-GCM token storage; Factory API bootstrap is not deployed and real provider dispatch is not enabled. Multiple open feature PRs including #19 provider dispatch and #20 API deployment status.",
+      "next_action": "Refresh PR #19/#20 CI and verify whether provider dispatch or API deployment is truly active; do not equate UI/API bootstrap with live agent execution."
     },
     {
       "project_id": "AVTOY_KOREA",
@@ -83,48 +83,56 @@
       "name": "StampCleaner / Neon Club",
       "repository": "sokfrut-tech/stamp-cleaner",
       "status": "VERIFIED",
-      "status_note": "Repository is present in GitHub inventory and master project index.",
-      "next_action": "Refresh open PR/source handoff and verify pipeline."
+      "status_note": "README documents Android + local-browser image background removal with transparent PNG export; local-only image processing. Open PR #5/#4 Neon Club theme and #3 Android/web parity.",
+      "next_action": "Separate StampCleaner core from Neon Club experiment; inspect PR tests and deployment state."
     },
     {
       "project_id": "SLEEP_BUTTON",
       "name": "sleep-button",
       "repository": "sokfrut-tech/sleep-button",
       "status": "UNKNOWN",
-      "status_note": "Repository existence observed; project purpose and status not yet inspected.",
-      "next_action": "Inspect README, tree, recent commits and workflows."
+      "status_note": "README confirms placeholder only; 2 files total, no source/build/config; no open PRs. Purpose must be recovered from owner brief.",
+      "next_action": "Ask owner for intended scope or locate original brief in project portfolio before any coding."
     },
     {
       "project_id": "VOICE_ASSISTANT",
       "name": "voice-assistant",
       "repository": "sokfrut-tech/voice-assistant",
-      "status": "UNKNOWN",
-      "status_note": "Repository existence observed; relationship to Jarvis not yet inspected.",
-      "next_action": "Inspect README, tree, recent commits and workflows."
+      "status": "VERIFIED",
+      "status_note": "README documents a basic Russian Android voice assistant: speech recognition, navigation handoff to Yandex/Google Maps and Russian TTS; Vosk offline work is planned. Open PR #16 continuation brief and #15 security tooling; several dependency PRs open.",
+      "next_action": "Determine whether this is a predecessor/standalone app or shared Jarvis component; review latest CI and open PRs."
     },
     {
       "project_id": "BREENO_APKS",
       "name": "breeno-apks",
       "repository": "sokfrut-tech/breeno-apks",
       "status": "UNKNOWN",
-      "status_note": "Repository existence observed; project purpose and status not yet inspected.",
-      "next_action": "Inspect README, tree, recent commits and workflows."
+      "status_note": "README confirms placeholder only; 2 files total, no APK/source inventory or open PRs.",
+      "next_action": "Recover intended APK archive/source scope and verify provenance/licensing before adding artifacts."
     },
     {
       "project_id": "RUSSIAN_TRANSLATION_MODELS",
       "name": "russ-translation-models",
       "repository": "sokfrut-tech/russ-translation-models",
-      "status": "UNKNOWN",
-      "status_note": "Repository existence observed; project purpose and status not yet inspected.",
-      "next_action": "Inspect README, tree, recent commits and workflows."
+      "status": "VERIFIED",
+      "status_note": "README identifies offline Helsinki-NLP Opus-MT ONNX int8 model archives for ru-en/en-ru/zh-en/en-zh; app code is in private RussSearchOPPO. README says release translation-models-v1 archives still need owner upload. Open PR #3 continuation brief, #2 security tooling.",
+      "next_action": "Verify translation-manifest hashes against actual downloadable artifacts and release state; link to RussSearchOPPO docs/hive/ml-translation."
     },
     {
       "project_id": "HAPP_PROXY_POOL",
       "name": "happ-proxy-pool",
       "repository": "sokfrut-tech/happ-proxy-pool",
-      "status": "UNKNOWN",
-      "status_note": "Repository existence observed; project purpose and status not yet inspected.",
-      "next_action": "Inspect README, tree, recent commits and workflows."
+      "status": "VERIFIED",
+      "status_note": "README documents scheduled public Shadowsocks/VLESS/VMess link collection and Xray/Happ JSON generation; only TCP reachability is checked, not protocol/auth/UDP. Open PR #4 brief, #3 security tooling, #1 Xray HTTPS prototype.",
+      "next_action": "Review public-node safety, generator and workflow; clearly retain limitation that TCP-open is not proof of working VPN."
+    },
+    {
+      "project_id": "NEON_CLUB_EXPERIMENT",
+      "name": "Neon Club visual studio experiment",
+      "repository": "sokfrut-tech/stamp-cleaner",
+      "status": "REPORTED",
+      "status_note": "Open draft PRs #4 and #5 add a Cyber Glam theme and portrait-video side panel; relationship to StampCleaner core is experimental.",
+      "next_action": "Inspect PR diffs and keep scope separated unless owner confirms product merge."
     }
   ]
 }
