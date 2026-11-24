@@ -1,0 +1,37 @@
+{
+  "checkpoint_id": "VOICE_ASSISTANT_2026-11-24",
+  "project_id": "VOICE_ASSISTANT",
+  "last_successful_step": "Primary repository README and UPKB project card reviewed; product describes a basic Russian Android voice assistant.",
+  "last_commit": null,
+  "last_verified_build": null,
+  "last_test_result": "No fresh CI/build/device verification captured in this inventory step.",
+  "known_problems": [
+    "Relationship to Jarvis/Gemeni is unknown; do not assume shared code or product identity.",
+    "Offline Vosk is described as future work, not confirmed implemented."
+  ],
+  "active_tasks": [],
+  "blocked_tasks": [],
+  "pending_tasks": [
+    "Inspect current source and PR #15/#16.",
+    "Establish whether this is predecessor, standalone app or reusable module using source history and dependency graph."
+  ],
+  "next_action": "Inspect source tree, manifest, speech/navigation/TTS modules and PR checks; document exact reuse boundaries before any Jarvis integration.",
+  "required_files": [
+    "README.md",
+    "docs/PROJECT_HANDOFF_2026-11-06.md"
+  ],
+  "required_access": [
+    "Read access to voice-assistant source, PRs and Actions."
+  ],
+  "environment_state": [
+    "No build or Android device session executed during this inventory step."
+  ],
+  "evidence": [
+    "https://github.com/sokfrut-tech/voice-assistant",
+    "https://github.com/sokfrut-tech/voice-assistant/pull/15",
+    "https://github.com/sokfrut-tech/voice-assistant/pull/16"
+  ],
+  "verification_status": "REPORTED",
+  "updated_at": "2026-11-24T18:00:00Z",
+  "updated_by": "GPT"
+}
