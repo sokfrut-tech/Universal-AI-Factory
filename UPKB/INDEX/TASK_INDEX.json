@@ -206,11 +206,15 @@
       "status": "active",
       "priority": "critical",
       "owner": "GPT",
-      "next_action": "Implement strict dispatch metadata parsing and tests, context size guard, structured report schema and stubbed-provider E2E contract. Do not change the live main workflow until UPKB PR #28 is reviewed and owner approves the separate integration PR.",
+      "next_action": "Add structured Gemini report metadata schema and stubbed-provider integration tests; then prepare a separate workflow PR after PR #28 is approved and merged by the owner.",
       "evidence": [
         "UPKB/INTEGRATION/FACTORY_AGENT_CONTEXT_INTEGRATION_DESIGN_2026-11-24.md",
         ".github/workflows/real-ai-agent-execution.yml",
-        "coordination/gemini/scripts/resolve-task.sh"
+        "coordination/gemini/scripts/resolve-task.sh",
+        "UPKB/tools/resolve_dispatch_metadata.py",
+        "UPKB/tests/test_resolve_dispatch_metadata.py",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45455079235",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45455099807"
       ],
       "verification_status": "PLANNED"
     }
