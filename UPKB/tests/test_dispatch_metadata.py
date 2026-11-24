@@ -30,7 +30,7 @@ class DispatchMetadataTests(unittest.TestCase):
 
     def write_task(self, project="JARVIS_PRIMARY", task="JARVIS-DEVICE-001", body="Inspect APK evidence"):
         self.task.write_text(
-            f"---\\nupkb_project_id: {project}\\nupkb_task_id: {task}\\n---\\n\\n{body}\\n",
+            f"---\nupkb_project_id: {project}\nupkb_task_id: {task}\n---\n\n{body}\n",
             encoding="utf-8",
         )
 
@@ -47,21 +47,21 @@ class DispatchMetadataTests(unittest.TestCase):
         self.assertEqual("coordination/gemini/dispatch/task.md", result["dispatch_path"])
 
     def test_missing_metadata_is_rejected(self):
-        self.task.write_text("# Task without metadata\\nDo work\\n", encoding="utf-8")
+        self.task.write_text("# Task without metadata\nDo work\n", encoding="utf-8")
         with self.assertRaisesRegex(DispatchMetadataError, "metadata block"):
             self.resolve()
 
     def test_duplicate_metadata_key_is_rejected(self):
         self.task.write_text(
-            "---\\nupkb_project_id: JARVIS_PRIMARY\\nupkb_task_id: JARVIS-DEVICE-001\\n"
-            "upkb_task_id: OTHER-1\\n---\\nBody\\n", encoding="utf-8")
+            "---\nupkb_project_id: JARVIS_PRIMARY\nupkb_task_id: JARVIS-DEVICE-001\n"
+            "upkb_task_id: OTHER-1\n---\nBody\n", encoding="utf-8")
         with self.assertRaisesRegex(DispatchMetadataError, "duplicate metadata key"):
             self.resolve()
 
     def test_unknown_metadata_key_is_rejected(self):
         self.task.write_text(
-            "---\\nupkb_project_id: JARVIS_PRIMARY\\nupkb_task_id: JARVIS-DEVICE-001\\n"
-            "project: Jarvis\\n---\\nBody\\n", encoding="utf-8")
+            "---\nupkb_project_id: JARVIS_PRIMARY\nupkb_task_id: JARVIS-DEVICE-001\n"
+            "project: Jarvis\n---\nBody\n", encoding="utf-8")
         with self.assertRaisesRegex(DispatchMetadataError, "unknown metadata key"):
             self.resolve()
 
@@ -82,7 +82,7 @@ class DispatchMetadataTests(unittest.TestCase):
             self.resolve()
 
     def test_empty_task_body_is_rejected(self):
-        self.write_task(body="  \\n ")
+        self.write_task(body="  \n ")
         with self.assertRaisesRegex(DispatchMetadataError, "body must not be empty"):
             self.resolve()
 
