@@ -206,7 +206,7 @@
       "status": "active",
       "priority": "critical",
       "owner": "GPT",
-      "next_action": "Add structured Gemini report metadata schema and stubbed-provider integration tests; then prepare a separate workflow PR after PR #28 is approved and merged by the owner.",
+      "next_action": "Add stubbed-provider end-to-end workflow test and prepare separate workflow integration PR after PR #28 is approved and merged by the owner.",
       "evidence": [
         "UPKB/INTEGRATION/FACTORY_AGENT_CONTEXT_INTEGRATION_DESIGN_2026-11-24.md",
         ".github/workflows/real-ai-agent-execution.yml",
@@ -214,7 +214,10 @@
         "UPKB/tools/resolve_dispatch_metadata.py",
         "UPKB/tests/test_resolve_dispatch_metadata.py",
         "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45455079235",
-        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45455099807"
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45455099807",
+        "UPKB/SCHEMA/agent_report.schema.json",
+        "UPKB/tests/test_upkb_validation.py",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45455252421"
       ],
       "verification_status": "PLANNED"
     }
