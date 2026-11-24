@@ -52,14 +52,14 @@
       "verification_status": "REPORTED"
     },
     {
-      "checkpoint_id": "FOREST_LTE_2026-11-24",
+      "checkpoint_id": "FOREST_LTE_REPORTED_2026-11-24",
       "project_id": "FOREST_LTE",
       "path": "UPKB/PROJECTS/FOREST_LTE/CHECKPOINT.json",
       "updated_at": "2026-11-24T17:55:00Z",
       "verification_status": "REPORTED"
     },
     {
-      "checkpoint_id": "IMAGE_TRANSLATOR_RU_2026-11-24",
+      "checkpoint_id": "IMAGE_TRANSLATOR_RU_REPORTED_2026-11-24",
       "project_id": "IMAGE_TRANSLATOR_RU",
       "path": "UPKB/PROJECTS/IMAGE_TRANSLATOR_RU/CHECKPOINT.json",
       "updated_at": "2026-11-24T17:55:00Z",
