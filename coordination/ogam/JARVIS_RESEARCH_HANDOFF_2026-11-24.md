@@ -149,3 +149,12 @@ Research-only update. No PR merged.
 - Latest push pipeline #6: https://gitlab.com/sokfrut-tech/jarvis/-/pipelines/3106803480 — failed immediately, `started_at=null`, zero jobs; earlier push pipelines #1–#5 show the same pre-job failure.
 - Manual pipeline create API continues to return the explicit identity-verification requirement. This is an account-level policy barrier before runner assignment, not evidence of no available runner. Shared and group runners are enabled in project metadata, but their execution capability remains untested.
 - Once the account identity step is completed, trigger a pipeline on the fallback branch and inspect both jobs/logs. Do not merge fallback branch into GitLab main until a real run proves it works.
+
+
+## Post-user-reported GitLab verification retry — 2026-11-24
+- User reported "Готово" after being asked to complete GitLab identity verification.
+- Immediately retried GitLab pipeline creation on `ci/jarvis-memory-m1-fallback-2026-11-24`; API still returned HTTP 400: `Identity verification is required in order to run CI jobs`.
+- Fetched authenticated GitLab current user: ID 43704569, username `sokfrut`, active; `confirmed_at` exists (email/account confirmation) but that field does not establish completion of GitLab's separate identity-verification gate. `two_factor_enabled=false` is unrelated and not assumed to be the blocker.
+- Project still reports shared runners, group runners and jobs enabled.
+- Latest pipeline #7 (MR event) failed immediately with `started_at=null`, zero jobs: https://gitlab.com/sokfrut-tech/jarvis/-/pipelines/3106808057
+- No runner has started. Do not claim that the reported identity verification has been recognized by the GitLab CI backend. Likely need the GitLab verification flow to be completed on the same account/session or reconnect/refresh the GitLab integration after the verification; ask user to confirm the exact GitLab verification screen completed and, if so, reconnect GitLab integration before another retry.
