@@ -28,7 +28,7 @@
       "status": "completed",
       "priority": "high",
       "owner": "GPT",
-      "next_action": "Maintain all seven record schemas and add consumer-level integration tests before enabling agent read/write integration.",
+      "next_action": "Maintain schema and validator contracts; extend semantic cross-reference validation as the project inventory grows.",
       "evidence": [
         "UPKB/tools/validate_upkb.py",
         ".github/workflows/upkb-validation.yml",
@@ -39,7 +39,8 @@
         "UPKB/SCHEMA/agent.schema.json",
         "UPKB/SCHEMA/pull_request.schema.json",
         "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/ae9ff40b1b7f71f7263f75f2e7587fc257107487",
-        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45452947914"
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45452947914",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45454496038"
       ],
       "verification_status": "VERIFIED"
     },
@@ -160,7 +161,7 @@
       "status": "completed",
       "priority": "high",
       "owner": "GPT",
-      "next_action": "Refresh these checkpoints when source PRs, builds or device evidence change; add checkpoint records for remaining projects as their primary sources are verified.",
+      "next_action": "Refresh all project checkpoints when source PRs, builds or device evidence change; recover canonical sources for user-reported projects.",
       "evidence": [
         "UPKB/INDEX/CHECKPOINT_INDEX.json",
         "UPKB/PROJECTS/JARVIS_PRIMARY/CHECKPOINT.json",
@@ -170,7 +171,29 @@
         "UPKB/PROJECTS/STAMPCLEANER/CHECKPOINT.json",
         "UPKB/PROJECTS/RUSSSEARCH_OPPO/CHECKPOINT.json",
         "UPKB/PROJECTS/FOREST_LTE/CHECKPOINT.json",
-        "UPKB/PROJECTS/IMAGE_TRANSLATOR_RU/CHECKPOINT.json"
+        "UPKB/PROJECTS/IMAGE_TRANSLATOR_RU/CHECKPOINT.json",
+        "UPKB/PROJECTS/VOICE_ASSISTANT/CHECKPOINT.json",
+        "UPKB/PROJECTS/RUSSIAN_TRANSLATION_MODELS/CHECKPOINT.json",
+        "UPKB/PROJECTS/HAPP_PROXY_POOL/CHECKPOINT.json",
+        "UPKB/PROJECTS/SLEEP_BUTTON/CHECKPOINT.json",
+        "UPKB/PROJECTS/BREENO_APKS/CHECKPOINT.json",
+        "UPKB/PROJECTS/NEON_CLUB_EXPERIMENT/CHECKPOINT.json"
+      ],
+      "verification_status": "VERIFIED"
+    },
+    {
+      "task_id": "UPKB-CTX-001",
+      "project_id": "UNIVERSAL_AI_FACTORY",
+      "title": "Build fail-closed project context packets",
+      "status": "completed",
+      "priority": "critical",
+      "owner": "GPT",
+      "next_action": "Review and integrate context packet loading into Factory agent execution only after defining write-back ownership, exact commit capture, and controlled end-to-end verification.",
+      "evidence": [
+        "UPKB/tools/build_context.py",
+        "UPKB/tests/test_build_context.py",
+        "UPKB/tests/test_upkb_validation.py",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45454496038"
       ],
       "verification_status": "VERIFIED"
     }
