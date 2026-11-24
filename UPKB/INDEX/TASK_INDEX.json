@@ -206,7 +206,7 @@
       "status": "active",
       "priority": "critical",
       "owner": "GPT",
-      "next_action": "Add stubbed-provider end-to-end workflow test and prepare separate workflow integration PR after PR #28 is approved and merged by the owner.",
+      "next_action": "After PR #28 is explicitly approved and merged by the owner, prepare a separate reviewed workflow PR that loads the exact-commit UPKB packet before Gemini API invocation and validates structured report metadata. Do not alter production dispatch before that gate.",
       "evidence": [
         "UPKB/INTEGRATION/FACTORY_AGENT_CONTEXT_INTEGRATION_DESIGN_2026-11-24.md",
         ".github/workflows/real-ai-agent-execution.yml",
@@ -217,9 +217,32 @@
         "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45455099807",
         "UPKB/SCHEMA/agent_report.schema.json",
         "UPKB/tests/test_upkb_validation.py",
-        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45455252421"
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45455252421",
+        "UPKB/tests/test_dispatch_metadata.py",
+        "UPKB/tests/test_agent_dispatch_e2e.py",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45476290511"
       ],
       "verification_status": "PLANNED"
+    },
+    {
+      "task_id": "UPKB-E2E-001",
+      "project_id": "UNIVERSAL_AI_FACTORY",
+      "title": "Prove offline dispatch-to-context-to-report flow with stub provider",
+      "status": "completed",
+      "priority": "critical",
+      "owner": "GPT",
+      "next_action": "Use this tested contract as the acceptance baseline for a separate Gemini workflow integration PR after owner-approved UPKB merge.",
+      "evidence": [
+        "UPKB/tests/test_dispatch_metadata.py",
+        "UPKB/tests/test_agent_dispatch_e2e.py",
+        "UPKB/tools/resolve_dispatch_metadata.py",
+        "UPKB/tools/build_context.py",
+        "UPKB/SCHEMA/agent_report.schema.json",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45476290511"
+      ],
+      "verification_status": "VERIFIED",
+      "branch": "feature/upkb-knowledge-base-bootstrap",
+      "checkpoint_id": "UNIVERSAL_AI_FACTORY_2026-11-24"
     }
   ]
 }
