@@ -1,6 +1,346 @@
 {
   "schema_version": "1.0.0",
   "updated_at": "2026-11-24",
-  "records": [],
-  "note": "Seed empty; populate from primary repository sources with provenance. Do not infer completeness."
+  "records": [
+    {
+      "document_id": "DOC-FACTORY-MASTER-INDEX",
+      "project_id": "UNIVERSAL_AI_FACTORY",
+      "document_type": "handoff",
+      "title": "Universal AI Factory — Master Project Index",
+      "document_url": "https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/docs/MASTER_PROJECT_INDEX.md",
+      "repository": "sokfrut-tech/Universal-AI-Factory",
+      "branch": "main",
+      "commit_hash": "da0053fcc3f0bb898e13cb6ef8ba6f121d52a03a",
+      "affected_area": [
+        "project-portfolio",
+        "agent-policy",
+        "project-handoffs"
+      ],
+      "description": "Portfolio entrypoint listing project repositories, handoffs, first resume steps, Factory rules and Jarvis/OGAM separation. File last modified 2026-11-22; source read from main.",
+      "created_at": "2026-11-06T17:56:36Z",
+      "updated_at": "2026-11-22T16:55:12Z",
+      "created_by_agent": null,
+      "agent_type": null,
+      "task_id": "UPKB-INV-001",
+      "status": "active",
+      "checkpoint_id": null,
+      "continuation_point": "Use project table and per-project handoffs as starting points; refresh each repo before relying on historical statuses.",
+      "dependencies": [],
+      "verification_status": "VERIFIED",
+      "last_verified_at": "2026-11-24T00:00:00Z",
+      "evidence": [
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/da0053fcc3f0bb898e13cb6ef8ba6f121d52a03a"
+      ],
+      "tags": [
+        "factory",
+        "portfolio",
+        "handoff",
+        "source-of-truth"
+      ]
+    },
+    {
+      "document_id": "DOC-FACTORY-CONTINUATION-BRIEF",
+      "project_id": "UNIVERSAL_AI_FACTORY",
+      "document_type": "handoff",
+      "title": "Universal AI Factory — Continuation Brief",
+      "document_url": "https://github.com/sokfrut-tech/Universal-AI-Factory/blob/main/docs/FACTORY_CONTINUATION_BRIEF.md",
+      "repository": "sokfrut-tech/Universal-AI-Factory",
+      "branch": "main",
+      "commit_hash": "5adf3c0a47da0a51ae455b243786de1449cb1744",
+      "affected_area": [
+        "agent-coordination",
+        "security",
+        "ci-cd",
+        "cloudflare",
+        "antigravity"
+      ],
+      "description": "Factory mission, user constraints, agent coordination contract, execution gates and prioritized implementation plan. Historical baseline; refresh workflows and policy before action.",
+      "created_at": "2026-11-06T17:56:38Z",
+      "updated_at": "2026-11-06T17:56:38Z",
+      "created_by_agent": null,
+      "agent_type": null,
+      "task_id": "UPKB-INV-001",
+      "status": "historical",
+      "checkpoint_id": null,
+      "continuation_point": "Compare listed P0 checklist with current workflows and the UPKB integration audit.",
+      "dependencies": [
+        "DOC-FACTORY-MASTER-INDEX"
+      ],
+      "verification_status": "VERIFIED",
+      "last_verified_at": "2026-11-24T00:00:00Z",
+      "evidence": [
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/5adf3c0a47da0a51ae455b243786de1449cb1744"
+      ],
+      "tags": [
+        "factory",
+        "continuation",
+        "security",
+        "agents"
+      ]
+    },
+    {
+      "document_id": "DOC-JARVIS-CONTINUATION-STATE",
+      "project_id": "JARVIS_PRIMARY",
+      "document_type": "handoff",
+      "title": "Jarvis / Gemeni — Continuation State",
+      "document_url": "https://github.com/sokfrut-tech/Gemeni/blob/main/docs/CONTINUATION_STATE.md",
+      "repository": "sokfrut-tech/Gemeni",
+      "branch": "main",
+      "commit_hash": "673c2afe6d1806bd01d9f3890f6a94ce048a026e",
+      "affected_area": [
+        "android-runtime",
+        "voice-pipeline",
+        "native-rendering",
+        "system-assistant",
+        "release-gates"
+      ],
+      "description": "Primary Jarvis product identity, hard runtime acceptance gates, black-screen regression, voice/system/rendering architecture and agent evidence requirements. File source last modified 2026-11-06.",
+      "created_at": "2026-10-28T03:40:32Z",
+      "updated_at": "2026-11-06T18:22:24Z",
+      "created_by_agent": null,
+      "agent_type": null,
+      "task_id": "JARVIS-DEVICE-001",
+      "status": "historical",
+      "checkpoint_id": null,
+      "continuation_point": "Refresh current branch/PR/source and identify exact installed APK before diagnosing physical-device launch.",
+      "dependencies": [],
+      "verification_status": "VERIFIED",
+      "last_verified_at": "2026-11-24T00:00:00Z",
+      "evidence": [
+        "https://github.com/sokfrut-tech/Gemeni/commit/673c2afe6d1806bd01d9f3890f6a94ce048a026e"
+      ],
+      "tags": [
+        "jarvis",
+        "gemeni",
+        "runtime",
+        "handoff",
+        "black-screen"
+      ]
+    },
+    {
+      "document_id": "DOC-JARVIS-CURRENT-STATUS",
+      "project_id": "JARVIS_PRIMARY",
+      "document_type": "report",
+      "title": "Jarvis / Gemeni — Current Status",
+      "document_url": "https://github.com/sokfrut-tech/Gemeni/blob/main/docs/CURRENT_STATUS.md",
+      "repository": "sokfrut-tech/Gemeni",
+      "branch": "main",
+      "commit_hash": "de5b24111da530387db01d3ccaaec3f87aeb1de1",
+      "affected_area": [
+        "android-runtime",
+        "voice-pipeline",
+        "release-readiness"
+      ],
+      "description": "Status report explicitly says NOT RELEASE READY and records black-screen placeholder behaviour and runtime acceptance gates. Content is dated 2026-10-28; historical, not current live status.",
+      "created_at": "2026-10-28T03:40:39Z",
+      "updated_at": "2026-11-06T18:25:23Z",
+      "created_by_agent": null,
+      "agent_type": null,
+      "task_id": "JARVIS-DEVICE-001",
+      "status": "historical",
+      "checkpoint_id": null,
+      "continuation_point": "Use only as regression history; fetch fresh source/CI/device evidence for current state.",
+      "dependencies": [
+        "DOC-JARVIS-CONTINUATION-STATE"
+      ],
+      "verification_status": "VERIFIED",
+      "last_verified_at": "2026-11-24T00:00:00Z",
+      "evidence": [
+        "https://github.com/sokfrut-tech/Gemeni/commit/de5b24111da530387db01d3ccaaec3f87aeb1de1"
+      ],
+      "tags": [
+        "jarvis",
+        "status",
+        "release-gate",
+        "historical"
+      ]
+    },
+    {
+      "document_id": "DOC-OGAM-HANDOFF-SYNC",
+      "project_id": "JARVIS_OGAM",
+      "document_type": "handoff",
+      "title": "OGAM — Handoff Sync Session",
+      "document_url": "https://github.com/sokfrut-tech/OGAM/blob/main/docs/HANDOFF_SYNC_SESSION.md",
+      "repository": "sokfrut-tech/OGAM",
+      "branch": "main",
+      "commit_hash": "6f7111bef27634c129249143ab528a3dc36684c1",
+      "affected_area": [
+        "ogam",
+        "handoff",
+        "sync"
+      ],
+      "description": "Historical OGAM handoff synchronization note, last modified 2026-07-31. It is not the current Jarvis M1/M2 implementation handoff.",
+      "created_at": "2026-07-31T01:44:15Z",
+      "updated_at": "2026-07-31T11:00:08Z",
+      "created_by_agent": null,
+      "agent_type": null,
+      "task_id": "JARVIS-OGAM-MEM-001",
+      "status": "historical",
+      "checkpoint_id": null,
+      "continuation_point": "Prefer current docs/jarvis implementation handoff and live PR #7 evidence for OGAM continuation.",
+      "dependencies": [],
+      "verification_status": "VERIFIED",
+      "last_verified_at": "2026-11-24T00:00:00Z",
+      "evidence": [
+        "https://github.com/sokfrut-tech/OGAM/commit/6f7111bef27634c129249143ab528a3dc36684c1"
+      ],
+      "tags": [
+        "ogam",
+        "handoff",
+        "historical"
+      ]
+    },
+    {
+      "document_id": "DOC-RUSSSEARCH-HANDOFF",
+      "project_id": "RUSSSEARCH_OPPO",
+      "document_type": "handoff",
+      "title": "RussSearchOPPO — Project Handoff",
+      "document_url": "https://github.com/sokfrut-tech/RussSearchOPPO/blob/main/docs/PROJECT_HANDOFF_2026-11-06.md",
+      "repository": "sokfrut-tech/RussSearchOPPO",
+      "branch": "main",
+      "commit_hash": "65ebbe5f95839f95e7480101bfb9ffdd18084abe",
+      "affected_area": [
+        "android",
+        "offline-voice",
+        "translation",
+        "coloros"
+      ],
+      "description": "Product goal, offline-first constraints, proposed voice architecture, assistant skills, release gates and first resume actions. Architecture statements are proposals unless verified in source.",
+      "created_at": "2026-11-06T17:56:45Z",
+      "updated_at": "2026-11-06T17:56:45Z",
+      "created_by_agent": null,
+      "agent_type": null,
+      "task_id": "UPKB-INV-001",
+      "status": "historical",
+      "checkpoint_id": null,
+      "continuation_point": "Inspect project memory, source tree and relationship to primary Jarvis; do not assume code is already implemented.",
+      "dependencies": [],
+      "verification_status": "VERIFIED",
+      "last_verified_at": "2026-11-24T00:00:00Z",
+      "evidence": [
+        "https://github.com/sokfrut-tech/RussSearchOPPO/commit/65ebbe5f95839f95e7480101bfb9ffdd18084abe"
+      ],
+      "tags": [
+        "russsearchoppo",
+        "android",
+        "handoff",
+        "offline"
+      ]
+    },
+    {
+      "document_id": "DOC-ANTIGRAVITY-HANDOFF",
+      "project_id": "ANTIGRAVITY_MOBILE",
+      "document_type": "handoff",
+      "title": "Antigravity Mobile — Project Handoff",
+      "document_url": "https://github.com/sokfrut-tech/Antigravity-Mobile/blob/main/docs/PROJECT_HANDOFF_2026-11-06.md",
+      "repository": "sokfrut-tech/Antigravity-Mobile",
+      "branch": "main",
+      "commit_hash": "58afec71752acf05bdf2af9906aca792ced7f81c",
+      "affected_area": [
+        "android-ui",
+        "factory-api",
+        "agent-collaboration",
+        "release"
+      ],
+      "description": "Approved Fallout-inspired UI direction, mobile usability, real-functionality requirements, provider collaboration and security constraints. Implementation status must be refreshed from source and CI.",
+      "created_at": "2026-11-06T17:56:48Z",
+      "updated_at": "2026-11-06T17:56:48Z",
+      "created_by_agent": null,
+      "agent_type": null,
+      "task_id": "ANTIGRAVITY-DISPATCH-001",
+      "status": "historical",
+      "checkpoint_id": null,
+      "continuation_point": "Refresh PR #19/#20, source and runtime API state; distinguish visual shell from working provider dispatch.",
+      "dependencies": [
+        "DOC-FACTORY-CONTINUATION-BRIEF"
+      ],
+      "verification_status": "VERIFIED",
+      "last_verified_at": "2026-11-24T00:00:00Z",
+      "evidence": [
+        "https://github.com/sokfrut-tech/Antigravity-Mobile/commit/58afec71752acf05bdf2af9906aca792ced7f81c"
+      ],
+      "tags": [
+        "antigravity",
+        "android",
+        "handoff",
+        "factory-api"
+      ]
+    },
+    {
+      "document_id": "DOC-AVTOY-CONTINUATION",
+      "project_id": "AVTOY_KOREA",
+      "document_type": "handoff",
+      "title": "AVTOY KOREA — Continuation Handoff",
+      "document_url": "https://github.com/sokfrut-tech/avtoy-korea-auto/blob/main/docs/CONTINUATION.md",
+      "repository": "sokfrut-tech/avtoy-korea-auto",
+      "branch": "main",
+      "commit_hash": "083bbd625f3b457bae8b0ffeb201f42f2db96401",
+      "affected_area": [
+        "telegram-bot",
+        "cloudflare-worker",
+        "private-orders",
+        "media-moderation"
+      ],
+      "description": "Historical continuation record with numbered private orders, admin-only details, media moderation and production verification caveats. It documents older PR #12 and must not override later PR/CI findings.",
+      "created_at": "2026-10-31T15:35:07Z",
+      "updated_at": "2026-11-22T17:46:37Z",
+      "created_by_agent": null,
+      "agent_type": null,
+      "task_id": "AVTOY-MEDIA-001",
+      "status": "historical",
+      "checkpoint_id": null,
+      "continuation_point": "Use as historical design evidence; refresh current PR #78/#81, main and deployment state before changes.",
+      "dependencies": [],
+      "verification_status": "VERIFIED",
+      "last_verified_at": "2026-11-24T00:00:00Z",
+      "evidence": [
+        "https://github.com/sokfrut-tech/avtoy-korea-auto/commit/083bbd625f3b457bae8b0ffeb201f42f2db96401"
+      ],
+      "tags": [
+        "avtoy",
+        "telegram",
+        "cloudflare",
+        "handoff",
+        "historical"
+      ]
+    },
+    {
+      "document_id": "DOC-STAMPCLEANER-HANDOFF",
+      "project_id": "STAMPCLEANER",
+      "document_type": "handoff",
+      "title": "StampCleaner / Neon Club — Project Handoff",
+      "document_url": "https://github.com/sokfrut-tech/stamp-cleaner/blob/main/docs/PROJECT_HANDOFF_2026-11-06.md",
+      "repository": "sokfrut-tech/stamp-cleaner",
+      "branch": "main",
+      "commit_hash": "59085a7ebefd6555a2bd495a8a79cf65ff568610",
+      "affected_area": [
+        "android",
+        "image-processing",
+        "transparent-png",
+        "neon-club-ui"
+      ],
+      "description": "Core document-cleaning requirements, true-alpha export, physical dimensions/DPI, Neon Club visual requirements and QA gates. Historical handoff; reconcile with current source/PRs.",
+      "created_at": "2026-11-06T17:56:41Z",
+      "updated_at": "2026-11-06T17:56:41Z",
+      "created_by_agent": null,
+      "agent_type": null,
+      "task_id": "UPKB-INV-001",
+      "status": "historical",
+      "checkpoint_id": null,
+      "continuation_point": "Inspect current PR #3/#4/#5 and source to separate core cleaning capability from Neon Club experiments.",
+      "dependencies": [],
+      "verification_status": "VERIFIED",
+      "last_verified_at": "2026-11-24T00:00:00Z",
+      "evidence": [
+        "https://github.com/sokfrut-tech/stamp-cleaner/commit/59085a7ebefd6555a2bd495a8a79cf65ff568610"
+      ],
+      "tags": [
+        "stampcleaner",
+        "neon-club",
+        "handoff",
+        "qa"
+      ]
+    }
+  ],
+  "note": "Initial source-backed document inventory. VERIFIED means the file and cited revision were fetched from GitHub on 2026-11-24; it does not mean the document's implementation claims are independently proven. Historical handoffs remain historical."
 }
