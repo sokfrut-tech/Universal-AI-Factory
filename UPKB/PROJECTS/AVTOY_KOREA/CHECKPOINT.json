@@ -1,0 +1,46 @@
+{
+  "checkpoint_id": "AVTOY_KOREA_2026-11-24",
+  "project_id": "AVTOY_KOREA",
+  "last_successful_step": "Refreshed PR #78 and #81 metadata and check runs; failures are confirmed but root causes remain unknown.",
+  "last_commit": "e5924ad5b13cd19c752deb0c06086b7644002343",
+  "last_verified_build": null,
+  "last_test_result": "PR #78: all 8 checks FAILURE on head e5924ad5b13cd19c752deb0c06086b7644002343. PR #81: all 4 checks FAILURE on head 50f6b728b99785614d4e7f4546721e031fe537df. No deploy or merge.",
+  "known_problems": [
+    "PR #78 failures span CodeQL, secret scan, tests, deploy, release evidence, functional/regression and security/privacy.",
+    "PR #81 secret scan, CodeQL and both validate checks fail.",
+    "Prior job API records lacked diagnostic steps/runner details; root cause not established."
+  ],
+  "active_tasks": [
+    "AVTOY-MEDIA-001",
+    "AVTOY-CI-ROOT-001"
+  ],
+  "blocked_tasks": [
+    "Do not merge/deploy PR #78/#81 while required checks fail."
+  ],
+  "pending_tasks": [
+    "Retrieve detailed logs or reproduce each failure in isolated branches.",
+    "Verify album order, duplicate prevention, private inquiries and admin-only data after fixes."
+  ],
+  "next_action": "Diagnose PR #78/#81 failures from full logs or deterministic local reproduction; preserve fail-closed deployment and do not merge/deploy until all required checks pass.",
+  "required_files": [
+    "docs/CONTINUATION.md",
+    "docs/PROJECT_HANDOFF_2026-11-06.md",
+    "worker.js",
+    "tests/"
+  ],
+  "required_access": [
+    "Read access to AVTOY repository, PRs and Actions; production Cloudflare/Telegram access is not used here."
+  ],
+  "environment_state": [
+    "No Cloudflare Worker, Telegram webhook, KV, secrets or production environment was changed or probed."
+  ],
+  "evidence": [
+    "https://github.com/sokfrut-tech/avtoy-korea-auto/pull/78",
+    "https://github.com/sokfrut-tech/avtoy-korea-auto/pull/81",
+    "https://github.com/sokfrut-tech/avtoy-korea-auto/commit/e5924ad5b13cd19c752deb0c06086b7644002343",
+    "https://github.com/sokfrut-tech/avtoy-korea-auto/commit/50f6b728b99785614d4e7f4546721e031fe537df"
+  ],
+  "verification_status": "VERIFIED",
+  "updated_at": "2026-11-24T17:55:00Z",
+  "updated_by": "GPT"
+}
