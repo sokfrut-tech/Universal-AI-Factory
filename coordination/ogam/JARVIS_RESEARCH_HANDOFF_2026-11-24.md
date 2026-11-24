@@ -125,3 +125,18 @@ Research-only update. No PR merged.
 - PR #5 is explicitly validation-only and must not be merged. Its only purpose is to trigger the existing main-target CI.
 - Rechecked the commit workflow runs and combined commit statuses after PR creation: both returned zero runs/statuses. Thus CI has still not started; this is not a passing test result. The current GitHub connector exposes workflow-run reads/retries but no workflow-dispatch action, and its approved fetch endpoint rejected the workflow-list endpoint.
 - Next: determine why the main-target PR event did not create a run (Actions disabled/repository event policy/connector delay), or use a supported runner path. Keep PR #4 and PR #5 unmerged. Do not claim Jest/typecheck success until there is a fresh run with successful jobs.
+
+
+## GitLab CI fallback configured — 2026-11-24
+- User requested GitLab CI as fallback executor when GitHub Actions cannot start.
+- Located existing private GitLab project `sokfrut-tech/jarvis` (project ID `88675977`). Project metadata confirms `shared_runners_enabled=true`, `group_runners_enabled=true`, `jobs_enabled=true`; initially only README and one initial commit existed, no pipeline history.
+- Created isolated branch `ci/jarvis-memory-m1-fallback-2026-11-24` with GitLab CI config and harness. No commits made to GitLab `main`.
+- Branch URL: https://gitlab.com/sokfrut-tech/jarvis/-/tree/ci/jarvis-memory-m1-fallback-2026-11-24
+- Added `.gitlab-ci.yml` with runner smoke stage and focused M1 validation stage. Added `.ci/run-jarvis-memory-m1.sh` which fetches only the public OGAM pinned commit `67c896cf21cab6f4d0c0ba9118e6013770165252`, copies four M1 source modules and four focused tests, sets up an isolated TypeScript/Jest harness, runs focused TypeScript + Jest, and probes the schema DDL/constraints/rollback using Node's bundled SQLite. No private submodule token/secrets required.
+- Root GitLab README updated with purpose, source pin, safety boundaries and current state.
+- GitLab CI create-pipeline API explicitly returned: `Identity verification is required in order to run CI jobs`. Push-triggered pipelines #1–#5 were also recorded as failed immediately with zero jobs and no started_at/duration. Thus no executor was assigned; this is not evidence of a product/test failure. Although shared runners are enabled, actual runner execution cannot be confirmed until GitLab identity verification is completed.
+- Current branch head at setup review: `39f71fec6283c90bd056eca8f0acdc5e9695af1d`; README was updated after this head.
+- GitLab pipeline config YAML syntax was independently parsed with Ruby Psych successfully. The job script itself has not been executed by a runner.
+- Independent local SQL check: manually executed the M1 DDL from the PR against Node `node:sqlite` / SQLite 3.49.1. Foreign-key PRAGMA, JSON1, savepoint rollback and DDL CHECK constraints (scope, approval timestamp, expiry, confidence) passed. This is a Node SQLite result, **not** the exact Android op-sqlite 15.2.5 runtime and not a Jest/typecheck result.
+- GitHub PR #5 was only a validation probe and produced no Actions workflow run/checks; close it as obsolete. Keep main implementation PR #4 open and draft.
+- Remaining gates: GitLab account identity verification; then actual GitLab pipeline and logs (focused Jest, focused TS typecheck, Node SQLite schema test); then actual OPPO PGEM10 op-sqlite capability probe and Android app build/device checks. Do not advance to Jarvis scheduler M2 before memory acceptance gates pass.
