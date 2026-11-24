@@ -297,3 +297,23 @@ Research-only update. No PR merged.
 - Fix commit: `71a07d01908ecc66749858dc60ca8052c48778b5`.
 - New run triggered by the fix: `45400312506`, https://github.com/sokfrut-tech/OGAM/actions/runs/45400312506. Job ID `138466850741`. At handoff update time it was still in progress; checkout and M1 source preparation passed, Node/Java setup passed, Android SDK setup was running. APK build and emulator launch had not yet been reached. Recheck before reporting a result.
 - PR #6 remains draft/open/unmerged and targets M1 branch `feature/jarvis-step-1-memory-m1-2026-11-24`; PR #4 remains draft/open/unmerged. No production merge, no M2 start, and no PGEM10 physical-device acceptance.
+
+## 2026-11-24 continuation — probe startup crash diagnosed, fixed, and verified PASS in Android 15 emulator
+
+- Downloaded and inspected artifact `14925987676` (`runtime-diagnostics/logcat.txt`) from failed run `45404892708` on `ci/jarvis-memory-m1-op-sqlite-device-probe-2026-11-24`.
+- Root cause of `com.jarvism1probe` launch crash (on both emulator and PGEM10):
+  - All native libraries (`libreactnative.so`, `libhermesvm.so`, `libop-sqlite.so`, etc.) loaded cleanly (`ok`) and all 11 `arm64-v8a` `.so` libraries in the APK are 16 KB ELF page-aligned (`p_align=0x4000`).
+  - `validation/android-native-probe/android/app/src/main/AndroidManifest.xml` configured `android:theme="@android:style/Theme.Material.NoActionBar"`, whereas `MainActivity` extends `ReactActivity` (`androidx.appcompat.app.AppCompatActivity`), throwing immediately in `onCreate()`: `java.lang.IllegalStateException: You need to use a Theme.AppCompat theme (or descendant) with this activity.`
+- Root cause of CI emulator step syntax failure in `45404892708`: `reactivecircus/android-emulator-runner@v2` executes `script:` line-by-line via `/usr/bin/sh -c`, breaking multi-line `if ... fi` blocks (subsequently extracted to `.ci/run-jarvis-m1-emulator-probe.sh` in `7b39517f` / `a91efdbb`).
+- Applied fix on top of `a91efdbb` in `sokfrut-tech/OGAM` PR #6 (`ci/jarvis-memory-m1-op-sqlite-device-probe-2026-11-24`), commit `956f7127a7656b8eb99fe3967da92c1a89054806`:
+  - Added `validation/android-native-probe/android/app/src/main/res/values/styles.xml` (`AppTheme` inheriting `Theme.AppCompat.DayNight.NoActionBar`).
+  - Updated `AndroidManifest.xml` to `android:theme="@style/AppTheme"`.
+  - Added release-mode logcat markers `[JARVIS_M1_PROBE] PASS <json>` / `[JARVIS_M1_PROBE] FAIL <msg>` in `validation/android-native-probe/App.tsx`.
+  - Updated `.ci/run-jarvis-m1-emulator-probe.sh` to launch with `am start -W`, poll `logcat` for `[JARVIS_M1_PROBE] (PASS|FAIL)`, capture `probe-result.txt` + `launch-screen.png` + `process-id.txt`, and fail if any crash signature or missing `PASS` marker is seen.
+- Verified in GitHub Actions run `45414070190` (`https://github.com/sokfrut-tech/OGAM/actions/runs/45414070190`, job `138515587396`, `completed/success` in `18m26s`):
+  - Logcat output (`runtime-diagnostics/probe-result.txt`):
+    `[JARVIS_M1_PROBE] PASS {"sqliteVersion":"3.50.4","schemaVersion":1,"json1":true,"foreignKeys":true,"proposalRoundTrip":true,"explicitConfirmation":true,"rejection":true,"savepointRollback":true,"checkConstraint":true,"databasePath":"/data/user/0/com.jarvism1probe/databases/jarvis_memory.db","probeRecordId":"497a60b6-36dd-484f-bb07-41e639501c24"}`
+  - Visual screenshot (`runtime-diagnostics/launch-screen.png`) confirms `PASS / Нативная проверка завершена` rendered by the app.
+  - Updated artifact: `Jarvis-M1-OPSQLite-Native-Probe-APK` (`id=14932771575`, size `14,819,306` B, APK `31,572,769` B, SHA-256 `c71fb87b8654e8da75f97d0f50a824971c086a1a4228c1b710d01e878092f7e5`), all 11 `lib/arm64-v8a/*.so` libraries including `libop-sqlite.so` (`1,803,256` B) verified `p_align=0x4000`.
+- Boundary preserved: emulator PASS confirms Android runtime + real native `@op-engineering/op-sqlite` 15.2.5 (`SQLite 3.50.4`, `JSON1=true`, `FK=true`, `SAVEPOINT`, `CHECK`). Physical OPPO Find X6 Pro (`PGEM10`) installation and PASS screen confirmation remain required before accepting Step 1 M1. PR #4 and PR #6 remain Draft and unmerged.
+
