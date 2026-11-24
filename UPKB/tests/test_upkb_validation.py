@@ -166,6 +166,27 @@ class SchemaContractTests(unittest.TestCase):
         record["adoption_status"] = "deployed"
         self.assertTrue(list(validator.iter_errors(record)))
 
+
+    def test_agent_report_schema_requires_exact_context_and_execution_evidence(self):
+        validator = load_schema("agent_report")
+        record = {
+            "report_id": "RPT-1", "project_id": "P1", "task_id": "T1",
+            "agent_id": "GEMINI", "agent_type": "GEMINI", "model": "test-model",
+            "upkb_commit": "a" * 40, "context_id": "P1@" + "a" * 40,
+            "execution_status": "partial", "generated_at": "2026-11-24T00:00:00Z",
+            "summary": "Analysis completed with unverified items.",
+            "changed_files": [], "evidence": ["https://example.org/run"],
+            "checks": [{"name": "unit tests", "result": "passed", "exit_code": 0}],
+            "unverified": ["Physical device"], "next_action": "Review report",
+            "verification_status": "REPORTED",
+        }
+        self.assertEqual([], list(validator.iter_errors(record)))
+        record["upkb_commit"] = "unknown"
+        self.assertTrue(list(validator.iter_errors(record)))
+        record["upkb_commit"] = "a" * 40
+        record["checks"][0]["result"] = "green-ish"
+        self.assertTrue(list(validator.iter_errors(record)))
+
     def test_all_schema_files_are_valid_draft_2020_12(self):
         for path in sorted(SCHEMA_DIR.glob("*.schema.json")):
             with self.subTest(schema=path.name):
