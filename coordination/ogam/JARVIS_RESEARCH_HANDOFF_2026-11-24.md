@@ -158,3 +158,15 @@ Research-only update. No PR merged.
 - Project still reports shared runners, group runners and jobs enabled.
 - Latest pipeline #7 (MR event) failed immediately with `started_at=null`, zero jobs: https://gitlab.com/sokfrut-tech/jarvis/-/pipelines/3106808057
 - No runner has started. Do not claim that the reported identity verification has been recognized by the GitLab CI backend. Likely need the GitLab verification flow to be completed on the same account/session or reconnect/refresh the GitLab integration after the verification; ask user to confirm the exact GitLab verification screen completed and, if so, reconnect GitLab integration before another retry.
+
+
+## External CI executor — CircleCI confirmed from prior records — 2026-11-24
+- Corrected the fallback inventory using the user's prior setup record dated 2026-11-19: **CircleCI is the actually registered/connected external CI service**, not merely a suggested option.
+- User explicitly reported registering/connecting CircleCI to GitLab for project `sokfrut-tech/russsearchoppo`.
+- The CircleCI connection smoke test `say-hello-workflow` succeeded, confirming basic GitLab authorization/connection at that time.
+- A `ferrite-dsp` workflow was also executed through CircleCI; GitLab showed associated statuses/repeated runs. The final Ferrite DSP validation was not confirmed because direct CircleCI job logs/session access were not available to the assistant.
+- Existing CircleCI project config was recorded at `.circleci/config.yml` on branch `feat/ferrite-neon-vad-clean` in `sokfrut-tech/russsearchoppo`.
+- Buildkite and Semaphore were only discussed; no registration/connection or execution evidence was found for them.
+- **Important limitation:** the current assistant tool inventory does not expose a direct CircleCI connector/session. Historical registration and successful smoke test are evidence of prior setup, not proof that the current account authorization is still active or that this assistant can inspect/run CircleCI jobs now.
+- Proposed next validation path for OGAM M1: inspect whether the existing CircleCI account can authorize the separate GitLab project `sokfrut-tech/jarvis` (project ID `88675977`) and run an isolated pipeline there, without changing OGAM PR #4 or merging the fallback branch. Reuse the existing tested integration only if its current access permits it; do not assume the prior authorization for `russsearchoppo` automatically covers `jarvis`.
+- Preserve M1 gates: actual focused Jest + TypeScript job results, schema probe logs, then OPPO PGEM10 native `op-sqlite` capability probe. Do not proceed to M2 until these pass.
