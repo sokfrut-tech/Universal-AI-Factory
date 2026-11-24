@@ -283,3 +283,5 @@ Research-only update. No PR merged.
 - Applied a CI-only correction to .github/workflows/jarvis-memory-m1-op-sqlite-probe.yml: pin runner from ubuntu-latest (which resolved to Ubuntu 26.04 in this run) to ubuntu-24.04, and set explicit headless emulator options (-no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot-save).
 - Correction commit: 92e9cd8ec4c1eb5b6ded9314443b572633879c8c on ci/jarvis-memory-m1-op-sqlite-device-probe-2026-11-24. Push should trigger a fresh run; inspect its actual emulator step conclusion and uploaded diagnostics before interpreting.
 - PR #6 and PR #4 remain draft/open/unmerged. No change to production code and no claim of PGEM10 acceptance.
+
+- Follow-up run after the runner correction: 45396893308 (https://github.com/sokfrut-tech/OGAM/actions/runs/45396893308), job 138454946957. At the latest inspection it was still running; SDK package installation was in progress and emulator launch had not yet started. Do not report a runtime result until that step completes.
