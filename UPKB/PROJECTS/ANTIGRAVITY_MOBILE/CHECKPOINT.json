@@ -1,0 +1,44 @@
+{
+  "checkpoint_id": "ANTIGRAVITY_MOBILE_2026-11-24",
+  "project_id": "ANTIGRAVITY_MOBILE",
+  "last_successful_step": "PR #19 refreshed: 12/12 CodeQL, Trivy, Semgrep, Gitleaks, Compose UI, APK build and unit-test checks SUCCESS.",
+  "last_commit": "9b84cde8c092655a9ad728ee582feb7c3f6f756c",
+  "last_verified_build": "PR #19 debug APK build passed in CI; artifact not installed or verified on user's phone in this checkpoint.",
+  "last_test_result": "PR #19 12/12 checks SUCCESS. PR #20 build and Compose UI tests passed, but separate Factory API checks failed at npm test and deploy dry-run was skipped (historical snapshot).",
+  "known_problems": [
+    "Factory API deployment/provider dispatch not proven live.",
+    "PR #20 API workflow failure prevents claiming the mobile hub is connected to real Factory execution.",
+    "Successful UI/build checks do not prove real task state, provider acceptance or end-to-end execution."
+  ],
+  "active_tasks": [
+    "ANTIGRAVITY-DISPATCH-001"
+  ],
+  "blocked_tasks": [
+    "Live provider dispatch until Factory API test and deployment gates pass."
+  ],
+  "pending_tasks": [
+    "Refresh PR #19/#20 checks and source.",
+    "Verify authenticated task read/write, provider response, PR/commit evidence and artifact status through live API."
+  ],
+  "next_action": "Treat PR #19 as a tested feature branch, not a deployed service; diagnose PR #20 npm test failure and verify Factory API deployment before enabling live dispatch.",
+  "required_files": [
+    "README.md",
+    "docs/PROJECT_HANDOFF_2026-11-06.md",
+    "docs/PROVIDER_RUN_LEDGER.md",
+    "factory-api/README.md"
+  ],
+  "required_access": [
+    "Read access to Antigravity-Mobile source, PRs, Actions and authorized Factory API health endpoint."
+  ],
+  "environment_state": [
+    "No production Factory API deployment or provider task was invoked during this checkpoint."
+  ],
+  "evidence": [
+    "https://github.com/sokfrut-tech/Antigravity-Mobile/pull/19",
+    "https://github.com/sokfrut-tech/Antigravity-Mobile/pull/20",
+    "https://github.com/sokfrut-tech/Antigravity-Mobile/commit/9b84cde8c092655a9ad728ee582feb7c3f6f756c"
+  ],
+  "verification_status": "VERIFIED",
+  "updated_at": "2026-11-24T17:55:00Z",
+  "updated_by": "GPT"
+}
