@@ -161,7 +161,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--source-commit", help="Exact 40-character commit SHA; defaults to git rev-parse HEAD")
     parser.add_argument("--output")
     parser.add_argument("--output-dir")
-    parser.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parents[1])
+    parser.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parents[2])
     args = parser.parse_args(argv)
 
     if bool(args.project_id) == bool(args.all_checkpointed):
@@ -172,8 +172,11 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--output-dir is only valid with --all-checkpointed")
 
     try:
-        root = args.repo_root.resolve()
-        commit = args.source_commit or resolve_git_commit(root)
+        repo_root = args.repo_root.resolve()
+        root = repo_root / "UPKB"
+        if not root.is_dir():
+            raise BuildContextError(f"UPKB directory not found under repository root {repo_root}")
+        commit = args.source_commit or resolve_git_commit(repo_root)
         if args.all_checkpointed:
             checkpoint_index = read_json(root, INDEX_FILES["checkpoints"])
             project_ids = sorted({
