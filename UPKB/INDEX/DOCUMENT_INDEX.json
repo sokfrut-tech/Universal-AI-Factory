@@ -540,6 +540,85 @@
         "placeholder",
         "unknown-scope"
       ]
+    },
+    {
+      "document_id": "DOC-FOREST-LTE-ORIGINAL-BRIEF-REFERENCE",
+      "project_id": "FOREST_LTE",
+      "document_type": "specification",
+      "title": "Forest LTE — Original Owner Project Memory (2026-10-27)",
+      "document_url": "https://github.com/sokfrut-tech/Universal-AI-Factory/blob/feature/upkb-knowledge-base-bootstrap/UPKB/SOURCES/FOREST_LTE_ORIGINAL_BRIEF_REFERENCE.md",
+      "repository": "sokfrut-tech/Universal-AI-Factory",
+      "branch": "feature/upkb-knowledge-base-bootstrap",
+      "commit_hash": "e49844972de1ba7cc963608e18e9786e88d4f6c5",
+      "affected_area": [
+        "lte",
+        "rf-engineering",
+        "antenna",
+        "router",
+        "failover",
+        "field-installation"
+      ],
+      "description": "Provenance reference to the original Library project-memory file, including B3/B7/B20/B31/B38 constraints, VARIUS Forester, mast/cable/failover criteria and explicit unknowns. Original Library artifact is preserved; owner-reported facts are not independently measured.",
+      "created_at": "2026-11-24T00:00:00Z",
+      "updated_at": "2026-11-24T00:00:00Z",
+      "created_by_agent": "GPT",
+      "agent_type": "assistant",
+      "task_id": "UPKB-SOURCE-RECOVERY-20261124",
+      "status": "active",
+      "checkpoint_id": "FOREST_LTE_SOURCE_RECOVERY_2026-11-24",
+      "continuation_point": "Recover newer site survey, operator availability and equipment/cable evidence; verify B31 before hardware recommendations.",
+      "dependencies": [],
+      "verification_status": "REPORTED",
+      "evidence": [
+        "Library file_id file_00000000d01c8211b6540c2541903399",
+        "Library file_id file_00000000ecd482118aa70e0b96d902b5"
+      ],
+      "tags": [
+        "forest-lte",
+        "original-brief",
+        "provenance",
+        "reported"
+      ]
+    },
+    {
+      "document_id": "DOC-IMAGE-TRANSLATOR-RU-HISTORY-REFERENCE",
+      "project_id": "IMAGE_TRANSLATOR_RU",
+      "document_type": "handoff",
+      "title": "Image Translator RU — Recovered Conversation Requirements",
+      "document_url": "https://github.com/sokfrut-tech/Universal-AI-Factory/blob/feature/upkb-knowledge-base-bootstrap/UPKB/SOURCES/IMAGE_TRANSLATOR_RU_HISTORY_REFERENCE.md",
+      "repository": "sokfrut-tech/Universal-AI-Factory",
+      "branch": "feature/upkb-knowledge-base-bootstrap",
+      "commit_hash": "0fec7a06a0e925485fbb29ec530111b51821e790",
+      "affected_area": [
+        "windows",
+        "ocr",
+        "image-translation",
+        "batch-processing",
+        "bilingual-layout",
+        "offline"
+      ],
+      "description": "Recovered owner constraints from the 2026-11-11 conversation: batch folders, immutable originals, EN-left/RU-right same-pixel-size output, Translated_RU, offline operation and extensible source languages. Actual v0.1-v0.3 ZIP files were not located; EasyOCR/Argos are historical leads only.",
+      "created_at": "2026-11-24T00:00:00Z",
+      "updated_at": "2026-11-24T00:00:00Z",
+      "created_by_agent": "GPT",
+      "agent_type": "assistant",
+      "task_id": "UPKB-SOURCE-RECOVERY-20261124",
+      "status": "active",
+      "checkpoint_id": "IMAGE_TRANSLATOR_RU_HISTORY_RECOVERY_2026-11-24",
+      "continuation_point": "Recover the original ZIP/source attachments and verify bytes, dependencies, licenses and offline operation before implementation.",
+      "dependencies": [],
+      "verification_status": "REPORTED",
+      "evidence": [
+        "Prior conversation retrieval dated 2026-11-11; historical ZIP names were reported but archive bytes were not located."
+      ],
+      "tags": [
+        "image-translator-ru",
+        "windows",
+        "batch",
+        "ocr",
+        "bilingual",
+        "provenance"
+      ]
     }
   ],
   "note": "Source-backed initial inventory. VERIFIED means the file and cited revision were fetched from GitHub on 2026-11-24; it does not prove implementation claims. Historical handoffs remain historical. Placeholder READMEs are indexed as explicit unknown-scope evidence."
