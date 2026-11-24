@@ -285,3 +285,15 @@ Research-only update. No PR merged.
 - PR #6 and PR #4 remain draft/open/unmerged. No change to production code and no claim of PGEM10 acceptance.
 
 - Follow-up run after the runner correction: 45396893308 (https://github.com/sokfrut-tech/OGAM/actions/runs/45396893308), job 138454946957. At the latest inspection it was still running; SDK package installation was in progress and emulator launch had not yet started. Do not report a runtime result until that step completes.
+
+## 2026-11-24 continuation — emulator root cause identified and corrected
+
+- Inspected the complete log for run 45396893308 after it completed. The APK build/checksum stages succeeded, but the emulator action still timed out before ADB connected. The real root cause is explicit in the runner log: reactivecircus/android-emulator-runner automatically passed `-accel off` because Linux hardware acceleration is disabled, while Android Emulator 37.3.10.0 refuses software CPU emulation unless `ANDROID_I_WANT_MY_TCG=yes` is set. Exact log: `Software CPU emulation (-accel off) is not supported. A hardware CPU accelerator is required (or set ANDROID_I_WANT_MY_TCG=yes to force TCG software emulation).`
+- This is a CI emulator infrastructure failure, not an application crash. No APK was installed/launched in that emulator attempt, so it provides no React Native/OP-SQLite runtime evidence.
+- Fixed `.github/workflows/jarvis-memory-m1-op-sqlite-probe.yml` on the same isolated probe branch:
+  - Added step environment `ANDROID_I_WANT_MY_TCG: 'yes'` to explicitly permit the runner's software CPU emulation mode.
+  - Removed `continue-on-error: true` from the emulator step so a runtime/boot failure cannot masquerade as a green job.
+  - Changed artifact upload to `if: always()` and `if-no-files-found: warn`, preserving the already-built APK even if emulator validation fails.
+- Fix commit: `71a07d01908ecc66749858dc60ca8052c48778b5`.
+- New run triggered by the fix: `45400312506`, https://github.com/sokfrut-tech/OGAM/actions/runs/45400312506. Job ID `138466850741`. At handoff update time it was still in progress; checkout and M1 source preparation passed, Node/Java setup passed, Android SDK setup was running. APK build and emulator launch had not yet been reached. Recheck before reporting a result.
+- PR #6 remains draft/open/unmerged and targets M1 branch `feature/jarvis-step-1-memory-m1-2026-11-24`; PR #4 remains draft/open/unmerged. No production merge, no M2 start, and no PGEM10 physical-device acceptance.
