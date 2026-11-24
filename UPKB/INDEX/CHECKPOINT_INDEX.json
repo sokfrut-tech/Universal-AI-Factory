@@ -8,6 +8,62 @@
       "path": "UPKB/PROJECTS/UNIVERSAL_AI_FACTORY/CHECKPOINT.json",
       "updated_at": "2026-11-24T17:10:00Z",
       "verification_status": "VERIFIED"
+    },
+    {
+      "checkpoint_id": "JARVIS_PRIMARY_2026-11-24",
+      "project_id": "JARVIS_PRIMARY",
+      "path": "UPKB/PROJECTS/JARVIS_PRIMARY/CHECKPOINT.json",
+      "updated_at": "2026-11-24T17:55:00Z",
+      "verification_status": "REPORTED"
+    },
+    {
+      "checkpoint_id": "JARVIS_OGAM_2026-11-24",
+      "project_id": "JARVIS_OGAM",
+      "path": "UPKB/PROJECTS/JARVIS_OGAM/CHECKPOINT.json",
+      "updated_at": "2026-11-24T17:55:00Z",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "checkpoint_id": "ANTIGRAVITY_MOBILE_2026-11-24",
+      "project_id": "ANTIGRAVITY_MOBILE",
+      "path": "UPKB/PROJECTS/ANTIGRAVITY_MOBILE/CHECKPOINT.json",
+      "updated_at": "2026-11-24T17:55:00Z",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "checkpoint_id": "AVTOY_KOREA_2026-11-24",
+      "project_id": "AVTOY_KOREA",
+      "path": "UPKB/PROJECTS/AVTOY_KOREA/CHECKPOINT.json",
+      "updated_at": "2026-11-24T17:55:00Z",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "checkpoint_id": "STAMPCLEANER_2026-11-24",
+      "project_id": "STAMPCLEANER",
+      "path": "UPKB/PROJECTS/STAMPCLEANER/CHECKPOINT.json",
+      "updated_at": "2026-11-24T17:55:00Z",
+      "verification_status": "REPORTED"
+    },
+    {
+      "checkpoint_id": "RUSSSEARCH_OPPO_2026-11-24",
+      "project_id": "RUSSSEARCH_OPPO",
+      "path": "UPKB/PROJECTS/RUSSSEARCH_OPPO/CHECKPOINT.json",
+      "updated_at": "2026-11-24T17:55:00Z",
+      "verification_status": "REPORTED"
+    },
+    {
+      "checkpoint_id": "FOREST_LTE_2026-11-24",
+      "project_id": "FOREST_LTE",
+      "path": "UPKB/PROJECTS/FOREST_LTE/CHECKPOINT.json",
+      "updated_at": "2026-11-24T17:55:00Z",
+      "verification_status": "REPORTED"
+    },
+    {
+      "checkpoint_id": "IMAGE_TRANSLATOR_RU_2026-11-24",
+      "project_id": "IMAGE_TRANSLATOR_RU",
+      "path": "UPKB/PROJECTS/IMAGE_TRANSLATOR_RU/CHECKPOINT.json",
+      "updated_at": "2026-11-24T17:55:00Z",
+      "verification_status": "REPORTED"
     }
   ],
   "note": "Seed project checkpoints after reading each project's latest handoff and refreshing repository/CI/device evidence."
