@@ -92,7 +92,9 @@ This avoids multiple agents racing to mutate the same checkpoint/index files and
 ## 8. Current status and next step
 
 - Context builder and task-scoped packet selection are implemented in the UPKB feature branch.
-- Strict dispatch metadata resolver and structured agent report schema are implemented and under CI verification.
-- CI run #116 proved 15 packets could be generated; the next run must re-verify after task-scoped selection changes.
+- Strict dispatch metadata resolver and structured agent report schema are implemented and validated in CI.
+- Eight focused dispatch metadata tests cover valid metadata, missing/duplicate/unknown keys, cross-project task, unknown/duplicate task records, empty body and path scope.
+- An offline stub-provider E2E test now exercises metadata resolution → exact-commit context build → stub provider response → agent report schema validation. Invalid metadata is proven to stop before the stub provider is called.
+- CI run #163 SUCCESS on `351fe40dc62687d7ae69762c4c760dcb0c4a9935`: 15 projects, 59 indexed records, 8 JSON Schemas, 15 context packets and 39 passing tests. The E2E test uses a deterministic local stub and performs no network/API call.
 - No live agent workflow has been modified. Gemini/Claude/GPT automatic UPKB read/write integration is not yet operational.
-- Next: add strict dispatch metadata parser + report schema/tests, then prepare a separate workflow PR after UPKB is approved and merged by the owner.
+- Next: prepare a separate, reviewed Gemini workflow integration PR after UPKB PR #28 is explicitly approved and merged by the owner. Keep the production Gemini workflow unchanged until then; first workflow integration must include the context-load gate before the API call and report metadata after execution.
