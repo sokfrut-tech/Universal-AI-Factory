@@ -97,6 +97,47 @@
         "https://github.com/sokfrut-tech/avtoy-korea-auto/pull/78"
       ],
       "verification_status": "REPORTED"
+    },
+    {
+      "task_id": "JARVIS-DEVICE-001",
+      "project_id": "JARVIS_PRIMARY",
+      "title": "Identify exact APK that collapses on OPPO and capture runtime evidence",
+      "status": "active",
+      "priority": "critical",
+      "owner": "unassigned",
+      "next_action": "Correlate package/version/SHA-256 to Gemeni or OGAM probe artifact; obtain logcat, process PID, Activity start result and screenshot; do not infer from CI.",
+      "evidence": [
+        "https://github.com/sokfrut-tech/Gemeni/blob/main/docs/CONTINUATION_STATE.md",
+        "https://github.com/sokfrut-tech/OGAM/pull/7"
+      ],
+      "verification_status": "REPORTED"
+    },
+    {
+      "task_id": "JARVIS-OGAM-DEVICE-001",
+      "project_id": "JARVIS_OGAM",
+      "title": "Run M2 memory probe on physical OPPO Find X6 Pro PGEM10",
+      "status": "pending",
+      "priority": "high",
+      "owner": "unassigned",
+      "next_action": "After confirming exact APK identity and safe install path, install package com.jarvism2probe and capture PASS marker, process survival and screenshot; keep separate from primary Jarvis app.",
+      "evidence": [
+        "https://github.com/sokfrut-tech/OGAM/pull/7"
+      ],
+      "verification_status": "PLANNED"
+    },
+    {
+      "task_id": "AVTOY-CI-ROOT-001",
+      "project_id": "AVTOY_KOREA",
+      "title": "Diagnose PR #78 and #81 failed CI/security/validation checks",
+      "status": "blocked",
+      "priority": "high",
+      "owner": "unassigned",
+      "next_action": "Retrieve detailed run logs or reproduce checks in isolated branch. Job records showed runner_id=0 and empty steps for key failures, so no root cause is established.",
+      "evidence": [
+        "https://github.com/sokfrut-tech/avtoy-korea-auto/pull/78",
+        "https://github.com/sokfrut-tech/avtoy-korea-auto/pull/81"
+      ],
+      "verification_status": "VERIFIED"
     }
   ]
 }
