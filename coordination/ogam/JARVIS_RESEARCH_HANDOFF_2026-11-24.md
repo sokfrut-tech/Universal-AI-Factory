@@ -346,3 +346,13 @@ Research-only update. No PR merged.
 - GitLab fallback project `sokfrut-tech/jarvis` (ID `88675977`) exists, but pipelines failed before jobs due account-level identity verification; no CI tests ran there. CircleCI config was committed in its branch, but no connected CircleCI API/run was verified.
 - M2/scheduler, prompt memory retrieval, automatic model writes, UI, sync and encryption are NOT implemented in M1 and remain gated. Do not merge PRs or change production branches without explicit user approval.
 - Immediate next action: user installs the latest standalone M1 probe APK on OPPO PGEM10 and reports whether the app opens to PASS. If PASS, record device acceptance and review PR #4/#6 before planning M2; if not, collect exact phone error evidence and diagnose without asking the user to repeat an already-tried old APK.
+
+## 2026-11-24 continuation — user reported PGEM10 M1 probe launched and working
+
+- User reported directly after installing the updated standalone `Jarvis M1 Probe` APK (`Jarvis-M1-OPSQLite-Native-Probe-APK`, artifact `14932771575`, SHA-256 `c71fb87b8654e8da75f97d0f50a824971c086a1a4228c1b710d01e878092f7e5`, run `45414070190`, commit `956f7127a7656b8eb99fe3967da92c1a89054806`): **"Jarvis M1 Probe запустилась работает продлжаем что следующее"**.
+- Evidence boundary preserved truthfully: user verbal launch/working confirmation on OPPO Find X6 Pro (`PGEM10`) received; phone screenshot / per-row PASS printout was not attached and is noted as optional archival confirmation.
+- PR #4 / PR #6 code review summary prior to M2:
+  - PR #4 core M1 implementation (`src/services/jarvisMemory/{types,schema,database,repository}.ts`) and all 4 focused Jest test suites (`schema`, `database`, `repositoryValidation`, `repositoryGuards`) passed isolated Node/TypeScript/Jest/SQLite CI (`45382511098`), native Android 15 OP-SQLite emulator probe (`45414070190`), and now user-confirmed launch/operation on physical `PGEM10`.
+  - Cleanup note for finalizing PR #4: PR #4 still contains the earlier `PRO_SUBMODULE_PAT`-gated `.github/workflows/jarvis-memory-m1-android.yml` and temporary `src/screens/DeviceInfoScreen.tsx` probe hook, which are superseded by PR #6's secret-free standalone probe (`956f7127`).
+- PR #4 and PR #6 remain `OPEN / Draft / UNMERGED`. Ready for user selection of the next workstream: Step 1 **M2** (secret guard, conflict detection + optimistic concurrency, deletion tombstones, expired cleanup, explicit confirmation UI + interactive M2 device probe APK) or PR #1 **Slice 9** (`@offgrid/models` remaining `35 → 0`).
+
