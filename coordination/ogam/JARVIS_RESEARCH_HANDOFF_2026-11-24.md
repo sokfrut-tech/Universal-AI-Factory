@@ -271,3 +271,15 @@ Research-only update. No PR merged.
   - Emulator step is continue-on-error: true so logs/artifact can still be uploaded if runtime launch fails. Interpret emulator result separately from APK compilation and from PGEM10 physical-device acceptance.
 - New GitHub Actions run started: 45393169372, https://github.com/sokfrut-tech/OGAM/actions/runs/45393169372. At last check, the build job was still in progress; emulator runtime step had not started yet. The branch head is 8c0dc1940e7779c7bf64a5a27fb3098aafca4507.
 - PR #6 remains draft/open/unmerged; PR #4 remains draft/open/unmerged. Do not merge or start M2 based on emulator success alone. A successful emulator launch still does not substitute for the user's PGEM10 test.
+
+
+## 2026-11-24 continuation — emulator timeout diagnosed and CI runner adjusted
+
+- Re-checked completed GitHub Actions run 45393169372 after the user reported that the run eventually finished.
+- Job 138441913934 concluded success, but the emulator step itself did NOT launch the APK. Its conclusion was also success only because continue-on-error: true is set on that diagnostic step.
+- Full job log confirms the emulator never registered with ADB: repeated adb: device 'emulator-5554' not found, followed by Timeout waiting for emulator to boot. Thus this run produced no application runtime result.
+- Downloaded artifact 14921016655 and inspected its contents. It contains only APK, checksum, and package-lock; no runtime-diagnostics files were generated because the emulator action failed before its script ran. This confirms we have no emulator logcat/screenshot from this run.
+- The same job's APK build and native library checks completed successfully. This remains build evidence only, not app-launch evidence.
+- Applied a CI-only correction to .github/workflows/jarvis-memory-m1-op-sqlite-probe.yml: pin runner from ubuntu-latest (which resolved to Ubuntu 26.04 in this run) to ubuntu-24.04, and set explicit headless emulator options (-no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot-save).
+- Correction commit: 92e9cd8ec4c1eb5b6ded9314443b572633879c8c on ci/jarvis-memory-m1-op-sqlite-device-probe-2026-11-24. Push should trigger a fresh run; inspect its actual emulator step conclusion and uploaded diagnostics before interpreting.
+- PR #6 and PR #4 remain draft/open/unmerged. No change to production code and no claim of PGEM10 acceptance.
