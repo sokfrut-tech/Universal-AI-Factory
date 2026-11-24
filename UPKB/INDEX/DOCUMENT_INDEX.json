@@ -340,7 +340,159 @@
         "handoff",
         "qa"
       ]
+    },
+    {
+      "document_id": "DOC-OGAM-JARVIS-IMPLEMENTATION-HANDOFF",
+      "project_id": "JARVIS_OGAM",
+      "document_type": "handoff",
+      "title": "OGAM / Jarvis — Execution Handoff (2026-11-22)",
+      "document_url": "https://github.com/sokfrut-tech/OGAM/blob/feature/jarvis-step-2-storage-privacy/docs/jarvis/IMPLEMENTATION_HANDOFF_2026-11-22.md",
+      "repository": "sokfrut-tech/OGAM",
+      "branch": "feature/jarvis-step-2-storage-privacy",
+      "commit_hash": "0f03010df4620e871d3ba510cb223c9dfbe1cc26",
+      "affected_area": [
+        "android-agent",
+        "privacy",
+        "local-models",
+        "skills"
+      ],
+      "description": "Current OGAM branch handoff; distinguishes implemented PR #1 code from standalone build blocker and does not claim release readiness.",
+      "created_at": "2026-11-22T12:39:32Z",
+      "updated_at": "2026-11-23T14:24:49Z",
+      "status": "active",
+      "verification_status": "VERIFIED",
+      "task_id": "JARVIS-OGAM-MEM-001",
+      "dependencies": [],
+      "evidence": [
+        "https://github.com/sokfrut-tech/OGAM/commit/0f03010df4620e871d3ba510cb223c9dfbe1cc26"
+      ],
+      "tags": [
+        "ogam",
+        "jarvis",
+        "handoff"
+      ]
+    },
+    {
+      "document_id": "DOC-JARVIS-REPOSITORY-AUDIT",
+      "project_id": "JARVIS_PRIMARY",
+      "document_type": "report",
+      "title": "Repository-wide AI and Jarvis Engineering Audit (2026-11-06)",
+      "document_url": "https://github.com/sokfrut-tech/Gemeni/blob/main/docs/REPOSITORY_WIDE_AI_AUDIT_2026-11-06.md",
+      "repository": "sokfrut-tech/Gemeni",
+      "branch": "main",
+      "commit_hash": "5a7517149416fa210c9d2062a9904deaac01c1ca",
+      "affected_area": [
+        "cross-repository-inventory",
+        "jarvis-architecture",
+        "source-audit"
+      ],
+      "description": "Source-level audit across 11 repositories and targeted code review; not a complete line-by-line audit.",
+      "created_at": "2026-11-06T18:15:07Z",
+      "updated_at": "2026-11-06T18:15:07Z",
+      "status": "historical",
+      "verification_status": "VERIFIED",
+      "task_id": "UPKB-INV-001",
+      "dependencies": [
+        "DOC-JARVIS-CONTINUATION-STATE"
+      ],
+      "evidence": [
+        "https://github.com/sokfrut-tech/Gemeni/commit/5a7517149416fa210c9d2062a9904deaac01c1ca"
+      ],
+      "tags": [
+        "jarvis",
+        "audit"
+      ]
+    },
+    {
+      "document_id": "DOC-VOICE-ASSISTANT-README",
+      "project_id": "VOICE_ASSISTANT",
+      "document_type": "specification",
+      "title": "Voice Assistant — README",
+      "document_url": "https://github.com/sokfrut-tech/voice-assistant/blob/main/README.md",
+      "repository": "sokfrut-tech/voice-assistant",
+      "branch": "main",
+      "commit_hash": "ec65de408ab8899cde789ce4d265de02977e6dad",
+      "affected_area": [
+        "android",
+        "speech-recognition",
+        "navigation",
+        "tts"
+      ],
+      "description": "README claims Russian push-to-talk, navigation handoff and Russian TTS; Vosk offline recognition is future work. Runtime/source verification remains separate.",
+      "created_at": "2026-10-26T10:27:32Z",
+      "updated_at": "2026-10-26T10:27:32Z",
+      "status": "historical",
+      "verification_status": "VERIFIED",
+      "task_id": "UPKB-INV-001",
+      "dependencies": [],
+      "evidence": [
+        "https://github.com/sokfrut-tech/voice-assistant/commit/ec65de408ab8899cde789ce4d265de02977e6dad"
+      ],
+      "tags": [
+        "voice-assistant",
+        "android"
+      ]
+    },
+    {
+      "document_id": "DOC-TRANSLATION-MODELS-README",
+      "project_id": "RUSSIAN_TRANSLATION_MODELS",
+      "document_type": "specification",
+      "title": "Offline Translation Models — README",
+      "document_url": "https://github.com/sokfrut-tech/russ-translation-models/blob/main/README.md",
+      "repository": "sokfrut-tech/russ-translation-models",
+      "branch": "main",
+      "commit_hash": "4b9576b455d1c364f652246c8b5b3933c7396b4d",
+      "affected_area": [
+        "offline-translation",
+        "onnx",
+        "model-provenance"
+      ],
+      "description": "README documents four Opus-MT directions and CC-BY-4.0 provenance; release archives were not uploaded according to the README.",
+      "created_at": "2026-10-29T03:32:50Z",
+      "updated_at": "2026-10-29T03:41:19Z",
+      "status": "historical",
+      "verification_status": "VERIFIED",
+      "task_id": "UPKB-INV-001",
+      "dependencies": [],
+      "evidence": [
+        "https://github.com/sokfrut-tech/russ-translation-models/commit/4b9576b455d1c364f652246c8b5b3933c7396b4d"
+      ],
+      "tags": [
+        "translation",
+        "onnx",
+        "opus-mt"
+      ]
+    },
+    {
+      "document_id": "DOC-HAPP-PROXY-README",
+      "project_id": "HAPP_PROXY_POOL",
+      "document_type": "security",
+      "title": "Happ Free Encrypted Node Pool — README",
+      "document_url": "https://github.com/sokfrut-tech/happ-proxy-pool/blob/main/README.md",
+      "repository": "sokfrut-tech/happ-proxy-pool",
+      "branch": "main",
+      "commit_hash": "6bc1a6d700992c924970f4bbd853da8fd64d7733",
+      "affected_area": [
+        "proxy-pool",
+        "xray",
+        "network-security"
+      ],
+      "description": "README warns that TCP-open does not prove protocol authentication, UDP or end-to-end VPN operation and that unknown public nodes are untrusted.",
+      "created_at": "2026-10-29T21:32:49Z",
+      "updated_at": "2026-10-29T22:03:55Z",
+      "status": "historical",
+      "verification_status": "VERIFIED",
+      "task_id": "UPKB-INV-001",
+      "dependencies": [],
+      "evidence": [
+        "https://github.com/sokfrut-tech/happ-proxy-pool/commit/6bc1a6d700992c924970f4bbd853da8fd64d7733"
+      ],
+      "tags": [
+        "happ",
+        "proxy",
+        "security"
+      ]
     }
   ],
-  "note": "Initial source-backed document inventory. VERIFIED means the file and cited revision were fetched from GitHub on 2026-11-24; it does not mean the document's implementation claims are independently proven. Historical handoffs remain historical."
+  "note": "Source-backed initial inventory. VERIFIED means the file and cited revision were fetched from GitHub on 2026-11-24; it does not prove implementation claims. Historical handoffs remain historical."
 }
