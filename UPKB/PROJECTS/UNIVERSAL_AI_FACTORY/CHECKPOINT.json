@@ -1,22 +1,21 @@
 {
   "checkpoint_id": "UPKB_FACTORY_BOOTSTRAP_2026-11-24",
   "project_id": "UNIVERSAL_AI_FACTORY",
-  "last_successful_step": "Source-backed project context now covers all 15 projects. Fail-closed context builder successfully generated all 15 packets in CI; 19 contract tests passed.",
-  "last_commit": "a8240e7a05967743601e4994ef3519d7199161d8",
+  "last_successful_step": "15 project context packets build successfully; task-scoped context, 512 KB no-truncation limit, strict Gemini dispatch metadata resolver and structured agent report schema are covered by CI.",
+  "last_commit": "c821b048de739ef542d8fc3cb94865f05e062ea8",
   "last_verified_build": null,
-  "last_test_result": "GitHub Actions run #116 SUCCESS on a8240e7a05967743601e4994ef3519d7199161d8. Validator: 15 projects, 57 indexed records, 7 JSON Schemas. Context builder: 15 project packets. Unit/contract tests: 19 passed, including unsafe path, missing README, unknown project, missing checkpoint and exact commit checks.",
+  "last_test_result": "GitHub Actions runs #147/#148 SUCCESS on c821b048de739ef542d8fc3cb94865f05e062ea8. Validator: 15 projects, 59 indexed records, 8 Draft 2020-12 schemas. Context builder: 15 packets. Contract tests: 29 passed. Runs #140/#141 also passed task-scoped resolver, budget and context builder tests.",
   "known_problems": [
-    "UPKB is not yet integrated into live agent workflows; no read-before-work/write-back end-to-end task has been proven.",
+    "UPKB is not yet integrated into live agent workflows; no read-before-work/write-back end-to-end provider task has been proven.",
     "FOREST_LTE and IMAGE_TRANSLATOR_RU have no confirmed canonical repositories; their context is REPORTED only.",
-    "Research index is empty; environment index is seed-only. Source inventory and project dependency map remain partial.",
-    "Task/PR/research/agent schemas and context builder are tested, but broader cross-reference semantics and real consumer integration remain.",
-    "Draft PR #28 remains open and unmerged; local/remote environments and physical devices are not inventoried."
+    "Research index is empty; environment index is seed-only. Source inventory and dependency mapping remain partial.",
+    "Factory Gemini execution workflow still does not load UPKB context; design and helper tools exist only on the feature branch.",
+    "Draft PR #28 remains open and unmerged; no deployment, secret or permission changes performed."
   ],
   "active_tasks": [
+    "Implement reviewed Gemini context load and report write-back integration after PR #28 owner approval.",
     "Complete canonical source investigation for FOREST_LTE and IMAGE_TRANSLATOR_RU.",
-    "Design and implement reviewed Factory agent read-before-work/write-back integration; no live dispatch until review.",
-    "Diagnose exact primary Jarvis APK runtime failure on OPPO, separate from OGAM test APKs.",
-    "Diagnose AVTOY PR #78/#81 CI failures from detailed logs."
+    "Diagnose primary Jarvis APK runtime issue on OPPO and AVTOY PR #78/#81 CI failures."
   ],
   "blocked_tasks": [],
   "pending_tasks": [
@@ -24,7 +23,7 @@
     "Add end-to-end read/context/write-back test with an actual agent/provider integration.",
     "Refresh all project checkpoints when source PRs/builds/device evidence change."
   ],
-  "next_action": "Review Factory dispatcher and provider execution workflows; design an explicit UPKB context-load and checkpoint/write-back contract. Do not enable live dispatch until a controlled E2E test proves agent consumption and evidence-backed write-back.",
+  "next_action": "Complete strict dispatch metadata and report contract tests, add stubbed-provider end-to-end workflow test, then prepare a separate workflow PR. Keep production Gemini dispatch unchanged until PR #28 is approved and merged by the owner.",
   "required_files": [
     "UPKB/CORE/AGENT_START_PROTOCOL.md",
     "UPKB/CORE/RULES.md",
@@ -59,9 +58,11 @@
     "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45453634896",
     "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45453652249",
     "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/a8240e7a05967743601e4994ef3519d7199161d8",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45454496038"
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45454496038",
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/c821b048de739ef542d8fc3cb94865f05e062ea8",
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45455252421"
   ],
   "verification_status": "VERIFIED",
-  "updated_at": "2026-11-24T18:00:00Z",
+  "updated_at": "2026-11-24T18:03:00Z",
   "updated_by": "GPT"
 }
