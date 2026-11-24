@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "updated_at": "2026-11-24",
+  "authority": "UPKB discovery index; source repositories remain authoritative",
+  "status": "BOOTSTRAP",
+  "projects_index": "PROJECT_INDEX.json",
+  "documents_index": "DOCUMENT_INDEX.json",
+  "tasks_index": "TASK_INDEX.json",
+  "research_index": "RESEARCH_INDEX.json",
+  "agents_index": "AGENT_INDEX.json",
+  "environments_index": "ENVIRONMENT_INDEX.json",
+  "checkpoints_index": "CHECKPOINT_INDEX.json",
+  "repositories": {
+    "verified_owner": "sokfrut-tech",
+    "observed_repositories": [
+      "avtoy-korea-auto",
+      "RussSearchOPPO",
+      "sleep-button",
+      "voice-assistant",
+      "breeno-apks",
+      "Gemeni",
+      "russ-translation-models",
+      "happ-proxy-pool",
+      "Universal-AI-Factory",
+      "Antigravity-Mobile",
+      "stamp-cleaner",
+      "OGAM"
+    ],
+    "observed_at": "2026-11-24",
+    "scope_note": "Observed through connected GitHub repository listing; not proof that no other repositories or non-GitHub projects exist."
+  },
+  "verification_policy": {
+    "VERIFIED": "checked against a primary source at the recorded revision/time",
+    "REPORTED": "reported by user or agent; not independently checked",
+    "PLANNED": "intended, not implemented",
+    "UNKNOWN": "insufficient evidence"
+  },
+  "next_steps": [
+    "Complete per-repository inventory and project mapping",
+    "Seed document/task/research/checkpoint indexes from primary sources",
+    "Implement deterministic index validator and CI",
+    "Integrate mandatory UPKB lookup and write-back into agent workflows"
+  ]
+}
