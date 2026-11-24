@@ -25,7 +25,7 @@ def resolve_dispatch(task_file: Path, repo_root: Path, task_index_path: Path) ->
         relative = candidate.relative_to(root).as_posix()
     except ValueError as exc:
         raise DispatchMetadataError("dispatch file must be inside the repository") from exc
-    if not re.fullmatch(r"coordination/gemini/dispatch/[A-Za-z0-9._-]+\\.md", relative):
+    if not re.fullmatch(r"coordination/gemini/dispatch/[A-Za-z0-9._-]+\.md", relative):
         raise DispatchMetadataError("dispatch file must be a Markdown file under coordination/gemini/dispatch")
     try:
         lines = candidate.read_text(encoding="utf-8").splitlines()
@@ -90,7 +90,7 @@ def main(argv: list[str] | None = None) -> int:
         root = args.repo_root.resolve()
         task_index = args.task_index if args.task_index.is_absolute() else root / args.task_index
         result = resolve_dispatch(args.task_file, root, task_index)
-        rendered = json.dumps(result, ensure_ascii=False, indent=2) + "\\n"
+        rendered = json.dumps(result, ensure_ascii=False, indent=2) + chr(10)
         if args.output:
             args.output.write_text(rendered, encoding="utf-8")
         else:
