@@ -200,3 +200,16 @@ Research-only update. No PR merged.
 - M1 source is implemented (typed memory schema/database/repository, explicit confirmation, scope isolation, expiry guard and focused tests). Do not merge PR #4 or begin M2 until exact-head tests and native Android/device acceptance pass.
 - Before any further changes, inspect the existing fallback harness and its dependency inventory, then inspect OGAM's actual workflow/action/package manifests to determine whether Android native validation can be separated from the unrelated private workspace. Prefer the already-recorded CircleCI/GitLab fallback route if it can be made to run. Do not ask the user to create a new token until existing factory records and available owned integrations have been exhausted.
 - Status: checkpoint recorded; no OGAM source/workflow changed by this checkpoint update.
+
+
+## 2026-11-24 continuation — fallback harness audit
+
+- Audited owned GitLab project `sokfrut-tech/jarvis` (project ID `88675977`), branch `ci/jarvis-memory-m1-fallback-2026-11-24`.
+- Confirmed the harness previously pinned OGAM source to stale commit `67c896cf21cab6f4d0c0ba9118e6013770165252`, not the current reviewed M1 head `a267478a8bf6b290e71b3d86992852b0b192a58f`.
+- Updated `.ci/run-jarvis-memory-m1.sh` to pin the latter immutable SHA. Verified the committed file now contains that exact SHA.
+- Updated `.circleci/config.yml` runtime from `cimg/node:22.14` to `cimg/node:26.0`, aligning with the GitLab `node:26-bookworm` harness and its bundled `node:sqlite` probe. Verified the committed config.
+- The focused harness still tests TypeScript/Jest with a resolver stub for `@op-engineering/op-sqlite`, plus Node's bundled SQLite DDL/constraint/savepoint probe. It is NOT an Android APK build and NOT an OPPO native op-sqlite runtime test.
+- GitLab latest pipeline `3108084086` (commit `0d3ba3ebb73bdfe7a7f6e68ebb7567e22906cab5`) failed immediately; `started_at=null`, `finished_at` equals creation time, and pipeline jobs endpoint reports zero jobs. Thus no harness test ran. This is consistent with the earlier runner identity-verification gate; do not report as test failure or success.
+- GitLab project metadata confirms shared runners enabled, but that does not bypass the account-level identity gate.
+- CircleCI configuration exists in the branch, but no CircleCI integration/API is exposed in connected tools, so project registration/authorization and run status cannot be verified from this session. Do not tell user a CircleCI run happened.
+- OGAM PR #4 remains unmerged; M2 remains blocked pending focused CI and real Android/OPPO native acceptance.
