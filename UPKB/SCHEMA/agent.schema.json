@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UPKB Agent Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "agent_id",
+    "agent_type",
+    "status",
+    "capabilities",
+    "verification_status"
+  ],
+  "properties": {
+    "agent_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9][A-Z0-9._:-]+$"
+    },
+    "agent_type": {
+      "enum": [
+        "GPT",
+        "CODEX",
+        "CLAUDE",
+        "GEMINI",
+        "KIMI",
+        "USER",
+        "OTHER"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "minLength": 1
+    },
+    "capabilities": {
+      "type": "string"
+    },
+    "verification_status": {
+      "enum": [
+        "VERIFIED",
+        "REPORTED",
+        "PLANNED",
+        "UNKNOWN"
+      ]
+    },
+    "repository_scope": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "last_seen_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    }
+  }
+}
