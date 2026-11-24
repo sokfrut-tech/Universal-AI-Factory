@@ -41,6 +41,7 @@ class BuildContextTests(unittest.TestCase):
             ]},
             "INDEX/TASK_INDEX.json": {"records": [
                 {"task_id": "T1", "project_id": "P1", "title": "Task"},
+                {"task_id": "T2", "project_id": "P2", "title": "Other project task"},
             ]},
             "INDEX/RESEARCH_INDEX.json": {"records": []},
             "INDEX/AGENT_INDEX.json": {"agents": [
@@ -72,6 +73,15 @@ class BuildContextTests(unittest.TestCase):
         self.assertEqual(["D1"], [item["document_id"] for item in packet["related"]["documents"]])
         self.assertEqual(["T1"], [item["task_id"] for item in packet["related"]["tasks"]])
         self.assertEqual("Rules", packet["core"]["rules"])
+
+
+    def test_task_id_is_included_only_when_it_matches_project(self):
+        packet = build_context(self.root, "P1", "a" * 40, task_id="T1")
+        self.assertEqual("T1", packet["task"]["task_id"])
+        with self.assertRaisesRegex(BuildContextError, "found 0"):
+            build_context(self.root, "P1", "a" * 40, task_id="MISSING")
+        with self.assertRaisesRegex(BuildContextError, "belongs to 'P2'"):
+            build_context(self.root, "P1", "a" * 40, task_id="T2")
 
     def test_missing_checkpoint_fails_closed(self):
         self.write_json("INDEX/CHECKPOINT_INDEX.json", {"records": []})
