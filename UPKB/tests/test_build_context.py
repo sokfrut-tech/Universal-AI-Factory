@@ -7,7 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
-from build_context import BuildContextError, build_context
+from build_context import BuildContextError, build_context, render_context
 
 
 class BuildContextTests(unittest.TestCase):
@@ -82,6 +82,17 @@ class BuildContextTests(unittest.TestCase):
             build_context(self.root, "P1", "a" * 40, task_id="MISSING")
         with self.assertRaisesRegex(BuildContextError, "belongs to 'P2'"):
             build_context(self.root, "P1", "a" * 40, task_id="T2")
+
+
+    def test_context_packet_exceeding_budget_fails_without_truncation(self):
+        packet = {"project_readme": "Ж" * 100}
+        with self.assertRaisesRegex(BuildContextError, "exceeding the 10-byte budget"):
+            render_context(packet, max_bytes=10)
+        self.assertIn("project_readme", render_context(packet, max_bytes=10000))
+
+    def test_context_budget_must_be_positive(self):
+        with self.assertRaisesRegex(BuildContextError, "positive integer"):
+            render_context({}, max_bytes=0)
 
     def test_missing_checkpoint_fails_closed(self):
         self.write_json("INDEX/CHECKPOINT_INDEX.json", {"records": []})
