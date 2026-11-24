@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UPKB Document Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "document_id",
+    "project_id",
+    "document_type",
+    "title",
+    "status",
+    "verification_status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "document_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9][A-Z0-9._:-]+$"
+    },
+    "project_id": {
+      "type": "string"
+    },
+    "document_type": {
+      "enum": [
+        "instruction",
+        "architecture",
+        "specification",
+        "research",
+        "report",
+        "journal",
+        "decision",
+        "test",
+        "build",
+        "apk",
+        "diagram",
+        "protocol",
+        "handoff",
+        "security",
+        "deployment",
+        "troubleshooting",
+        "checkpoint",
+        "source-code",
+        "other"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "document_url": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uri-reference"
+    },
+    "repository": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "branch": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "commit_hash": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "affected_area": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "created_by_agent": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "agent_type": {
+      "enum": [
+        "GPT",
+        "CODEX",
+        "CLAUDE",
+        "GEMINI",
+        "KIMI",
+        "USER",
+        "OTHER",
+        null
+      ]
+    },
+    "task_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "enum": [
+        "active",
+        "historical",
+        "draft",
+        "superseded",
+        "archived",
+        "unknown"
+      ]
+    },
+    "checkpoint_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "continuation_point": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "verification_status": {
+      "enum": [
+        "VERIFIED",
+        "REPORTED",
+        "PLANNED",
+        "UNKNOWN"
+      ]
+    },
+    "last_verified_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
