@@ -213,3 +213,13 @@ Research-only update. No PR merged.
 - GitLab project metadata confirms shared runners enabled, but that does not bypass the account-level identity gate.
 - CircleCI configuration exists in the branch, but no CircleCI integration/API is exposed in connected tools, so project registration/authorization and run status cannot be verified from this session. Do not tell user a CircleCI run happened.
 - OGAM PR #4 remains unmerged; M2 remains blocked pending focused CI and real Android/OPPO native acceptance.
+
+
+## 2026-11-24 continuation — CircleCI access boundary
+
+- Rechecked available connected tool integrations: no CircleCI API/connector actions are exposed in this session. Therefore cannot inspect CircleCI project registration, authorization, pipeline history, or trigger a CircleCI run; do not claim that CircleCI is connected or tested.
+- GitLab project `sokfrut-tech/jarvis` branch head is `0d3ba3ebb73bdfe7a7f6e68ebb7567e22906cab5`. This commit includes the two intended updates: focused harness pin to OGAM M1 `a267478a8bf6b290e71b3d86992852b0b192a58f` and CircleCI Node image `cimg/node:26.0`.
+- The latest GitLab pipeline for this branch (`3108084086`) is failed with `started_at=null`, immediate finish, and zero jobs. No test command ran. Existing CircleCI config is present but its remote execution status is unknown.
+- OGAM Android workflow was inspected. It explicitly requires private `off-grid-ai/mobile-pro` and `off-grid-ai/shared` packages to run the complete app build; the setup action skips those checkouts only when token is empty, but then the complete TypeScript/app build cannot be assumed to pass because file dependencies and test imports reference the private sibling workspace. Do not remove this requirement or represent a focused test as APK build.
+- Attempted to create a separate secret-free GitHub Actions focused-validation branch in OGAM from M1 head. Branch `ci/jarvis-memory-m1-github-2026-11-24` was created, but GitHub file creation returned HTTP 422 (missing sha) and no workflow/script was committed. Treat branch as an empty branch at the M1 base; no CI was triggered. This is not a deliverable and must be revisited carefully or cleaned up when branch-delete capability is available.
+- Next safe route: either obtain actual CircleCI integration/authorization through the user's existing CircleCI project UI (without asking for any foreign token), or implement focused GitHub Actions via Git Data API (blob/tree/commit/ref) with fresh tree/ref inspection. Preserve separate gates: focused TS/Jest/Node SQLite ≠ full Android APK ≠ OPPO native SQLite acceptance.
