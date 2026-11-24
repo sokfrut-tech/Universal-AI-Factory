@@ -39,7 +39,7 @@ def require_array(document: dict | None, key: str, source: str) -> list:
     return document[key]
 
 
-SCHEMA_NAMES = ("document", "checkpoint", "environment")
+SCHEMA_NAMES = ("document", "checkpoint", "environment", "task", "research", "agent", "pull_request")
 SCHEMAS: dict[str, dict] = {}
 for name in SCHEMA_NAMES:
     schema = load(f"SCHEMA/{name}.schema.json")
@@ -104,6 +104,7 @@ if isinstance(agents_doc, dict):
         if agent["agent_id"] in seen_agents:
             ERRORS.append(f"AGENT_INDEX.agents[{i}]: duplicate agent_id {agent['agent_id']!r}")
         seen_agents.add(agent["agent_id"])
+        validate_record("agent", agent, f"AGENT_INDEX.agents[{i}]")
 
 for name, document in indexes.items():
     if not isinstance(document, dict):
@@ -131,11 +132,25 @@ for name, document in indexes.items():
                 ERRORS.append(f"{source}: duplicate {id_field} {identifier!r}")
             else:
                 seen.add(identifier)
+        elif name == "PULL_REQUEST_INDEX":
+            identifier = (record.get("repository"), record.get("number"))
+            if not all(identifier):
+                ERRORS.append(f"{source}: repository and number are required for identity")
+            elif identifier in seen:
+                ERRORS.append(f"{source}: duplicate pull request {identifier!r}")
+            else:
+                seen.add(identifier)
         project_id = record.get("project_id")
         if project_id is not None and project_id not in project_ids:
             ERRORS.append(f"{source}: unknown project_id {project_id!r}")
         if name == "DOCUMENT_INDEX":
             validate_record("document", record, source)
+        elif name == "TASK_INDEX":
+            validate_record("task", record, source)
+        elif name == "RESEARCH_INDEX":
+            validate_record("research", record, source)
+        elif name == "PULL_REQUEST_INDEX":
+            validate_record("pull_request", record, source)
         elif name == "ENVIRONMENT_INDEX":
             validate_record("environment", record, source)
         elif name == "CHECKPOINT_INDEX":
