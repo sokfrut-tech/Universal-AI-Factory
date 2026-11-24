@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0.0",
+  "updated_at": "2026-11-24",
+  "agents": [
+    {
+      "agent_id": "GPT",
+      "agent_type": "GPT",
+      "status": "available-in-current-session",
+      "capabilities": "Coordinator, repository exploration, documentation, implementation and verification through connected tools.",
+      "verification_status": "VERIFIED"
+    },
+    {
+      "agent_id": "CODEX",
+      "agent_type": "CODEX",
+      "status": "UNKNOWN",
+      "capabilities": "Use only when an actual Codex executor/session is available.",
+      "verification_status": "UNKNOWN"
+    },
+    {
+      "agent_id": "CLAUDE",
+      "agent_type": "CLAUDE",
+      "status": "optional",
+      "capabilities": "Factory policy says optional API; availability must be checked per task.",
+      "verification_status": "REPORTED"
+    },
+    {
+      "agent_id": "GEMINI",
+      "agent_type": "GEMINI",
+      "status": "quota-limited-specialist",
+      "capabilities": "Dispatch only for material blocker, architecture decision or independent high-risk review.",
+      "verification_status": "REPORTED"
+    },
+    {
+      "agent_id": "KIMI",
+      "agent_type": "KIMI",
+      "status": "UNKNOWN",
+      "capabilities": "No live connector or active agent session confirmed.",
+      "verification_status": "UNKNOWN"
+    }
+  ]
+}
