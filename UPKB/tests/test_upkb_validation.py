@@ -1,7 +1,12 @@
 """Negative and positive contract tests for the UPKB JSON Schemas."""
 import json
+import sys
+import tempfile
 import unittest
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
+from build_context import BuildContextError, build_context
 
 from jsonschema import Draft202012Validator, FormatChecker
 
@@ -14,6 +19,67 @@ def load_schema(name):
     Draft202012Validator.check_schema(schema)
     return Draft202012Validator(schema, format_checker=FormatChecker())
 
+
+
+class ContextBuilderContractTests(unittest.TestCase):
+    COMMIT = "a" * 40
+
+    def make_root(self, base, include_readme=True, checkpoint_path="PROJECTS/P1/CHECKPOINT.json"):
+        root = Path(base) / "UPKB"
+        (root / "CORE").mkdir(parents=True)
+        (root / "INDEX").mkdir()
+        (root / "PROJECTS" / "P1").mkdir(parents=True)
+        for name in ("RULES.md", "SECURITY.md", "AGENT_START_PROTOCOL.md"):
+            (root / "CORE" / name).write_text("test core", encoding="utf-8")
+        (root / "README.md").write_text("UPKB test", encoding="utf-8")
+        if include_readme:
+            (root / "PROJECTS" / "P1" / "README.md").write_text("Project context", encoding="utf-8")
+        checkpoint = {"checkpoint_id": "CP-1", "project_id": "P1", "verification_status": "REPORTED"}
+        (root / "PROJECTS" / "P1" / "CHECKPOINT.json").write_text(json.dumps(checkpoint), encoding="utf-8")
+        indexes = {
+            "MASTER_INDEX.json": {},
+            "PROJECT_INDEX.json": {"projects": [{"project_id": "P1", "name": "Project One"}]},
+            "DOCUMENT_INDEX.json": {"records": []},
+            "TASK_INDEX.json": {"records": []},
+            "RESEARCH_INDEX.json": {"records": []},
+            "AGENT_INDEX.json": {"agents": []},
+            "ENVIRONMENT_INDEX.json": {"records": []},
+            "CHECKPOINT_INDEX.json": {"records": [{
+                "checkpoint_id": "CP-1", "project_id": "P1",
+                "path": checkpoint_path, "updated_at": "2026-11-24T00:00:00Z",
+            }]},
+            "PULL_REQUEST_INDEX.json": {"records": []},
+        }
+        for name, value in indexes.items():
+            (root / "INDEX" / name).write_text(json.dumps(value), encoding="utf-8")
+        return root
+
+    def test_context_packet_contains_exact_commit_and_project_checkpoint(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self.make_root(tmp)
+            packet = build_context(root, "P1", self.COMMIT)
+            self.assertEqual(self.COMMIT, packet["upkb_commit"])
+            self.assertEqual("P1", packet["project_id"])
+            self.assertEqual("CP-1", packet["checkpoint"]["checkpoint_id"])
+            self.assertEqual("Project context", packet["project_readme"])
+
+    def test_context_builder_fails_closed_when_project_readme_missing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self.make_root(tmp, include_readme=False)
+            with self.assertRaisesRegex(BuildContextError, "PROJECTS/P1/README.md"):
+                build_context(root, "P1", self.COMMIT)
+
+    def test_context_builder_rejects_checkpoint_path_traversal(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self.make_root(tmp, checkpoint_path="../outside.json")
+            with self.assertRaisesRegex(BuildContextError, "unsafe checkpoint path"):
+                build_context(root, "P1", self.COMMIT)
+
+    def test_context_builder_requires_exact_source_commit(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self.make_root(tmp)
+            with self.assertRaisesRegex(BuildContextError, "exact 40-character"):
+                build_context(root, "P1", "unknown")
 
 class SchemaContractTests(unittest.TestCase):
     def test_document_schema_rejects_missing_id_and_unknown_fields(self):
