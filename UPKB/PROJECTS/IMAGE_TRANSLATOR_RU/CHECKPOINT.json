@@ -1,32 +1,39 @@
 {
-  "checkpoint_id": "IMAGE_TRANSLATOR_RU_REPORTED_2026-11-24",
+  "checkpoint_id": "IMAGE_TRANSLATOR_RU_HISTORY_RECOVERY_2026-11-24",
   "project_id": "IMAGE_TRANSLATOR_RU",
-  "last_successful_step": "User-reported requirements preserved; targeted GitHub default-branch search did not locate a dedicated canonical repository.",
+  "last_successful_step": "Recovered exact owner requirements from prior conversation dated 2026-11-11 and saved a provenance/requirements reference in UPKB. No source archive or runnable build verified.",
   "last_commit": null,
   "last_verified_build": null,
-  "last_test_result": null,
+  "last_test_result": "Not applicable; historical requirements recovery only.",
   "known_problems": [
-    "No canonical repository or original brief confirmed.",
-    "Do not conflate Image Translator RU with russ-translation-models, which is a separate offline model archive project."
+    "No canonical repository or original full specification file confirmed.",
+    "ZIP candidates v0.1-v0.3 were named in historical assistant outputs but their bytes were not found in the Library search on 2026-11-24.",
+    "EasyOCR and Argos Translate are historical implementation leads, not verified dependencies or proof of offline operation.",
+    "Do not conflate this application with russ-translation-models."
   ],
   "active_tasks": [],
   "blocked_tasks": [],
   "pending_tasks": [
-    "Locate original project brief, designs and source files.",
-    "Preserve batch image processing, bilingual original+translation output and professional terminology profiles."
+    "Recover actual v0.1-v0.3 ZIP files or original conversation attachments.",
+    "Inspect source, dependency versions, model files, licenses and offline behavior.",
+    "Verify folder batch processing, unchanged originals, bilingual left/right layout, exact output pixel dimensions and Translated_RU directory."
   ],
-  "next_action": "Find the original Image Translator RU brief and assets; map radio, IT, electronics, programming, engineering, robotics, physics, mathematics and cybersecurity terminology requirements before implementation.",
-  "required_files": [],
+  "next_action": "Locate the actual Windows ZIP/source archive and inspect its contents and hashes before deciding whether to continue an existing codebase or create a new repository.",
+  "required_files": [
+    "UPKB/SOURCES/IMAGE_TRANSLATOR_RU_HISTORY_REFERENCE.md"
+  ],
   "required_access": [
-    "User-provided project materials or a confirmed canonical repository."
+    "Original ZIP files or their original conversation attachments are needed for source recovery."
   ],
   "environment_state": [
-    "No image translation app, model or runtime environment was inspected or changed."
+    "No Windows runtime, executable or model environment was inspected or changed."
   ],
   "evidence": [
-    "User-reported project requirements from prior conversations; no primary repository source confirmed."
+    "Prior conversation retrieved for 2026-11-11: Windows app, batch folders, bilingual EN-left/RU-right canvas, exact source pixel dimensions, Translated_RU and offline operation.",
+    "Historical implementation outputs named v0.1-v0.3 ZIP candidates; actual file bytes not located.",
+    "UPKB/SOURCES/IMAGE_TRANSLATOR_RU_HISTORY_REFERENCE.md"
   ],
   "verification_status": "REPORTED",
-  "updated_at": "2026-11-24T17:55:00Z",
+  "updated_at": "2026-11-24T00:00:00Z",
   "updated_by": "GPT"
 }
