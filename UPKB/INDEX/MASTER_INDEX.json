@@ -40,5 +40,6 @@
     "Seed document/task/research/checkpoint indexes from primary sources",
     "Implement deterministic index validator and CI",
     "Integrate mandatory UPKB lookup and write-back into agent workflows"
-  ]
+  ],
+  "pull_request_index": "PULL_REQUEST_INDEX.json"
 }
