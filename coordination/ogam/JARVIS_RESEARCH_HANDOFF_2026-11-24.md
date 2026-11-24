@@ -384,5 +384,32 @@ Research-only update. No PR merged.
 - Evidence boundary preserved truthfully: user-reported physical-device PASS (no phone screenshot attached). Focused CI (`45427014939`) and Android 15 emulator runtime (`45427014740`) also remain green at exact HEAD `276f2f2ca489122b9145410b9552a199683604b3`.
 - PR #7 (and PR #4/#6) remain `OPEN / Draft / UNMERGED`. Ready for user selection of **M3** (memory management UI/service: search/filter, edit confirmed records, portable JSON export with warning, disable switch, expired cleanup) or **PR #1 Slice 9** (`@offgrid/models` remaining `35 → 0`).
 
+## 2026-11-24 continuation — Hybrid Jarvis Step 1 M3 + M4 implemented & verified in CI + Android 15 emulator (PR #8)
+
+- User approved cross-breeding verified Factory patterns into **Этап 1: Hybrid Jarvis Memory Step 1 · M3 + M4** (`"давай"`).
+- Created clean isolated branch `sokfrut-tech/OGAM:feature/jarvis-step-1-memory-m3-m4-2026-11-24` based on PR #7 head (`276f2f2ca489122b9145410b9552a199683604b3`), and opened Draft PR #8 (`https://github.com/sokfrut-tech/OGAM/pull/8`, targeting PR #7, `OPEN / Draft / UNMERGED`, HEAD `60746777c8f0b4afbef13ec709641290879b8c79`).
+- Preserved `schema.ts` / `database.ts` v1, M1/M2 repositories, secret guards, and all 7 M1+M2 Jest suites completely untouched (`memory_settings` and `memory_undo_checkpoints` are lazily created by `managementService.ts`).
+- Implemented M3 + M4 production modules and standalone RN UI without `PRO_SUBMODULE_PAT`:
+  - `src/services/jarvisMemory/types.ts`: additive M3 search, settings, undo checkpoint, source deletion, export bundle, and M4 retrieval contracts.
+  - `src/services/jarvisMemory/managementService.ts`:
+    - Fail-closed global memory switch (`getMemoryState` / `setMemoryEnabled` / `assertMemoryEnabled`, `MemoryDisabledError`, `MEM-026`, PocketMind pattern) — blocks new proposals & prompt retrieval immediately while preserving stored rows.
+    - Scoped substring & kind/status/expiry search (`searchRecords`, `MEM-025`, Nyral pattern).
+    - Local 1-step Undo (`updateWithCheckpoint`, `deleteWithCheckpoint`, `undoLastChange` inside `SAVEPOINT jarvis_memory_undo`, PocketMind pattern) — restores pre-edit fields or re-inserts deleted rows while deleting the matching tombstone.
+    - Explicit source conversation deletion handler (`handleSourceConversationDeleted`: `'delete_linked'` or `'keep_memory'`, `MEM-019`).
+    - Portable JSON export (`exportPortableJson`, `MEM-020`, Nyral pattern) requiring `userInitiated: true`, emitting explicit RU/EN unencrypted warning, and re-screening every row through `assessSecretRisk`.
+  - `src/services/jarvisMemory/confirmationController.ts`: checks `assertMemoryEnabled()` in `propose()` after `assertNoSecretRisk()`.
+  - `src/services/jarvisMemory/retrievalService.ts`: deterministic M4 scoped prompt retrieval (`retrieveForPrompt`) reading **only** active `confirmed`, non-expired rows in active scopes (`global` + optional exact `projectId` / `conversationId`), Cyrillic/Unicode token + stem-prefix scoring, stable specificity ordering (`conversation > project > global`), strict `maxTokens` / `maxItems` budgeting, fail-closed on disabled/empty/invalid scope (`MEM-007/008/009/026`), and provenance citations (`[mem:<id8> | <scope> | <source>]`).
+  - `src/components/jarvisMemory/MemoryManagerPanel.tsx`: standalone dark-slate RN panel (enable/disable card, 1-tap Undo banner, scoped search + kind chips, inline editor, delete, unencrypted JSON export preview).
+- Added 2 real-SQLite Jest suites (`managementM3.test.ts`, `retrievalM4.test.ts`), secret-free harness `.ci/run-jarvis-memory-m3-m4.sh`, and upgraded `validation/android-native-probe/` to side-by-side **`Jarvis M3+M4 Memory`** (`com.jarvism3probe`, 3-tab UI: `Самотест` / `Память M3` / `Промпт M4`, Android 16 bottom-bar clearance `paddingBottom: 96`).
+- Exact-head GitHub Actions verification at `60746777c8f0b4afbef13ec709641290879b8c79`:
+  - **Focused M1–M4 CI (`45452539226`, https://github.com/sokfrut-tech/OGAM/actions/runs/45452539226):** `completed/success` (`29s`) — strict `tsc --noEmit`, **9/9 Jest suites (`39/39` tests)**, and compiled `node:sqlite` (`3.54.1`) M1–M4 integration (`checksPassed: true`).
+  - **External Dependency Audit (`45452554820`, https://github.com/sokfrut-tech/OGAM/actions/runs/45452554820):** `completed/success` (`24s`).
+  - **Android Native OP-SQLite M3+M4 Probe + Emulator (`45452539356`, https://github.com/sokfrut-tech/OGAM/actions/runs/45452539356):** `completed/success` (`16m15s`) — strict RN `0.83.1` + `op-sqlite 15.2.5` `tsc --noEmit`, ARM64+x86_64 release APK (`31,664,877` B, SHA-256 `68fe1585477f0eb61a124a4239086ebaf18c6e835135839a9ef023fdca7c66bd`), APK Signature Scheme v2 (`0x7109871a`), uncompressed 4-aligned `resources.arsc`, all 11 `lib/arm64-v8a/*.so` libs 16 KB aligned (`zip_mod16k=0`, `p_align=0x4000`), live Android 15 emulator `PASS`:
+    `[JARVIS_M3_M4_PROBE] PASS {"sqliteVersion":"3.50.4","schemaVersion":1,"json1":true,"foreignKeys":true,"secretGuardBlocked":true,"conflictDetected":true,"optimisticConcurrency":true,"deleteWithTombstone":true,"expiryBoundary":true,"savepointRollback":true,"checkConstraint":true,"disableFailClosed":true,"searchAndFilter":true,"editAndUndo":true,"deleteAndUndo":true,"sourceDeleteAndExport":true,"scopedPromptRetrieval":true,"databasePath":"/data/user/0/com.jarvism3probe/databases/jarvis_memory.db"}`
+    Visual inspection of `runtime-diagnostics/launch-screen.png` confirmed green `PASS` cards/rows on top of clean bottom navigation padding (emulator `System UI isn't responding` dialog was TCG CPU boot slowness on `com.android.phone`, while `com.jarvism3probe` `pid 2212` ran cleanly with `topResumedActivity` and zero errors).
+- Artifact: `Jarvis-M3-M4-OPSQLite-Native-Probe-APK` (`id=14949233461`, https://github.com/sokfrut-tech/OGAM/actions/runs/45452539356/artifacts/14949233461).
+- Acceptance boundary: focused CI + real `node:sqlite` + Android 15 emulator OP-SQLite PASS verified; physical OPPO Find X6 Pro (`PGEM10`) installation and interactive acceptance (Undo edit/delete, memory pause fail-closed, JSON export warning, and M4 prompt retrieval) remain to be tested by the user. All PRs remain `OPEN / Draft / UNMERGED`. Next after `PGEM10` confirmation: **Этап 2 (`OGAM PR #1 Slice 9`, `@offgrid/models` `35 → 0`)**.
+
+
 
 
