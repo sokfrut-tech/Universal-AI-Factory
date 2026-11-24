@@ -255,3 +255,19 @@ Research-only update. No PR merged.
 - PR #4 (M1 production implementation) remains draft/open/unmerged. M2 remains blocked until the user/device acceptance result is observed. The standalone probe is deliberately separate from the full OGAM APK build and does not require foreign `off-grid-ai` credentials.
 
 - Opened draft PR #6 in OGAM, targeting the M1 feature branch (not main): https://github.com/sokfrut-tech/OGAM/pull/6. It remains draft/open/unmerged pending installation and runtime acceptance on PGEM10.
+
+
+## 2026-11-24 continuation — investigate probe APK launch failure
+
+- User reported that the installed Jarvis M1 Probe APK did not launch on OPPO PGEM10. No live device screen/logcat was available in this chat, so the exact phone-side crash cause is not yet known.
+- Inspected the complete changed-file list and the actual PR #6 launcher configuration:
+  - AndroidManifest.xml declares android.intent.action.MAIN + android.intent.category.LAUNCHER for .MainActivity, label "Jarvis M1 Probe". Android creates the app-drawer launcher entry automatically; no shortcut-creation permission or special shortcut API is used by this APK.
+  - MainActivity.kt registers React Native component JarvisM1Probe, matching app.json and index.js.
+  - App.tsx automatically runs the native SQLite probe in useEffect on startup. Therefore a startup crash may occur before the screen renders, during React Native bootstrap or OP-SQLite initialization; source inspection alone cannot identify the exact cause.
+- Added an emulator runtime diagnostic stage to .github/workflows/jarvis-memory-m1-op-sqlite-probe.yml on the existing PR #6 branch:
+  - Commit: 8c0dc1940e7779c7bf64a5a27fb3098aafca4507.
+  - Builds native libraries for both arm64-v8a and x86_64 so the same APK can be launched in an Android x86_64 emulator while retaining the phone's ARM64 library.
+  - Uses Android API 35 Pixel 2 emulator, installs and launches the release APK, checks process survival, captures activity state, full logcat and a launch screenshot into validation/android-native-probe/runtime-diagnostics/, and uploads diagnostics with the APK.
+  - Emulator step is continue-on-error: true so logs/artifact can still be uploaded if runtime launch fails. Interpret emulator result separately from APK compilation and from PGEM10 physical-device acceptance.
+- New GitHub Actions run started: 45393169372, https://github.com/sokfrut-tech/OGAM/actions/runs/45393169372. At last check, the build job was still in progress; emulator runtime step had not started yet. The branch head is 8c0dc1940e7779c7bf64a5a27fb3098aafca4507.
+- PR #6 remains draft/open/unmerged; PR #4 remains draft/open/unmerged. Do not merge or start M2 based on emulator success alone. A successful emulator launch still does not substitute for the user's PGEM10 test.
