@@ -53,6 +53,53 @@ class SchemaContractTests(unittest.TestCase):
         }
         self.assertTrue(list(validator.iter_errors(record)))
 
+
+    def test_task_schema_validates_priority_and_required_fields(self):
+        validator = load_schema("task")
+        record = {
+            "task_id": "TASK-1", "project_id": "P1", "title": "Inventory",
+            "status": "active", "priority": "high", "owner": "GPT",
+            "next_action": "Read source docs", "evidence": [],
+            "verification_status": "REPORTED",
+        }
+        self.assertEqual([], list(validator.iter_errors(record)))
+        record["priority"] = "urgent-ish"
+        self.assertTrue(list(validator.iter_errors(record)))
+
+    def test_agent_schema_rejects_unknown_agent_type(self):
+        validator = load_schema("agent")
+        record = {
+            "agent_id": "GEMINI", "agent_type": "GEMINI", "status": "available",
+            "capabilities": "Review", "verification_status": "REPORTED",
+        }
+        self.assertEqual([], list(validator.iter_errors(record)))
+        record["agent_type"] = "UNREGISTERED"
+        self.assertTrue(list(validator.iter_errors(record)))
+
+    def test_pull_request_schema_rejects_malformed_commit_sha(self):
+        validator = load_schema("pull_request")
+        record = {
+            "project_id": "P1", "repository": "owner/repo", "number": 7,
+            "title": "Example", "head": "feature/example", "head_sha": "a" * 40,
+            "base": "main", "draft": True, "url": "https://github.com/owner/repo/pull/7",
+            "verification_status": "VERIFIED", "state": "open", "checked_at": "2026-11-24",
+        }
+        self.assertEqual([], list(validator.iter_errors(record)))
+        record["head_sha"] = "not-a-sha"
+        self.assertTrue(list(validator.iter_errors(record)))
+
+    def test_research_schema_requires_provenance_and_adoption_state(self):
+        validator = load_schema("research")
+        record = {
+            "research_id": "RES-1", "project_id": "P1", "title": "Model review",
+            "source": "https://example.org/research", "source_date": "2026-11-24",
+            "project_scope": ["P1"], "summary": "Reviewed candidate model.",
+            "adoption_status": "under-review", "verification_status": "REPORTED",
+        }
+        self.assertEqual([], list(validator.iter_errors(record)))
+        record["adoption_status"] = "deployed"
+        self.assertTrue(list(validator.iter_errors(record)))
+
     def test_all_schema_files_are_valid_draft_2020_12(self):
         for path in sorted(SCHEMA_DIR.glob("*.schema.json")):
             with self.subTest(schema=path.name):
