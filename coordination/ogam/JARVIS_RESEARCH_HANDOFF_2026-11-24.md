@@ -140,3 +140,12 @@ Research-only update. No PR merged.
 - Independent local SQL check: manually executed the M1 DDL from the PR against Node `node:sqlite` / SQLite 3.49.1. Foreign-key PRAGMA, JSON1, savepoint rollback and DDL CHECK constraints (scope, approval timestamp, expiry, confidence) passed. This is a Node SQLite result, **not** the exact Android op-sqlite 15.2.5 runtime and not a Jest/typecheck result.
 - GitHub PR #5 was only a validation probe and produced no Actions workflow run/checks; close it as obsolete. Keep main implementation PR #4 open and draft.
 - Remaining gates: GitLab account identity verification; then actual GitLab pipeline and logs (focused Jest, focused TS typecheck, Node SQLite schema test); then actual OPPO PGEM10 op-sqlite capability probe and Android app build/device checks. Do not advance to Jarvis scheduler M2 before memory acceptance gates pass.
+
+
+### GitLab fallback follow-up
+- Latest GitLab fallback branch head: `628cd56bafd594a291a5a6b7cb1e3a908da85bde`.
+- README, CI YAML and focused harness script are committed to `sokfrut-tech/jarvis` branch `ci/jarvis-memory-m1-fallback-2026-11-24`.
+- GitLab YAML syntax independently parsed successfully via Ruby Psych.
+- Latest push pipeline #6: https://gitlab.com/sokfrut-tech/jarvis/-/pipelines/3106803480 — failed immediately, `started_at=null`, zero jobs; earlier push pipelines #1–#5 show the same pre-job failure.
+- Manual pipeline create API continues to return the explicit identity-verification requirement. This is an account-level policy barrier before runner assignment, not evidence of no available runner. Shared and group runners are enabled in project metadata, but their execution capability remains untested.
+- Once the account identity step is completed, trigger a pipeline on the fallback branch and inspect both jobs/logs. Do not merge fallback branch into GitLab main until a real run proves it works.
