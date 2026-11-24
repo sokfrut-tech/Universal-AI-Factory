@@ -9,9 +9,11 @@
       "status": "active",
       "priority": "high",
       "owner": "GPT",
-      "next_action": "Read all repository continuation briefs and map projects, codebases, assets and dependencies; mark unknowns explicitly.",
+      "next_action": "Extend the source-backed document inventory to remaining repositories and project handoffs; inspect canonical docs for FOREST_LTE and IMAGE_TRANSLATOR_RU; then add source-backed project checkpoints.",
       "evidence": [
-        "https://github.com/sokfrut-tech/Universal-AI-Factory/tree/feature/upkb-knowledge-base-bootstrap"
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/tree/feature/upkb-knowledge-base-bootstrap",
+        "UPKB/INDEX/DOCUMENT_INDEX.json",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/b6bfdecd95d2af502c8c1891f8d6cd9b1eac4fb3"
       ],
       "verification_status": "REPORTED"
     },
