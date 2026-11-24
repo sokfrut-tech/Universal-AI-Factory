@@ -143,7 +143,7 @@ for name, document in indexes.items():
             if not isinstance(checkpoint_path, str):
                 ERRORS.append(f"{source}: checkpoint path is required")
             else:
-                checkpoint = load(checkpoint_path)
+                checkpoint = load(str(Path(checkpoint_path).relative_to(ROOT.parent)))
                 if checkpoint is not None:
                     validate_record("checkpoint", checkpoint, checkpoint_path)
                     if checkpoint.get("checkpoint_id") != record.get("checkpoint_id"):
