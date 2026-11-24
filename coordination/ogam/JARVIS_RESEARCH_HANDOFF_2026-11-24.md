@@ -317,3 +317,32 @@ Research-only update. No PR merged.
   - Updated artifact: `Jarvis-M1-OPSQLite-Native-Probe-APK` (`id=14932771575`, size `14,819,306` B, APK `31,572,769` B, SHA-256 `c71fb87b8654e8da75f97d0f50a824971c086a1a4228c1b710d01e878092f7e5`), all 11 `lib/arm64-v8a/*.so` libraries including `libop-sqlite.so` (`1,803,256` B) verified `p_align=0x4000`.
 - Boundary preserved: emulator PASS confirms Android runtime + real native `@op-engineering/op-sqlite` 15.2.5 (`SQLite 3.50.4`, `JSON1=true`, `FK=true`, `SAVEPOINT`, `CHECK`). Physical OPPO Find X6 Pro (`PGEM10`) installation and PASS screen confirmation remain required before accepting Step 1 M1. PR #4 and PR #6 remain Draft and unmerged.
 
+
+
+## Inventory refresh — 2026-11-24 17:52 local
+
+### Current verified M1 native probe state
+- OGAM PR #6 remains OPEN + DRAFT + UNMERGED; head `956f7127a7656b8eb99fe3967da92c1a89054806`, base `feature/jarvis-step-1-memory-m1-2026-11-24` at `a267478a8bf6b290e71b3d86992852b0b192a58f`.
+- Latest Android native probe workflow run: `45414070190`, job `138515587396`, completed SUCCESS. This includes a real Android emulator app launch and OP-SQLite native runtime checks, not merely APK compilation.
+- Verified runtime: SQLite 3.50.4; schema v1; JSON1 true; foreign keys true; proposal round-trip true; explicit confirmation true; rejection true; savepoint rollback true; CHECK constraint true. The app process remained alive and the PASS screen screenshot was captured.
+- Fixed startup crash: Manifest used platform Material theme with ReactActivity/AppCompat; now uses AppCompat descendant `AppTheme`.
+- Latest probe artifact: ID `14932771575`, name `Jarvis-M1-OPSQLite-Native-Probe-APK`, not expired at inventory time; archive 14,819,306 bytes; APK SHA-256 `c71fb87b8654e8da75f97d0f50a824971c086a1a4228c1b710d01e878092f7e5`.
+- APK download: https://github.com/sokfrut-tech/OGAM/actions/runs/45414070190/artifacts/14932771575
+- Workflow evidence: https://github.com/sokfrut-tech/OGAM/actions/runs/45414070190
+- Physical OPPO Find X6 Pro PGEM10 install and PASS screen have NOT yet been confirmed. Do not claim phone acceptance or close M1 until user reports/produces the phone result.
+
+### Pull request inventory (live GitHub snapshot)
+- PR #1 Step 2 storage/privacy bridge — OPEN, DRAFT, UNMERGED; head `71cbffbbe2a5631732553dc4bd238b5d074af037`, base main.
+- PR #2 Breeno/ColorOS adaptation research — OPEN, DRAFT, UNMERGED; head `85a9326f40c289bd007ff7f098b5f916a3ee0d16`, base main.
+- PR #3 Android agent ecosystem research — OPEN, DRAFT, UNMERGED; head `56b667ff637bd5098df67dc76ef6afa7e5a5af46`, base Breeno research branch.
+- PR #4 Step 1 M1 memory database foundation — OPEN, DRAFT, UNMERGED; head `a267478a8bf6b290e71b3d86992852b0b192a58f`, base Step 2 branch.
+- PR #5 temporary CI validation — CLOSED, NOT MERGED; validation-only, obsolete.
+- PR #6 isolated Android OP-SQLite probe — OPEN, DRAFT, UNMERGED; validation-only, base M1 PR #4 branch.
+
+### Validation boundaries and next gates
+- M1 source validation passed in secret-free GitHub Actions run `45382511098`: focused TypeScript, four Jest suites, schema compile and Node 26 SQLite DDL/constraints/savepoint checks. Jest native binding is stubbed in that focused harness; it is not Android native evidence.
+- Native Android emulator validation passed in `45414070190` with actual OP-SQLite 15.2.5; still not physical-device acceptance.
+- Full OGAM application build remains a separate blocked route because private foreign submodules `off-grid-ai/mobile-pro` and `off-grid-ai/shared` are inaccessible. Do not request or create `PRO_SUBMODULE_PAT`; do not confuse standalone probe APK with the full Jarvis app.
+- GitLab fallback project `sokfrut-tech/jarvis` (ID `88675977`) exists, but pipelines failed before jobs due account-level identity verification; no CI tests ran there. CircleCI config was committed in its branch, but no connected CircleCI API/run was verified.
+- M2/scheduler, prompt memory retrieval, automatic model writes, UI, sync and encryption are NOT implemented in M1 and remain gated. Do not merge PRs or change production branches without explicit user approval.
+- Immediate next action: user installs the latest standalone M1 probe APK on OPPO PGEM10 and reports whether the app opens to PASS. If PASS, record device acceptance and review PR #4/#6 before planning M2; if not, collect exact phone error evidence and diagnose without asking the user to repeat an already-tried old APK.
