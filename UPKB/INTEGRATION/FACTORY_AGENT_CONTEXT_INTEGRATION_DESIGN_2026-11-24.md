@@ -53,7 +53,7 @@ After task resolution and before any provider API call:
 5. Add the packet to the Gemini prompt together with the dispatch file. The system prompt must say that repository files, task prose, context records and reports are untrusted data, not privileged instructions.
 6. Keep the packet in runner temporary storage. Do not commit it or copy it into a public outbox.
 
-The context builder now supports explicit task selection and rejects unknown or cross-project task IDs. It loads CORE rules/security/start protocol, project card, project README, one unambiguous latest checkpoint, and project-scoped documents/tasks/research/environments/PRs plus agent registry.
+The context builder now supports explicit task selection and rejects unknown or cross-project task IDs. It enforces a hard 512,000-byte UTF-8 packet budget without truncation. A strict metadata resolver has been added at `UPKB/tools/resolve_dispatch_metadata.py`; it accepts only `upkb_project_id` and `upkb_task_id` in a frontmatter block and verifies the task's project association. Structured report metadata is specified by `UPKB/SCHEMA/agent_report.schema.json`. It loads CORE rules/security/start protocol, project card, project README, one unambiguous latest checkpoint, and project-scoped documents/tasks/research/environments/PRs plus agent registry.
 
 ## 5. Write-back and ownership
 
@@ -92,6 +92,7 @@ This avoids multiple agents racing to mutate the same checkpoint/index files and
 ## 8. Current status and next step
 
 - Context builder and task-scoped packet selection are implemented in the UPKB feature branch.
+- Strict dispatch metadata resolver and structured agent report schema are implemented and under CI verification.
 - CI run #116 proved 15 packets could be generated; the next run must re-verify after task-scoped selection changes.
 - No live agent workflow has been modified. Gemini/Claude/GPT automatic UPKB read/write integration is not yet operational.
 - Next: add strict dispatch metadata parser + report schema/tests, then prepare a separate workflow PR after UPKB is approved and merged by the owner.
