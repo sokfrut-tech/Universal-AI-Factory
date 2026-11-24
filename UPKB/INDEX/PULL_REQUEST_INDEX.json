@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "updated_at": "2026-11-24",
-  "source": "GitHub REST open-pull-request listings queried during UPKB inventory; snapshot only, refresh before action.",
+  "source": "Snapshot of open pull requests refreshed from GitHub REST on 2026-11-24. Check summaries refer to observed head commits; refresh before action.",
   "records": [
     {
       "project_id": "JARVIS_PRIMARY",
@@ -83,7 +83,7 @@
       "draft": true,
       "url": "https://github.com/sokfrut-tech/RussSearchOPPO/pull/15",
       "verification_status": "VERIFIED",
-      "check_summary": "No check runs returned; PR mergeable=false at audit time",
+      "check_summary": "PR remains open draft; mergeable=false at refresh. No new check-run evidence captured in this refresh.",
       "state": "open",
       "checked_at": "2026-11-24"
     },
@@ -140,7 +140,7 @@
       "draft": true,
       "url": "https://github.com/sokfrut-tech/avtoy-korea-auto/pull/81",
       "verification_status": "VERIFIED",
-      "check_summary": "Secret scanning FAILURE; CodeQL FAILURE; two validate checks FAILURE. Job API returned no diagnostic steps; root cause not established.",
+      "check_summary": "All 4 check runs FAILURE on refreshed head: secret scan, CodeQL and two validate checks. Root cause not established.",
       "state": "open",
       "checked_at": "2026-11-24"
     },
@@ -155,7 +155,7 @@
       "draft": true,
       "url": "https://github.com/sokfrut-tech/avtoy-korea-auto/pull/78",
       "verification_status": "VERIFIED",
-      "check_summary": "All returned checks FAILURE: CodeQL, secret scan, worker tests, deploy, check, director evidence, functional/regression, security/privacy. Job APIs returned empty steps/runner_id=0 for worker test; root cause not established.",
+      "check_summary": "All 8 check runs FAILURE on refreshed head: CodeQL, secret scan, test, deploy, check, release evidence, functional/regression, security/privacy. Root cause not established.",
       "state": "open",
       "checked_at": "2026-11-24"
     },
@@ -182,6 +182,34 @@
       "draft": true,
       "url": "https://github.com/sokfrut-tech/happ-proxy-pool/pull/1",
       "verification_status": "VERIFIED"
+    },
+    {
+      "project_id": "STAMPCLEANER",
+      "repository": "sokfrut-tech/stamp-cleaner",
+      "number": 3,
+      "title": "Android and web extraction parity",
+      "head": "fix/android-web-extraction-parity",
+      "head_sha": "68e1e9d1ca6ef73ba37529e56c0538dacc2d4519",
+      "base": "main",
+      "draft": false,
+      "url": "https://github.com/sokfrut-tech/stamp-cleaner/pull/3",
+      "verification_status": "VERIFIED",
+      "state": "open",
+      "checked_at": "2026-11-24"
+    },
+    {
+      "project_id": "STAMPCLEANER",
+      "repository": "sokfrut-tech/stamp-cleaner",
+      "number": 4,
+      "title": "Neon Club cyber glam theme",
+      "head": "feature/neon-club-cyber-glam",
+      "head_sha": "868c68d2223bc81a3048f49e7afbfe3a7d16da77",
+      "base": "main",
+      "draft": true,
+      "url": "https://github.com/sokfrut-tech/stamp-cleaner/pull/4",
+      "verification_status": "VERIFIED",
+      "state": "open",
+      "checked_at": "2026-11-24"
     }
   ]
 }
