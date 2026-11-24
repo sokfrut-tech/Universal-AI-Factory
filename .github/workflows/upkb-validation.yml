@@ -23,5 +23,7 @@ jobs:
         run: python -m pip install --disable-pip-version-check "jsonschema>=4.22,<5"
       - name: Validate UPKB indexes and schemas
         run: python UPKB/tools/validate_upkb.py
-      - name: Run negative and positive schema contract tests
+      - name: Build context packets for all checkpointed projects
+        run: python UPKB/tools/build_context.py --all-checkpointed --output-dir "$RUNNER_TEMP/upkb-context"
+      - name: Run negative and positive schema and context contract tests
         run: python -m unittest discover -s UPKB/tests -p "test_*.py" -v
