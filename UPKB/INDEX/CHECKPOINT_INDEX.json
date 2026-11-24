@@ -1,0 +1,6 @@
+{
+  "schema_version": "1.0.0",
+  "updated_at": "2026-11-24",
+  "records": [],
+  "note": "Seed project checkpoints after reading each project's latest handoff and refreshing repository/CI/device evidence."
+}
