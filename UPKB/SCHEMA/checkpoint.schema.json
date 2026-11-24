@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UPKB Checkpoint",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "checkpoint_id",
+    "project_id",
+    "updated_at",
+    "updated_by",
+    "verification_status"
+  ],
+  "properties": {
+    "checkpoint_id": {
+      "type": "string"
+    },
+    "project_id": {
+      "type": "string"
+    },
+    "last_successful_step": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "last_commit": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "last_verified_build": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "last_test_result": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "known_problems": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "active_tasks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "blocked_tasks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "pending_tasks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "next_action": {
+      "type": "string"
+    },
+    "required_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "required_access": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "environment_state": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "verification_status": {
+      "enum": [
+        "VERIFIED",
+        "REPORTED",
+        "PLANNED",
+        "UNKNOWN"
+      ]
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_by": {
+      "type": "string"
+    }
+  }
+}
