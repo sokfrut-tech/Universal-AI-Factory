@@ -1,0 +1,40 @@
+{
+  "checkpoint_id": "RUSSSEARCH_OPPO_2026-11-24",
+  "project_id": "RUSSSEARCH_OPPO",
+  "last_successful_step": "Repository README and dated project handoff fetched; PR #15 remains open draft and mergeable=false; PR #16 is closed and merged.",
+  "last_commit": "65ebbe5f95839f95e7480101bfb9ffdd18084abe",
+  "last_verified_build": null,
+  "last_test_result": "No fresh build/runtime verification performed in this inventory step.",
+  "known_problems": [
+    "Relationship between RussSearchOPPO and primary Jarvis/Gemeni is not fully established; avoid merging product identities.",
+    "Proposed offline speech/translation components in handoff are not proof of implementation."
+  ],
+  "active_tasks": [],
+  "blocked_tasks": [],
+  "pending_tasks": [
+    "Inspect project memory, source tree and PR #15; verify model manifest/releases.",
+    "Map reusable code/modules to Jarvis only after source-level dependency review."
+  ],
+  "next_action": "Read docs/HIVE_PROJECT_MEMORY.md and docs/hive/ml-translation/README.md, inspect source and PR #15, and document exact shared-module boundaries with Gemeni.",
+  "required_files": [
+    "README.md",
+    "docs/PROJECT_HANDOFF_2026-11-06.md",
+    "docs/HIVE_PROJECT_MEMORY.md",
+    "docs/hive/WHERE-IS-WHAT.md"
+  ],
+  "required_access": [
+    "Read access to RussSearchOPPO source, PRs and Actions."
+  ],
+  "environment_state": [
+    "No device or build environment was executed in this inventory step."
+  ],
+  "evidence": [
+    "https://github.com/sokfrut-tech/RussSearchOPPO",
+    "https://github.com/sokfrut-tech/RussSearchOPPO/pull/15",
+    "https://github.com/sokfrut-tech/RussSearchOPPO/pull/16",
+    "https://github.com/sokfrut-tech/RussSearchOPPO/commit/65ebbe5f95839f95e7480101bfb9ffdd18084abe"
+  ],
+  "verification_status": "REPORTED",
+  "updated_at": "2026-11-24T17:55:00Z",
+  "updated_by": "GPT"
+}
