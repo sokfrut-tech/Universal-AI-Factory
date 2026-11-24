@@ -19,15 +19,17 @@
       "task_id": "UPKB-VAL-001",
       "project_id": "UNIVERSAL_AI_FACTORY",
       "title": "Execute UPKB validator in CI and validate schemas",
-      "status": "pending",
+      "status": "completed",
       "priority": "high",
       "owner": "GPT",
-      "next_action": "Run workflow_dispatch or push a test change; add JSON Schema validation and test invalid fixtures fail.",
+      "next_action": "Maintain schema coverage as new record types are introduced; add schemas for task, research, agent and PR records when their contracts stabilize.",
       "evidence": [
         "UPKB/tools/validate_upkb.py",
-        ".github/workflows/upkb-validation.yml"
+        ".github/workflows/upkb-validation.yml",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45450813762",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/4154388be3cd17847d696872c657dffc2824fa6a"
       ],
-      "verification_status": "PLANNED"
+      "verification_status": "VERIFIED"
     },
     {
       "task_id": "UPKB-INT-001",
