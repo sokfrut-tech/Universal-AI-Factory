@@ -376,4 +376,13 @@ Research-only update. No PR merged.
 - Artifact: `Jarvis-M2-OPSQLite-Native-Probe-APK` (`id=14938107025`, `https://github.com/sokfrut-tech/OGAM/actions/runs/45427014740/artifacts/14938107025`).
 - Acceptance boundary: focused Node CI + Android 15 emulator OP-SQLite PASS verified; physical OPPO Find X6 Pro (`PGEM10`) installation and interactive test (automated PASS + secret block preset + save/confirm/relaunch persistence `MEM-004` + delete/tombstone `MEM-006`) remain to be confirmed by the user before closing M2 and proceeding to **M3** (management: inspect/edit/delete/export UI & controls) or **PR #1 Slice 9**. All PRs remain `Draft` and unmerged.
 
+## 2026-11-24 continuation — physical OPPO PGEM10 M2 device acceptance confirmed
+
+- User tested `Jarvis M2 Memory` (`com.jarvism2probe`, artifact `Jarvis-M2-OPSQLite-Native-Probe-APK`, `id=14938107025`, SHA-256 `3b7fc2ac873e156992e57fe478e1ed88b524f60e164ccc37abc3ee5ffef6ec87`, run `45427014740`, OGAM PR #7 HEAD `276f2f2ca489122b9145410b9552a199683604b3`) on physical OPPO Find X6 Pro (`PGEM10`, Android 16 / ColorOS 16.0.5) and reported: **`"1- да 2-да"`**:
+  1. All 7 automated native M1+M2 OP-SQLite self-test rows reported green `PASS` on physical `PGEM10`.
+  2. Interactive M2 sandbox flow passed on physical `PGEM10`: secret token blocked (`MEM-014`), proposal confirmed via `MemoryProposalCard`, conflict banner surfaced (`MEM-010`), confirmed record persisted across cold close/relaunch (`MEM-004`), and deletion created a tombstone (`MEM-006`).
+- Evidence boundary preserved truthfully: user-reported physical-device PASS (no phone screenshot attached). Focused CI (`45427014939`) and Android 15 emulator runtime (`45427014740`) also remain green at exact HEAD `276f2f2ca489122b9145410b9552a199683604b3`.
+- PR #7 (and PR #4/#6) remain `OPEN / Draft / UNMERGED`. Ready for user selection of **M3** (memory management UI/service: search/filter, edit confirmed records, portable JSON export with warning, disable switch, expired cleanup) or **PR #1 Slice 9** (`@offgrid/models` remaining `35 → 0`).
+
+
 
