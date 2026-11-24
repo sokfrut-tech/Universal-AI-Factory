@@ -1,6 +1,102 @@
 {
   "schema_version": "1.0.0",
   "updated_at": "2026-11-24",
-  "records": [],
-  "note": "Only active/pending/blocked/completed tasks with source-backed status belong here."
+  "records": [
+    {
+      "task_id": "UPKB-INV-001",
+      "project_id": "UNIVERSAL_AI_FACTORY",
+      "title": "Complete repository and project inventory",
+      "status": "active",
+      "priority": "high",
+      "owner": "GPT",
+      "next_action": "Read all repository continuation briefs and map projects, codebases, assets and dependencies; mark unknowns explicitly.",
+      "evidence": [
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/tree/feature/upkb-knowledge-base-bootstrap"
+      ],
+      "verification_status": "REPORTED"
+    },
+    {
+      "task_id": "UPKB-VAL-001",
+      "project_id": "UNIVERSAL_AI_FACTORY",
+      "title": "Execute UPKB validator in CI and validate schemas",
+      "status": "pending",
+      "priority": "high",
+      "owner": "GPT",
+      "next_action": "Run workflow_dispatch or push a test change; add JSON Schema validation and test invalid fixtures fail.",
+      "evidence": [
+        "UPKB/tools/validate_upkb.py",
+        ".github/workflows/upkb-validation.yml"
+      ],
+      "verification_status": "PLANNED"
+    },
+    {
+      "task_id": "UPKB-INT-001",
+      "project_id": "UNIVERSAL_AI_FACTORY",
+      "title": "Integrate mandatory UPKB context load and write-back into Factory agents",
+      "status": "pending",
+      "priority": "critical",
+      "owner": "GPT",
+      "next_action": "Inspect dispatcher and agent policies; design read-before-work and durable write-back contract; prove end-to-end with a test task.",
+      "evidence": [
+        "UPKB/CORE/AGENT_START_PROTOCOL.md"
+      ],
+      "verification_status": "PLANNED"
+    },
+    {
+      "task_id": "JARVIS-OGAM-MEM-001",
+      "project_id": "JARVIS_OGAM",
+      "title": "Refresh Jarvis memory M1/M2 Android probe and runtime evidence",
+      "status": "active",
+      "priority": "high",
+      "owner": "unassigned",
+      "next_action": "Inspect OGAM PR #4/#6/#7, Actions logs and device probe outputs; distinguish CI success from real OPPO launch.",
+      "evidence": [
+        "https://github.com/sokfrut-tech/OGAM/pull/4",
+        "https://github.com/sokfrut-tech/OGAM/pull/6",
+        "https://github.com/sokfrut-tech/OGAM/pull/7"
+      ],
+      "verification_status": "REPORTED"
+    },
+    {
+      "task_id": "JARVIS-GEM-001",
+      "project_id": "JARVIS_PRIMARY",
+      "title": "Reconcile Jarvis integration branch and open feature PR chain",
+      "status": "active",
+      "priority": "high",
+      "owner": "unassigned",
+      "next_action": "Review PR #148 and #133, branch ancestry, checks and APK/runtime acceptance; do not merge disconnected chains blindly.",
+      "evidence": [
+        "https://github.com/sokfrut-tech/Gemeni/pull/148",
+        "https://github.com/sokfrut-tech/Gemeni/pull/133"
+      ],
+      "verification_status": "REPORTED"
+    },
+    {
+      "task_id": "ANTIGRAVITY-DISPATCH-001",
+      "project_id": "ANTIGRAVITY_MOBILE",
+      "title": "Verify actual Factory API deployment and provider dispatch",
+      "status": "pending",
+      "priority": "high",
+      "owner": "unassigned",
+      "next_action": "Inspect PR #19/#20 and runtime endpoints; prove provider accepted/executed task rather than relying on UI/ACK.",
+      "evidence": [
+        "https://github.com/sokfrut-tech/Antigravity-Mobile/pull/19",
+        "https://github.com/sokfrut-tech/Antigravity-Mobile/pull/20"
+      ],
+      "verification_status": "REPORTED"
+    },
+    {
+      "task_id": "AVTOY-MEDIA-001",
+      "project_id": "AVTOY_KOREA",
+      "title": "Verify Telegram album ordering and duplicate prevention",
+      "status": "pending",
+      "priority": "high",
+      "owner": "unassigned",
+      "next_action": "Inspect PR #78 tests and current main behavior; do not deploy without all required tests passing.",
+      "evidence": [
+        "https://github.com/sokfrut-tech/avtoy-korea-auto/pull/78"
+      ],
+      "verification_status": "REPORTED"
+    }
+  ]
 }
