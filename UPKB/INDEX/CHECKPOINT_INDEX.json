@@ -64,6 +64,48 @@
       "path": "UPKB/PROJECTS/IMAGE_TRANSLATOR_RU/CHECKPOINT.json",
       "updated_at": "2026-11-24T17:55:00Z",
       "verification_status": "REPORTED"
+    },
+    {
+      "checkpoint_id": "VOICE_ASSISTANT_2026-11-24",
+      "project_id": "VOICE_ASSISTANT",
+      "path": "UPKB/PROJECTS/VOICE_ASSISTANT/CHECKPOINT.json",
+      "updated_at": "2026-11-24T18:00:00Z",
+      "verification_status": "REPORTED"
+    },
+    {
+      "checkpoint_id": "RUSSIAN_TRANSLATION_MODELS_2026-11-24",
+      "project_id": "RUSSIAN_TRANSLATION_MODELS",
+      "path": "UPKB/PROJECTS/RUSSIAN_TRANSLATION_MODELS/CHECKPOINT.json",
+      "updated_at": "2026-11-24T18:00:00Z",
+      "verification_status": "REPORTED"
+    },
+    {
+      "checkpoint_id": "HAPP_PROXY_POOL_2026-11-24",
+      "project_id": "HAPP_PROXY_POOL",
+      "path": "UPKB/PROJECTS/HAPP_PROXY_POOL/CHECKPOINT.json",
+      "updated_at": "2026-11-24T18:00:00Z",
+      "verification_status": "REPORTED"
+    },
+    {
+      "checkpoint_id": "SLEEP_BUTTON_2026-11-24",
+      "project_id": "SLEEP_BUTTON",
+      "path": "UPKB/PROJECTS/SLEEP_BUTTON/CHECKPOINT.json",
+      "updated_at": "2026-11-24T18:00:00Z",
+      "verification_status": "UNKNOWN"
+    },
+    {
+      "checkpoint_id": "BREENO_APKS_2026-11-24",
+      "project_id": "BREENO_APKS",
+      "path": "UPKB/PROJECTS/BREENO_APKS/CHECKPOINT.json",
+      "updated_at": "2026-11-24T18:00:00Z",
+      "verification_status": "UNKNOWN"
+    },
+    {
+      "checkpoint_id": "NEON_CLUB_EXPERIMENT_2026-11-24",
+      "project_id": "NEON_CLUB_EXPERIMENT",
+      "path": "UPKB/PROJECTS/NEON_CLUB_EXPERIMENT/CHECKPOINT.json",
+      "updated_at": "2026-11-24T18:00:00Z",
+      "verification_status": "REPORTED"
     }
   ],
   "note": "Seed project checkpoints after reading each project's latest handoff and refreshing repository/CI/device evidence."
