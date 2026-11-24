@@ -1,0 +1,32 @@
+{
+  "checkpoint_id": "IMAGE_TRANSLATOR_RU_REPORTED_2026-11-24",
+  "project_id": "IMAGE_TRANSLATOR_RU",
+  "last_successful_step": "User-reported requirements preserved; targeted GitHub default-branch search did not locate a dedicated canonical repository.",
+  "last_commit": null,
+  "last_verified_build": null,
+  "last_test_result": null,
+  "known_problems": [
+    "No canonical repository or original brief confirmed.",
+    "Do not conflate Image Translator RU with russ-translation-models, which is a separate offline model archive project."
+  ],
+  "active_tasks": [],
+  "blocked_tasks": [],
+  "pending_tasks": [
+    "Locate original project brief, designs and source files.",
+    "Preserve batch image processing, bilingual original+translation output and professional terminology profiles."
+  ],
+  "next_action": "Find the original Image Translator RU brief and assets; map radio, IT, electronics, programming, engineering, robotics, physics, mathematics and cybersecurity terminology requirements before implementation.",
+  "required_files": [],
+  "required_access": [
+    "User-provided project materials or a confirmed canonical repository."
+  ],
+  "environment_state": [
+    "No image translation app, model or runtime environment was inspected or changed."
+  ],
+  "evidence": [
+    "User-reported project requirements from prior conversations; no primary repository source confirmed."
+  ],
+  "verification_status": "REPORTED",
+  "updated_at": "2026-11-24T17:55:00Z",
+  "updated_by": "GPT"
+}
