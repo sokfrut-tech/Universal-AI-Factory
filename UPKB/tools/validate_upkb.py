@@ -39,7 +39,7 @@ def require_array(document: dict | None, key: str, source: str) -> list:
     return document[key]
 
 
-SCHEMA_NAMES = ("document", "checkpoint", "environment", "task", "research", "agent", "pull_request")
+SCHEMA_NAMES = ("document", "checkpoint", "environment", "task", "research", "agent", "pull_request", "agent_report")
 SCHEMAS: dict[str, dict] = {}
 for name in SCHEMA_NAMES:
     schema = load(f"SCHEMA/{name}.schema.json")
