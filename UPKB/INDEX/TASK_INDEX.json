@@ -9,7 +9,7 @@
       "status": "active",
       "priority": "high",
       "owner": "GPT",
-      "next_action": "Complete remaining source-backed README/handoff records and add project checkpoints from current primary sources; locate original briefs/canonical storage for FOREST_LTE and IMAGE_TRANSLATOR_RU.",
+      "next_action": "Locate canonical repositories/original briefs for FOREST_LTE and IMAGE_TRANSLATOR_RU; complete remaining project dependency mapping and refresh source records where handoffs are historical.",
       "evidence": [
         "https://github.com/sokfrut-tech/Universal-AI-Factory/tree/feature/upkb-knowledge-base-bootstrap",
         "UPKB/INDEX/DOCUMENT_INDEX.json",
@@ -150,6 +150,27 @@
       "evidence": [
         "https://github.com/sokfrut-tech/avtoy-korea-auto/pull/78",
         "https://github.com/sokfrut-tech/avtoy-korea-auto/pull/81"
+      ],
+      "verification_status": "VERIFIED"
+    },
+    {
+      "task_id": "UPKB-CP-001",
+      "project_id": "UNIVERSAL_AI_FACTORY",
+      "title": "Seed source-backed project checkpoints",
+      "status": "completed",
+      "priority": "high",
+      "owner": "GPT",
+      "next_action": "Refresh these checkpoints when source PRs, builds or device evidence change; add checkpoint records for remaining projects as their primary sources are verified.",
+      "evidence": [
+        "UPKB/INDEX/CHECKPOINT_INDEX.json",
+        "UPKB/PROJECTS/JARVIS_PRIMARY/CHECKPOINT.json",
+        "UPKB/PROJECTS/JARVIS_OGAM/CHECKPOINT.json",
+        "UPKB/PROJECTS/ANTIGRAVITY_MOBILE/CHECKPOINT.json",
+        "UPKB/PROJECTS/AVTOY_KOREA/CHECKPOINT.json",
+        "UPKB/PROJECTS/STAMPCLEANER/CHECKPOINT.json",
+        "UPKB/PROJECTS/RUSSSEARCH_OPPO/CHECKPOINT.json",
+        "UPKB/PROJECTS/FOREST_LTE/CHECKPOINT.json",
+        "UPKB/PROJECTS/IMAGE_TRANSLATOR_RU/CHECKPOINT.json"
       ],
       "verification_status": "VERIFIED"
     }
