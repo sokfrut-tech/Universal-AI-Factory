@@ -1,0 +1,36 @@
+{
+  "checkpoint_id": "RUSSIAN_TRANSLATION_MODELS_2026-11-24",
+  "project_id": "RUSSIAN_TRANSLATION_MODELS",
+  "last_successful_step": "Repository README and model-archive project card reviewed; README describes Opus-MT ONNX int8 archives for ru-en, en-ru, zh-en and en-zh.",
+  "last_commit": null,
+  "last_verified_build": null,
+  "last_test_result": "No model artifact download, checksum comparison or inference test performed in this inventory step.",
+  "known_problems": [
+    "README states translation-models-v1 release archives still require manual owner upload.",
+    "Model archive presence, SHA-256 manifest consistency, licenses and runtime compatibility remain unverified."
+  ],
+  "active_tasks": [],
+  "blocked_tasks": [],
+  "pending_tasks": [
+    "Inspect translation-manifest.json and release assets.",
+    "Verify archive hashes and license/provenance.",
+    "Map exact consuming code in RussSearchOPPO."
+  ],
+  "next_action": "Compare every manifest SHA-256 to actual release/archive bytes and record artifact URLs, licenses and model revisions before integration claims.",
+  "required_files": [
+    "README.md",
+    "translation-manifest.json"
+  ],
+  "required_access": [
+    "Read access to model repository releases and RussSearchOPPO translation integration docs."
+  ],
+  "environment_state": [
+    "No model weights downloaded and no inference runtime started."
+  ],
+  "evidence": [
+    "https://github.com/sokfrut-tech/russ-translation-models"
+  ],
+  "verification_status": "REPORTED",
+  "updated_at": "2026-11-24T18:00:00Z",
+  "updated_by": "GPT"
+}
