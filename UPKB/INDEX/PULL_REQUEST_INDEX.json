@@ -13,7 +13,10 @@
       "base": "integration/jarvis-assistant-ci-smoke-repair-2026-11-10",
       "draft": false,
       "url": "https://github.com/sokfrut-tech/Gemeni/pull/148",
-      "verification_status": "VERIFIED"
+      "verification_status": "VERIFIED",
+      "check_summary": "Secret scanning SUCCESS; CodeQL SUCCESS; build SUCCESS",
+      "state": "open",
+      "checked_at": "2026-11-24"
     },
     {
       "project_id": "JARVIS_PRIMARY",
@@ -37,7 +40,10 @@
       "base": "feature/jarvis-step-1-memory-m1-2026-11-24",
       "draft": true,
       "url": "https://github.com/sokfrut-tech/OGAM/pull/7",
-      "verification_status": "VERIFIED"
+      "verification_status": "VERIFIED",
+      "check_summary": "Build isolated M2 OP-SQLite ARM64 APK SUCCESS; import/workspace scan SUCCESS; focused M1+M2 TypeScript/Jest/SQLite integration SUCCESS",
+      "state": "open",
+      "checked_at": "2026-11-24"
     },
     {
       "project_id": "JARVIS_OGAM",
@@ -49,7 +55,10 @@
       "base": "feature/jarvis-step-1-memory-m1-2026-11-24",
       "draft": true,
       "url": "https://github.com/sokfrut-tech/OGAM/pull/6",
-      "verification_status": "VERIFIED"
+      "verification_status": "VERIFIED",
+      "check_summary": "Isolated OP-SQLite ARM64 APK build SUCCESS; import/workspace scan SUCCESS",
+      "state": "open",
+      "checked_at": "2026-11-24"
     },
     {
       "project_id": "JARVIS_OGAM",
@@ -73,7 +82,10 @@
       "base": "main",
       "draft": true,
       "url": "https://github.com/sokfrut-tech/RussSearchOPPO/pull/15",
-      "verification_status": "VERIFIED"
+      "verification_status": "VERIFIED",
+      "check_summary": "No check runs returned; PR mergeable=false at audit time",
+      "state": "open",
+      "checked_at": "2026-11-24"
     },
     {
       "project_id": "RUSSSEARCH_OPPO",
@@ -97,7 +109,10 @@
       "base": "main",
       "draft": true,
       "url": "https://github.com/sokfrut-tech/Antigravity-Mobile/pull/19",
-      "verification_status": "VERIFIED"
+      "verification_status": "VERIFIED",
+      "check_summary": "CodeQL, Trivy, Semgrep, Gitleaks, Compose UI tests, debug APK build and unit tests SUCCESS",
+      "state": "open",
+      "checked_at": "2026-11-24"
     },
     {
       "project_id": "ANTIGRAVITY_MOBILE",
@@ -109,7 +124,10 @@
       "base": "main",
       "draft": true,
       "url": "https://github.com/sokfrut-tech/Antigravity-Mobile/pull/20",
-      "verification_status": "VERIFIED"
+      "verification_status": "VERIFIED",
+      "check_summary": "Build debug APK and Compose UI tests SUCCESS; separate Factory API checks workflow failed at npm test; deploy dry-run skipped",
+      "state": "open",
+      "checked_at": "2026-11-24"
     },
     {
       "project_id": "AVTOY_KOREA",
@@ -121,7 +139,10 @@
       "base": "feature/max-operator-commands-2026-11-16",
       "draft": true,
       "url": "https://github.com/sokfrut-tech/avtoy-korea-auto/pull/81",
-      "verification_status": "VERIFIED"
+      "verification_status": "VERIFIED",
+      "check_summary": "Secret scanning FAILURE; CodeQL FAILURE; two validate checks FAILURE. Job API returned no diagnostic steps; root cause not established.",
+      "state": "open",
+      "checked_at": "2026-11-24"
     },
     {
       "project_id": "AVTOY_KOREA",
@@ -133,7 +154,10 @@
       "base": "main",
       "draft": true,
       "url": "https://github.com/sokfrut-tech/avtoy-korea-auto/pull/78",
-      "verification_status": "VERIFIED"
+      "verification_status": "VERIFIED",
+      "check_summary": "All returned checks FAILURE: CodeQL, secret scan, worker tests, deploy, check, director evidence, functional/regression, security/privacy. Job APIs returned empty steps/runner_id=0 for worker test; root cause not established.",
+      "state": "open",
+      "checked_at": "2026-11-24"
     },
     {
       "project_id": "STAMPCLEANER",
