@@ -223,3 +223,18 @@ Research-only update. No PR merged.
 - OGAM Android workflow was inspected. It explicitly requires private `off-grid-ai/mobile-pro` and `off-grid-ai/shared` packages to run the complete app build; the setup action skips those checkouts only when token is empty, but then the complete TypeScript/app build cannot be assumed to pass because file dependencies and test imports reference the private sibling workspace. Do not remove this requirement or represent a focused test as APK build.
 - Attempted to create a separate secret-free GitHub Actions focused-validation branch in OGAM from M1 head. Branch `ci/jarvis-memory-m1-github-2026-11-24` was created, but GitHub file creation returned HTTP 422 (missing sha) and no workflow/script was committed. Treat branch as an empty branch at the M1 base; no CI was triggered. This is not a deliverable and must be revisited carefully or cleaned up when branch-delete capability is available.
 - Next safe route: either obtain actual CircleCI integration/authorization through the user's existing CircleCI project UI (without asking for any foreign token), or implement focused GitHub Actions via Git Data API (blob/tree/commit/ref) with fresh tree/ref inspection. Preserve separate gates: focused TS/Jest/Node SQLite ≠ full Android APK ≠ OPPO native SQLite acceptance.
+
+
+## 2026-11-24 continuation — focused GitHub Actions M1 validation succeeded
+
+- Recovered the previously empty OGAM validation branch `ci/jarvis-memory-m1-github-2026-11-24` and inspected its exact ref/head before writing.
+- Used Git Data API (blob → tree → commit → ref with expected-head lease) to commit two files:
+  - `.ci/run-jarvis-memory-m1.sh` — isolated harness based on the reviewed M1 source and all four focused test files; pin updated to immutable M1 head `a267478a8bf6b290e71b3d86992852b0b192a58f`.
+  - `.github/workflows/jarvis-memory-m1-focused.yml` — secret-free push + manual-dispatch workflow, Node.js 26, runs the focused harness only.
+- Commit: `e5ee7a40f3e9f3c29fb0dd28d140346b496b88a7`.
+- Verified both committed files by fetching them from the branch; the branch ref advanced successfully from parent `a267478a8bf6b290e71b3d86992852b0b192a58f`.
+- GitHub Actions automatically started on push: run #1, ID `45382511098`, URL https://github.com/sokfrut-tech/OGAM/actions/runs/45382511098.
+- Run completed successfully at 2026-11-24 11:16:04Z. Job `focused-validation` ID `138404881465` concluded `success`; all setup, checkout, Node 26 and focused-validation steps completed successfully. This proves the isolated script exited 0 for the pinned M1 source. Run duration for the focused command was approximately 12 seconds.
+- Scope of this green run: focused M1 TypeScript type-check, four focused Jest suites, production schema compilation, Node 26 `node:sqlite` schema/migration DDL + CHECK constraint + savepoint rollback probe. The harness deliberately uses a resolver stub for `@op-engineering/op-sqlite` because Jest mocks the native module. This is NOT a full React Native/Android APK build and NOT an OPPO device/native `op-sqlite` runtime probe.
+- This is a material gate passed for M1 source-level validation at the exact reviewed M1 head. PR #4 remains draft/open/unmerged. Do not start M2 yet: Android arm64 APK build and real PGEM10 native SQLite/device acceptance remain outstanding.
+- Next: obtain the actual CI log text for the passing job if accessible, then solve the separate Android build/private-workspace dependency route without requesting credentials for the foreign `off-grid-ai` account. Keep all gates explicitly separated.
