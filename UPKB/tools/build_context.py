@@ -75,7 +75,7 @@ def resolve_indexed_path(root: Path, raw_path: object) -> Path:
     return candidate
 
 
-def build_context(root: Path, project_id: str, source_commit: str) -> dict:
+def build_context(root: Path, project_id: str, source_commit: str, task_id: str | None = None) -> dict:
     """Build one context packet; refuse missing or ambiguous project/checkpoint data."""
     root = root.resolve()
     if not project_id or not isinstance(project_id, str):
@@ -96,6 +96,20 @@ def build_context(root: Path, project_id: str, source_commit: str) -> dict:
     if len(matches) != 1:
         raise BuildContextError(f"expected exactly one project record for {project_id!r}; found {len(matches)}")
     project = matches[0]
+
+    selected_task = None
+    if task_id is not None:
+        task_records = records(loaded["tasks"], "records", "TASK_INDEX")
+        task_matches = [item for item in task_records if item.get("task_id") == task_id]
+        if len(task_matches) != 1:
+            raise BuildContextError(
+                f"expected exactly one task record for {task_id!r}; found {len(task_matches)}"
+            )
+        selected_task = task_matches[0]
+        if selected_task.get("project_id") != project_id:
+            raise BuildContextError(
+                f"task {task_id!r} belongs to {selected_task.get('project_id')!r}, not {project_id!r}"
+            )
 
     project_readme_path = f"PROJECTS/{project_id}/README.md"
     project_readme = read_text(root, project_readme_path)
@@ -132,6 +146,7 @@ def build_context(root: Path, project_id: str, source_commit: str) -> dict:
         "upkb_commit": source_commit.lower(),
         "project_id": project_id,
         "project": project,
+        "task": selected_task,
         "core": core,
         "project_readme": project_readme,
         "checkpoint": checkpoint,
@@ -157,6 +172,7 @@ def resolve_git_commit(root: Path) -> str:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--project-id")
+    parser.add_argument("--task-id", help="Require exactly one task record scoped to --project-id")
     parser.add_argument("--all-checkpointed", action="store_true")
     parser.add_argument("--source-commit", help="Exact 40-character commit SHA; defaults to git rev-parse HEAD")
     parser.add_argument("--output")
@@ -170,6 +186,8 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--output-dir is required with --all-checkpointed")
     if args.project_id and args.output_dir:
         parser.error("--output-dir is only valid with --all-checkpointed")
+    if args.task_id and not args.project_id:
+        parser.error("--task-id requires --project-id and cannot be used with --all-checkpointed")
 
     try:
         repo_root = args.repo_root.resolve()
@@ -196,7 +214,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"Built {len(project_ids)} project context packets at UPKB commit {commit}.")
             return 0
 
-        packet = build_context(root, args.project_id, commit)
+        packet = build_context(root, args.project_id, commit, args.task_id)
         rendered = json.dumps(packet, ensure_ascii=False, indent=2) + "\n"
         if args.output:
             Path(args.output).write_text(rendered, encoding="utf-8")
