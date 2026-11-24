@@ -67,16 +67,16 @@
       "name": "Forest 4G connectivity",
       "repository": null,
       "status": "REPORTED",
-      "status_note": "Planning brief exists in master index; no dedicated repository confirmed.",
-      "next_action": "Find existing measurements and confirm whether a repository exists before implementation."
+      "status_note": "User-reported project. No dedicated repository confirmed in the 12 observed GitHub repositories; a targeted default-branch search on 2026-11-24 did not identify a canonical repository. No dedicated measurements/document store has yet been indexed.",
+      "next_action": "Locate original measurements, equipment notes and canonical storage/repository before implementation."
     },
     {
       "project_id": "IMAGE_TRANSLATOR_RU",
       "name": "Image Translator RU",
       "repository": null,
       "status": "REPORTED",
-      "status_note": "Project requirements are known from prior user instructions; repository mapping not confirmed in this inventory.",
-      "next_action": "Search all repositories and handoffs for the project."
+      "status_note": "User-reported project with requirements preserved in prior context. No dedicated repository confirmed in the 12 observed GitHub repositories; targeted default-branch GitHub code search on 2026-11-24 returned no matching files. Do not conflate with russ-translation-models, which is a model-archive repository.",
+      "next_action": "Locate original brief, design files and canonical repository; preserve batch translation and specialist terminology requirements."
     },
     {
       "project_id": "STAMPCLEANER",
