@@ -9,13 +9,15 @@
       "status": "active",
       "priority": "high",
       "owner": "GPT",
-      "next_action": "Extend source-backed document inventory to remaining repositories, including README/continuation records and canonical project checkpoints; locate original briefs and canonical storage for FOREST_LTE and IMAGE_TRANSLATOR_RU.",
+      "next_action": "Complete remaining source-backed README/handoff records and add project checkpoints from current primary sources; locate original briefs/canonical storage for FOREST_LTE and IMAGE_TRANSLATOR_RU.",
       "evidence": [
         "https://github.com/sokfrut-tech/Universal-AI-Factory/tree/feature/upkb-knowledge-base-bootstrap",
         "UPKB/INDEX/DOCUMENT_INDEX.json",
         "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/b6bfdecd95d2af502c8c1891f8d6cd9b1eac4fb3",
         "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/a427b80027e3d608d78417b199602f0cdf9edd92",
-        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45452470186"
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45452470186",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/78e9115c792aa05a652100c76fb1f71dc3d962e7",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45452715486"
       ],
       "verification_status": "REPORTED"
     },
@@ -26,12 +28,18 @@
       "status": "completed",
       "priority": "high",
       "owner": "GPT",
-      "next_action": "Maintain schema coverage as new record types are introduced; add schemas for task, research, agent and PR records when their contracts stabilize.",
+      "next_action": "Maintain all seven record schemas and add consumer-level integration tests before enabling agent read/write integration.",
       "evidence": [
         "UPKB/tools/validate_upkb.py",
         ".github/workflows/upkb-validation.yml",
         "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45450813762",
-        "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/4154388be3cd17847d696872c657dffc2824fa6a"
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/4154388be3cd17847d696872c657dffc2824fa6a",
+        "UPKB/SCHEMA/task.schema.json",
+        "UPKB/SCHEMA/research.schema.json",
+        "UPKB/SCHEMA/agent.schema.json",
+        "UPKB/SCHEMA/pull_request.schema.json",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/ae9ff40b1b7f71f7263f75f2e7587fc257107487",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45452947914"
       ],
       "verification_status": "VERIFIED"
     },
