@@ -32,6 +32,7 @@ INDEX_FILES = {
     "pull_requests": "INDEX/PULL_REQUEST_INDEX.json",
 }
 COMMIT_RE = re.compile(r"^[0-9a-fA-F]{40}$")
+DEFAULT_MAX_CONTEXT_BYTES = 512_000
 
 
 def read_text(root: Path, relative: str) -> str:
@@ -155,6 +156,19 @@ def build_context(root: Path, project_id: str, source_commit: str, task_id: str 
     }
 
 
+def render_context(packet: dict, max_bytes: int = DEFAULT_MAX_CONTEXT_BYTES) -> str:
+    """Serialize a packet without truncation and enforce a hard UTF-8 byte budget."""
+    if not isinstance(max_bytes, int) or max_bytes < 1:
+        raise BuildContextError("max_bytes must be a positive integer")
+    rendered = json.dumps(packet, ensure_ascii=False, indent=2) + "\n"
+    actual_bytes = len(rendered.encode("utf-8"))
+    if actual_bytes > max_bytes:
+        raise BuildContextError(
+            f"context packet is {actual_bytes} bytes, exceeding the {max_bytes}-byte budget"
+        )
+    return rendered
+
+
 def resolve_git_commit(root: Path) -> str:
     try:
         result = subprocess.run(
@@ -177,6 +191,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--source-commit", help="Exact 40-character commit SHA; defaults to git rev-parse HEAD")
     parser.add_argument("--output")
     parser.add_argument("--output-dir")
+    parser.add_argument("--max-bytes", type=int, default=DEFAULT_MAX_CONTEXT_BYTES,
+                        help="Maximum UTF-8 bytes per packet; packets are never truncated")
     parser.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parents[2])
     args = parser.parse_args(argv)
 
@@ -208,14 +224,13 @@ def main(argv: list[str] | None = None) -> int:
             output_dir.mkdir(parents=True, exist_ok=True)
             for project_id in project_ids:
                 packet = build_context(root, project_id, commit)
-                (output_dir / f"{project_id}.context.json").write_text(
-                    json.dumps(packet, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-                )
+                rendered = render_context(packet, args.max_bytes)
+                (output_dir / f"{project_id}.context.json").write_text(rendered, encoding="utf-8")
             print(f"Built {len(project_ids)} project context packets at UPKB commit {commit}.")
             return 0
 
         packet = build_context(root, args.project_id, commit, args.task_id)
-        rendered = json.dumps(packet, ensure_ascii=False, indent=2) + "\n"
+        rendered = render_context(packet, args.max_bytes)
         if args.output:
             Path(args.output).write_text(rendered, encoding="utf-8")
         else:
