@@ -1,10 +1,14 @@
-# Qwen agent channel
+# Qwen local-first research channel
 
-This directory reserves a durable exchange location for Qwen-related research and provider work.
+This directory tracks research toward a **strictly zero-cost, local-first** Qwen integration.
 
-- `inbox/`: task requests for a Qwen executor.
-- `outbox/`: substantive Qwen reports and verifiable results.
-- A file in `inbox/` is only queued context. It does **not** invoke Qwen.
-- No Qwen dispatcher/provider invocation has been verified as configured at the time this channel was created.
-- Do not write empty ACKs or represent queued work as completed.
-- Any future dispatcher must follow `coordination/shared/AGENT_EXCHANGE_PROTOCOL.md` and `coordination/AI_AGENT_USAGE_POLICY.md`.
+- `inbox/`: bounded research tasks.
+- `outbox/`: substantive, evidence-backed reports only.
+- No Qwen hosted API worker is configured or approved.
+- No billing account, API key, card, paid inference, paid runner, or paid fallback may be added.
+- Public inbox files and GitHub Actions receipts do not invoke a Qwen model.
+- Until an existing user-owned local execution host is verified, automated Qwen dispatch is **BLOCKED**, not completed.
+- Local open-weight models may be evaluated subject to exact model license and runtime verification.
+- Preserve offline Jarvis behavior. No microphone, screen, prompts, repository source, or personal data may be sent to a cloud model.
+
+The current research brief is in `inbox/2026-11-25_jarvis-qwen-technology-and-factory-adapter-research.md`.
