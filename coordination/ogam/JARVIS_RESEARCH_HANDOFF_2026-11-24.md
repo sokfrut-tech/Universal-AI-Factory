@@ -460,6 +460,19 @@ Research-only update. No PR merged.
 - Verification boundary: contract Node suites, strict `tsc` on Slice 10 modules, and live Audit CI are green; full RN Jest, whole-workspace `tsc`, Gradle/APK build, and physical device runtime were not executed on PR #1 in this slice.
 - Ready for **Slice 11 (`@offgrid/models` `11 → 0` `src/`: `CATALOG` + `pickModelsForDevice` + remaining `23` test hits + `package.json`/`metro.config.js` removal)** while all PRs remain `OPEN / Draft / UNMERGED`.
 
+## 2026-11-25 continuation — Этап 2 · OGAM PR #1 Slice 11 verified (`@offgrid/models` 100% eliminated: `11 → 0` `src/`, `2 → 1` local deps)
+
+- Pushed Slice 11 to Draft PR #1 (`https://github.com/sokfrut-tech/OGAM/pull/1`, branch `feature/jarvis-step-2-storage-privacy`, `OPEN / Draft / UNMERGED`) at HEAD `51caa92464525a716594b3ed1db19d19c62ec984`.
+- Added/extended OGAM-owned pure TypeScript modules: `src/utils/modelCatalogCore.ts` (`CATALOG` covering curated chat/vision models, `Qwen3-ASR 0.6B`, all 18 image models from `catalog/models.json` + `Qwen Image 2.1`, and 6 Wan video packs with verified HF LFS SHA-256 checksums, plus `pickModelsForDevice`), extended `src/types/modelCatalog.ts` (`imageModes`), and extended `src/utils/videoPackPolicy.ts` (`templateStoryboard`, `videoModelInfo`).
+- Migrated all remaining `11` `src/` files and all `21` non-fixture test imports (`19` test files under `__tests__/harness/`, `__tests__/integration/`, and `__tests__/pro/video/`) off `@offgrid/models`, and removed `@offgrid/models` from `package.json` and `metro.config.js` (`package-lock.json` kept untouched).
+- Wired `scripts/__tests__/model-catalog-core.node.test.mjs` into `.github/workflows/ogam-external-dependency-audit.yml` (`50` steps).
+- Exact-head verification at `51caa92464525a716594b3ed1db19d19c62ec984`:
+  - **Live `OGAM External Dependency Audit`:** `push` [`45580501348`](https://github.com/sokfrut-tech/OGAM/actions/runs/45580501348) (`completed / success`, `23s`, job `139089040285`) + `pull_request` [`45580512539`](https://github.com/sokfrut-tech/OGAM/actions/runs/45580512539) (`completed / success`).
+  - **Local verification:** all `47` `.mjs` suites (`197/197` cases pass via `node --experimental-strip-types --test`, `0` fail, `0` skipped), `tsc --noEmit --strict` on the 3 Slice 11 `.ts` files (`exit 0`), PyYAML workflow check (`50` steps), and `node scripts/audit-offgrid-imports.mjs` (`2,044` files scanned, `1,181` refs, `packageImports: 291`, `localFileDependencies: 1` (`@offgrid/sync` only), `@offgrid/models`: **`0` in `src/`**, **`0` in `build-config`**, **`2` synthetic string fixtures only** in `scripts/__tests__/audit-offgrid-imports.test.mjs`).
+- Verification boundary: contract Node suites, strict `tsc` on Slice 11 modules, and live Audit CI are green; full RN Jest, whole-workspace `tsc`, Gradle/APK build, and physical device runtime were not executed on PR #1 in this slice.
+- Ready for **Slice 12+ (`@offgrid/sync` Half B `29 → 0` `src/` + `pro/` cleanup)** while all PRs remain `OPEN / Draft / UNMERGED`.
+
+
 
 
 
