@@ -1,94 +1,87 @@
-# Qwen independent research task — Jarvis + Universal AI Factory
+# Qwen local-first research task — Jarvis + Universal AI Factory
 
 - Date: 2026-11-25
 - Requested by: project owner
 - Coordinator: ChatGPT
-- Status: QUEUED — this file is not proof of a Qwen API invocation
-- Scope: research and architecture review only; do not modify application source or secrets
+- Status: QUEUED — no Qwen execution is claimed
+- Budget constraint: **strictly zero cost**. No paid API, billing account, card, subscription, metered fallback, or paid runner.
+- Scope: public-source research and local architecture only; do not modify application source, secrets, billing, or deployment.
 
 ## Objective
 
-Independently assess the next useful Qwen technologies and recommend a practical integration path for two distinct targets:
+Assess whether open-weight Qwen models can improve two targets without introducing any ongoing service cost:
 
 1. **Jarvis Android** — local-first assistant for OPPO Find X6 Pro (PGEM10), Snapdragon 8 Gen 2, Android 16 / ColorOS. Offline operation is a core requirement.
-2. **Universal-AI-Factory** — multi-agent GitHub workflow where tasks, evidence and handoffs must be durable and auditable.
+2. **Universal-AI-Factory** — auditable multi-agent workflow. A Qwen worker is acceptable only if it runs on existing user-owned hardware or another genuinely no-cost local resource. Do not assume GitHub-hosted compute or a free hosted inference endpoint is unlimited or free.
+
+## Strict zero-cost rules
+
+- Do not call Alibaba Cloud Model Studio, QwenCloud, OpenAI-compatible hosted endpoints, inference providers, or any other hosted model API.
+- Do not add API keys, billing setup, card verification, paid subscriptions, pay-as-you-go configuration, or automatic paid fallback.
+- Do not run model hosting, deployment, fine-tuning, paid GPU, paid CI, or paid storage.
+- Cloud free trials are not treated as a permanent free solution. Record them only as excluded options.
+- Open model weights and open-source inference software may be evaluated for local execution. Account for storage, power, data and thermal costs; no inference can be called "free" if it requires a paid service.
+- No cloud audio, screen, prompts, source code, or personal data uploads.
 
 ## Questions to answer
 
-### A. Qwen technology status
+### A. Open-weight Qwen models
 
-Verify using official Qwen sources and dated release notes:
+Use official Qwen / Hugging Face model cards and the exact repository license. Identify:
+- Smallest viable Qwen text models with downloadable official GGUF variants.
+- Exact model IDs, file sizes by quantization, license, provenance, supported context, multilingual/Russian evidence.
+- Which candidate is suitable for an initial OPPO test and which is only an optional higher-quality candidate.
+- Runtime compatibility with llama.cpp on Android/ARM64; distinguish official support from untested assumptions.
 
-- Qwen4-Max: actual capabilities, context, tool use, modality, API availability, pricing/limits if public, data handling, and whether downloadable open weights exist.
-- Qwen3.8-Omni-Flash and Qwen3.8-LiveTranslate: supported input/output modalities, Russian support, streaming behavior, speaker separation, API constraints and costs.
-- Current smaller open-weight Qwen models that can realistically run on Android Snapdragon 8 Gen 2. Verify exact model IDs, parameter sizes, quantization formats, license, source URLs and download availability.
-- Do not infer that a cloud model has local/offline weights. Distinguish API models from open-weight releases.
+### B. Jarvis device feasibility
 
-### B. Jarvis integration recommendation
+Compare local Qwen 0.6B, 1.7B and 4B quantizations where available. Evaluate:
+- Download/storage size, runtime RAM (not just file size), context/KV-cache impact.
+- Snapdragon 8 Gen 2 CPU/Adreno/QNN feasibility; do not claim NPU/Hexagon acceleration unless the exact backend supports this model and is tested.
+- Thermal, battery and latency risks.
+- Russian conversation, instruction-following and tool-call evaluation with fixed prompts and repeatable scoring.
+- Offline fallback to the current model if Qwen fails or exceeds resource limits.
+- Exact candidate source paths in OGAM/Jarvis, only after inspecting repository contents provided to you. Do not guess paths.
 
-Compare at least these options:
+### C. Factory architecture
 
-1. Local Qwen model through the existing llama.cpp / llama.rn / GGUF route.
-2. Optional Qwen cloud provider adapter behind explicit user consent.
-3. Optional streaming translation mode for live multilingual conversations.
+- Do not implement a hosted Qwen API adapter.
+- Determine whether an actual Qwen worker can run on existing user-owned hardware at zero additional cost.
+- GitHub inbox files and Actions receipts are not proof of a Qwen model invocation.
+- If no available local execution host is verified, mark automated Qwen dispatch as BLOCKED; do not create an ACK or fabricate an outbox report.
+- Recommend a safe local bridge only if it can be run on the user's existing device/computer without exposing private network services publicly or adding paid infrastructure.
 
-For each option provide:
-- What source files/interfaces in the current OGAM/Jarvis code would be affected (inspect repository before naming exact paths).
-- RAM, storage, thermal, battery and latency risks on Snapdragon 8 Gen 2.
-- Russian quality evaluation plan with repeatable prompts and scoring.
-- Offline behavior and fallback.
-- Privacy, permission and microphone-data boundaries.
-- License and model-weight provenance.
-- A rollback strategy.
+### D. Ranked recommendation
 
-Do not recommend replacing the existing local model until measured device results justify it.
+Return:
+1. Test locally now.
+2. Prototype behind a feature flag.
+3. Keep under research.
+4. Reject/defer, with reasons.
 
-### C. Factory multi-agent integration
-
-Review the current factory protocol and the open provider-dispatch work. Recommend a Qwen provider adapter that:
-- Uses a separate explicit provider/model configuration.
-- Reads credentials only from GitHub Actions secrets; never print, commit or echo secret values.
-- Has bounded timeouts/retries, idempotency and correlation IDs.
-- Distinguishes received, queued, dispatched, running, completed, failed and blocked.
-- Writes substantive results to `coordination/qwen/outbox/`; an ACK alone is not a result.
-- Does not claim a Qwen agent was invoked unless a real API response and provider/model metadata are recorded.
-- Does not modify another repository without a scoped branch and explicit authorization.
-
-### D. Independent recommendation
-
-Return a ranked decision:
-- Implement now (if any).
-- Prototype behind a feature flag.
-- Keep under research.
-- Reject / defer, with reasons.
-
-Prefer the smallest useful integration over a broad rewrite.
+Do not replace the existing local model until actual device measurements justify it.
 
 ## Required report format
 
-Save one substantive Markdown report in `coordination/qwen/outbox/` with:
-
-1. Executive summary.
-2. Verified facts with direct official source URLs and publication dates.
-3. Cloud vs open-weight vs fully offline comparison table.
-4. Device feasibility for OPPO Find X6 Pro / Snapdragon 8 Gen 2.
-5. Factory provider-adapter proposal.
-6. Security/privacy/licensing review.
-7. Benchmarks and acceptance tests.
-8. Ranked recommendations and unresolved questions.
-9. Exact files/commits inspected and any commands/tests actually run.
+Save one substantive Markdown report in `coordination/qwen/outbox/` containing:
+1. Executive summary and zero-cost compliance.
+2. Verified model facts with exact source URLs and dates.
+3. Cloud/hosted options explicitly excluded from implementation.
+4. Open-weight model comparison and file sizes.
+5. Snapdragon 8 Gen 2 feasibility, clearly separating estimates from measurements.
+6. Jarvis integration files inspected and minimal prototype proposal.
+7. RAM/storage/thermal/battery benchmark plan.
+8. Licensing/provenance and security review.
+9. Ranked recommendations and unresolved questions.
+10. Exact files/commits inspected and commands/tests actually run.
 
 ## Evidence rules
 
-- Cite official model cards, official API docs, release notes and source repositories.
-- For licenses, inspect the exact model/repository license; do not assume one license covers every package or weight.
-- Label vendor performance figures as vendor-reported, not independently measured.
-- Never fabricate test results, device measurements, API calls or source inspection.
-- If unable to access a source or execute a benchmark, state that explicitly.
-- Do not create an empty ACK file. If no substantive answer can be produced, leave the outbox empty and report the blocker through the available real dispatch mechanism.
+- Prefer official Qwen and ggml-org sources, model cards, exact LICENSE files, and llama.cpp Android docs.
+- No invented device measurements, source inspections, tests, API calls, or runtime performance.
+- Label vendor claims, estimates, and independently measured results separately.
+- If the report cannot be completed from available public sources, explain the gap and leave the outbox empty rather than creating an ACK.
 
 ## Constraints
 
-- Research only. No APK changes, production deployment, merge, billing activation, or secret changes.
-- No cloud audio/screen upload without explicit user consent.
-- Preserve local-first operation and the user's ability to use Jarvis without internet.
+Research only. No APK changes, production deployment, merge, billing activation, secrets, or paid service. Preserve local-first operation and the user's ability to use Jarvis without internet.
