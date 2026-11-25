@@ -14,9 +14,9 @@ elif [[ "$EVENT_NAME" == "push" ]]; then
     exit 2
   fi
   if [[ -z "$EVENT_BEFORE" || "$EVENT_BEFORE" == "0000000000000000000000000000000000000000" ]]; then
-    mapfile -t TASKS < <(git diff-tree --root --no-commit-id --name-only --diff-filter=AM -r "$EVENT_SHA" -- 'coordination/qwen/dispatch/*.md')
+    mapfile -t TASKS < <(git diff-tree --root --no-commit-id --name-only --diff-filter=AM -r "$EVENT_SHA" -- 'coordination/qwen/dispatch/TASK_*.md')
   else
-    mapfile -t TASKS < <(git diff --name-only --diff-filter=AM "$EVENT_BEFORE" "$EVENT_SHA" -- 'coordination/qwen/dispatch/*.md')
+    mapfile -t TASKS < <(git diff --name-only --diff-filter=AM "$EVENT_BEFORE" "$EVENT_SHA" -- 'coordination/qwen/dispatch/TASK_*.md')
   fi
   if [[ "${#TASKS[@]}" -ne 1 ]]; then
     echo "ERROR: expected exactly one added/modified Qwen task; found ${#TASKS[@]}." >&2
@@ -28,7 +28,7 @@ else
   exit 4
 fi
 
-if [[ ! "$TASK" =~ ^coordination/qwen/dispatch/[A-Za-z0-9._-]+\.md$ ]]; then
+if [[ ! "$TASK" =~ ^coordination/qwen/dispatch/TASK_[A-Za-z0-9._-]+\.md$ ]]; then
   echo "ERROR: invalid Qwen task path." >&2
   exit 5
 fi
