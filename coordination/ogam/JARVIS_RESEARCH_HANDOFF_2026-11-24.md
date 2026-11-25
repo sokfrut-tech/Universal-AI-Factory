@@ -472,6 +472,23 @@ Research-only update. No PR merged.
 - Verification boundary: contract Node suites, strict `tsc` on Slice 11 modules, and live Audit CI are green; full RN Jest, whole-workspace `tsc`, Gradle/APK build, and physical device runtime were not executed on PR #1 in this slice.
 - Ready for **Slice 12+ (`@offgrid/sync` Half B `29 → 0` `src/` + `pro/` cleanup)** while all PRs remain `OPEN / Draft / UNMERGED`.
 
+## 2026-11-25 continuation — Этап 2 · OGAM PR #1 Slice 12 verified (`@offgrid/sync` Half B `29 → 9` `source`, `17/19` `src/` files cleared)
+
+- Pushed Slice 12 to Draft PR #1 (`https://github.com/sokfrut-tech/OGAM/pull/1`, branch `feature/jarvis-step-2-storage-privacy`, `OPEN / Draft / UNMERGED`) at HEAD `92794e0db6b03f2848824b15916c5286bd2dc20a`.
+- Added 5 OGAM-owned pure TypeScript modules:
+  - `src/types/syncContracts.ts` (zero-runtime canonical types for Personal Mesh devices, provenance, timelines/tool artifacts/metrics/turns, model manifests, Pro admission & activation failures, entity descriptors, native directory copy, health snapshots, transport/discovery bridges, pairing/revocation persistence, `SyncEngineOptions`, `BlobChannelHost`/`BlobEndpoint`, `RnTcpModule`, `RnZeroconf`).
+  - `src/utils/proEntitlementCore.ts` (`hasProAccess`, `projectPersonalMeshActivationFailure`).
+  - `src/utils/syncEntityCore.ts` (`OFFGRID_SYNC_PORT` `37878`, all `9` `*_ENTITY` constants, `createKnowledgeDocumentStateFields`, `createSharedFileStateFields`, `writingLearnedEntityId`, `createWritingLearnedFields`, `parseWritingLearned`, `ogamModelTransferBlocker`).
+  - `src/utils/syncMessageContextCore.ts` (`serializeSyncedMessageContext`, `projectSyncedMessageTurn`).
+  - `src/utils/syncChecksumCore.ts` (`CHUNK_SIZE` `262_144`, `BLOB_FRAME_BYTES` `4_194_304`, `BLOB_TOKEN_TTL_MS` `300_000`, `checksumFromSha512Hex`, portable `BigInt` streaming FIPS 180-4 SHA-512 `IncrementalChecksum`, pure SHA-256 / HMAC-SHA256 / RFC 5869 HKDF-SHA256, `blobKeyBase64`, `createBlobMaterial`; uses OGAM-owned HKDF domain `offgrid-sync-blob-v1` / `offgrid-sync-blob-key-v1:<requestId>` because upstream `off-grid-ai/shared` is unavailable/404).
+- Migrated `17` `src/` files (`20` `@offgrid/sync*` import statements cleared: `src/types/index.ts`, `src/stores/{appStore.ts, proAccessSlice.ts}`, `src/screens/ProDetailScreen/ProUnlockModal.tsx`, `src/services/proLicenseService.ts`, `src/services/modelManager/{index.ts, imageTransfer.ts, transferAdmission.ts}`, `src/services/sync/{knowledgeDocument.ts, localDevice.ts, nativeDirectorySource.ts, nativeProximity.ts, nativeSync.ts, messageContext.ts, mutation.ts, fileChecksum.ts, nativeBlobChannel.ts}`) plus `3` matching unit tests (`__tests__/unit/sync/{fileChecksum.test.ts, nativeBlobChannel.test.ts}`, `__tests__/rntl/screens/ProDetailScreen.test.tsx`).
+- Wired `4` standalone Node contract suites (`pro-entitlement-core`, `sync-entity-core`, `sync-message-context-core`, `sync-checksum-core`) into `.github/workflows/ogam-external-dependency-audit.yml` (`54` steps).
+- Exact-head verification at `92794e0db6b03f2848824b15916c5286bd2dc20a`:
+  - **Live `OGAM External Dependency Audit`:** `push` [`45601768201`](https://github.com/sokfrut-tech/OGAM/actions/runs/45601768201) (`completed / success`, `31s`, job `139162216082`) + `pull_request` [`45601781820`](https://github.com/sokfrut-tech/OGAM/actions/runs/45601781820) (`completed / success`).
+  - **Local verification:** all `51` `.mjs` suites (`214/214` cases pass: `3/3` plain + `211/211` `--experimental-strip-types --test`, `0` fail, `0` skipped, with `IncrementalChecksum` cross-verified against `node:crypto` SHA-512 and `hkdfSha256` against RFC 5869 + `node:crypto.hkdfSync`), `tsc --noEmit --strict` on all 5 new `.ts` files (`exit 0`), PyYAML workflow check (`54` steps), and `node scripts/audit-offgrid-imports.mjs` (`2,053` files scanned, `1,159` refs, `packageImports: 268`, `localFileDependencies: 1`, `@offgrid/sync` `source`: **`29 → 9`** across `discovery.ts` (4), `engine.ts` (4), and `scripts/blob-e2e/bundle-desktop-host.sh` (1); `test`: **`104 → 101`**).
+- Verification boundary: contract Node suites, strict `tsc` on Slice 12 modules, and live Audit CI are green; full RN Jest, whole-workspace `tsc`, Gradle/APK build, and physical device runtime were not executed on PR #1 in this slice.
+- Ready for **Slice 13 (`@offgrid/sync` final: `discovery.ts`, `engine.ts`, `bundle-desktop-host.sh`, remaining `101` test hits, and `package.json`/`metro.config.js`/`jest.config.js` removal → `0` `localFileDependencies`)** while all PRs remain `OPEN / Draft / UNMERGED`.
+
 
 
 
