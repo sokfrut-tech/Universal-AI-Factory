@@ -437,6 +437,18 @@ Research-only update. No PR merged.
 - Artifact: `Jarvis-M5-OPSQLite-Native-Probe-APK` (`id=14999211878`, https://github.com/sokfrut-tech/OGAM/actions/runs/45563132527/artifacts/14999211878).
 - Evidence boundary preserved: CI + real SQLite fault injection + Android 15 emulator runtime verified green; physical `OPPO PGEM10` sanity check on `Jarvis-M5-Memory.apk` is available/optional while ready to advance to **Этап 2 (`OGAM PR #1 · Slice 9`, `@offgrid/models` `35 → 0`)**. All PRs remain `OPEN / Draft / UNMERGED`.
 
+## 2026-11-25 continuation — Этап 2 · OGAM PR #1 Slice 9 verified (`@offgrid/models` `35 → 17` `src/`)
+
+- Pushed Slice 9 to Draft PR #1 (`https://github.com/sokfrut-tech/OGAM/pull/1`, branch `feature/jarvis-step-2-storage-privacy`, `OPEN / Draft / UNMERGED`) at HEAD `ceb53a73b6d7eb4ab068cbe644e0f6504f09ed9d`.
+- Added 5 OGAM-owned TypeScript modules (`src/types/modelCatalog.ts`, `src/utils/mtpHeadsCore.ts` with verified Hugging Face LFS SHA-256 digests for Gemma 4 E2B/E4B/26B-A4B/31B Q8_0 MTP heads, `src/utils/videoPackPolicy.ts`, `src/utils/transcriptionEnginePolicy.ts`, and `src/utils/remoteCatalogCore.ts`) and 4 standalone Node contract suites (`mtp-heads-core`, `video-pack-policy`, `transcription-engine-policy`, `remote-catalog-core`) wired into `.github/workflows/ogam-external-dependency-audit.yml` (`46` steps).
+- Migrated `21` `src/` files: `18` `src/` files completely cleared to `0` `@offgrid/models` imports (`ModelsScreen/{TranscriptionModelsTab.tsx, index.tsx, utils.ts}`, `autoSetupPlan.ts`, `coreMLModelBrowser.ts`, `curatedLiteRTRegistry.ts`, `llamaEngineSupport.ts`, `modelDownloadService/types.ts`, `modelManager/downloadHelpers.ts`, `mtpHeads.ts`, `startModelDownload.ts`, `videoModelFiles.ts`, `whisperModelDownloads.ts`, `whisperModels.ts`, `recommendedModels.ts`, `appStore.ts`, `sync/mutation.ts`, `modelCatalogStore.ts`) plus non-`CATALOG` helper imports cleared from `3` `src/` files (`useDownloadedSpeedBadges.ts`, `phoneVideoPacks.ts`, `qwenAsrModel.ts`).
+- Exact-head verification at `ceb53a73b6d7eb4ab068cbe644e0f6504f09ed9d`:
+  - **Live `OGAM External Dependency Audit` (`45568112618`, https://github.com/sokfrut-tech/OGAM/actions/runs/45568112618):** `completed / success` (`23s`).
+  - **Local verification:** all `43` `.mjs` contract suites (`180/180` cases pass via `node --experimental-strip-types --test`, `0` fail, `0` skipped), `tsc --noEmit --strict` on the 5 new `.ts` files (`exit 0`), PyYAML workflow check (`46` steps), and `node scripts/audit-offgrid-imports.mjs` (`2,036` files scanned, `1,223` refs, `packageImports: 335`, `localFileDependencies: 2`, `@offgrid/models` `src/`: `35 → 17`, `test`: `29`).
+- Verification boundary: contract Node suites, strict `tsc` on new modules, and live Audit CI are green; full RN Jest, whole-workspace `tsc`, Gradle/APK build, and physical device runtime were not executed on PR #1 in this slice.
+- Ready for **Slice 10 (`@offgrid/models` `17 → 0` `src/` + test cleanup + `package.json`/`metro.config.js` removal)** while all PRs remain `OPEN / Draft / UNMERGED`.
+
+
 
 
 
