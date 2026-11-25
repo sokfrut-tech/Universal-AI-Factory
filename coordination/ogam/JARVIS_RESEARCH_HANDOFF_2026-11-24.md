@@ -448,6 +448,19 @@ Research-only update. No PR merged.
 - Verification boundary: contract Node suites, strict `tsc` on new modules, and live Audit CI are green; full RN Jest, whole-workspace `tsc`, Gradle/APK build, and physical device runtime were not executed on PR #1 in this slice.
 - Ready for **Slice 10 (`@offgrid/models` `17 → 0` `src/` + test cleanup + `package.json`/`metro.config.js` removal)** while all PRs remain `OPEN / Draft / UNMERGED`.
 
+## 2026-11-25 continuation — Этап 2 · OGAM PR #1 Slice 10 verified (`@offgrid/models`: `17 → 11` `src/`, `29 → 23` tests)
+
+- Pushed Slice 10 to Draft PR #1 (`https://github.com/sokfrut-tech/OGAM/pull/1`, branch `feature/jarvis-step-2-storage-privacy`, `OPEN / Draft / UNMERGED`) at HEAD `9079ef5f2508a768f35212da3f3cee80283e5b42`.
+- Added/extended 4 OGAM-owned pure TypeScript modules: `src/utils/sdImagePackPolicy.ts` (`QWEN_IMAGE_21_WEIGHT`, `SD_CHECKPOINT_HEADER_BYTES`, `sdImagePackFor`, `isSDImageWeight`, `isImageWeightAvailableOn`, `imageEngineSettings`, portable `Uint8Array` `isCompleteSDCheckpointHeader`), `src/utils/ggufSplitFiles.ts` (`collapseSplitGgufParts`), `src/utils/huggingFaceCore.ts` (`searchHuggingFace`, `getModelFiles` with strict `mmproj` pairing + companion skip, `resolveHuggingFaceModel`, `getModelType`, `extractQuantization`, `cleanModelName`), and `src/utils/guideCore.ts` (topics, starters, progressive reveal, >100 mobile flows grounded in existing `src/` files and labels).
+- Migrated `7` `src/` files (`6` cleared to `0` `@offgrid/models` imports: `huggingface.ts`, `GuideScreen/{guideTopics.ts, GuideTopicScreen.tsx, index.tsx, useGuideAction.ts}`, `guideVector.ts`; `huggingFaceModelBrowser.ts` cleared of `13/14` imports retaining ONLY `CATALOG`) plus `6` `__tests__/` files (`guideFlows.contract.test.ts`, `filmOnPhone.test.ts`, `filmWaitsForStills.rendered.test.tsx`, `imageStyles.rendered.test.tsx`, `videoStyles.rendered.test.tsx`, `residencyMatrix.modes.test.ts`).
+- Wired `3` new Node contract suites (`sd-image-pack-policy`, `hugging-face-core`, `guide-core`) into `.github/workflows/ogam-external-dependency-audit.yml` (`49` steps).
+- Exact-head verification at `9079ef5f2508a768f35212da3f3cee80283e5b42`:
+  - **Live `OGAM External Dependency Audit`:** `push` [`45571102536`](https://github.com/sokfrut-tech/OGAM/actions/runs/45571102536) (`completed / success`, `30s`, job `139057671675`) + `pull_request` [`45571109845`](https://github.com/sokfrut-tech/OGAM/actions/runs/45571109845) (`completed / success`).
+  - **Local verification:** all `46` `.mjs` suites (`193/193` cases pass via `node --experimental-strip-types --test`, `0` fail, `0` skipped), `tsc --noEmit --strict` on the 5 Slice 10 `.ts` files (`exit 0`), PyYAML workflow check (`49` steps), and `node scripts/audit-offgrid-imports.mjs` (`2,042` files scanned, `1,214` refs, `packageImports: 323`, `@offgrid/models` `src/`: `17 → 11`, `test`: `29 → 23`, total: `46 → 34`).
+- Verification boundary: contract Node suites, strict `tsc` on Slice 10 modules, and live Audit CI are green; full RN Jest, whole-workspace `tsc`, Gradle/APK build, and physical device runtime were not executed on PR #1 in this slice.
+- Ready for **Slice 11 (`@offgrid/models` `11 → 0` `src/`: `CATALOG` + `pickModelsForDevice` + remaining `23` test hits + `package.json`/`metro.config.js` removal)** while all PRs remain `OPEN / Draft / UNMERGED`.
+
+
 
 
 
