@@ -410,6 +410,17 @@ Research-only update. No PR merged.
 - Artifact: `Jarvis-M3-M4-OPSQLite-Native-Probe-APK` (`id=14949233461`, https://github.com/sokfrut-tech/OGAM/actions/runs/45452539356/artifacts/14949233461).
 - Acceptance boundary: focused CI + real `node:sqlite` + Android 15 emulator OP-SQLite PASS verified; physical OPPO Find X6 Pro (`PGEM10`) installation and interactive acceptance (Undo edit/delete, memory pause fail-closed, JSON export warning, and M4 prompt retrieval) remain to be tested by the user. All PRs remain `OPEN / Draft / UNMERGED`. Next after `PGEM10` confirmation: **Этап 2 (`OGAM PR #1 Slice 9`, `@offgrid/models` `35 → 0`)**.
 
+## 2026-11-25 continuation — physical OPPO PGEM10 M3+M4 check passed & M5 overnight audit synced
+
+- User tested **`Jarvis M3+M4 Memory`** (`com.jarvism3probe`, artifact `14949233461`, SHA-256 `68fe1585477f0eb61a124a4239086ebaf18c6e835135839a9ef023fdca7c66bd`, run `45452539356`, PR #8 `60746777c8f0b4afbef13ec709641290879b8c79`) on physical **OPPO Find X6 Pro (`PGEM10`)** and reported: **`"проверил работает"`** *(evidence boundary: user verbal confirmation; no screenshot attached)*. Recorded in PR #8 comment `7153684452`.
+- Integrated overnight Factory research from `OGAM PR #3` (`ae6dc5e0e9ae05e3461f74b1410810c7cb94e417`):
+  - **`JARVIS_M5_SECURITY_RESILIENCE_AUDIT_2026-11-24.md`:** classifies Step 1 **M5** as `PARTIAL` with two concrete fixes before closing Step 1:
+    1. `M5-01` (Medium): move `updateWithCheckpoint` / `deleteWithCheckpoint` mutation + checkpoint insert into one atomic SQLite `SAVEPOINT` so checkpoint failure rolls back both cleanly.
+    2. `M5-02` (Medium): replace silent `depth > 8` early return in `secretGuard.ts` (`scanValueRecursive`) with fail-closed / bounded iterative depth+node rejection and boundary tests.
+  - **`OPENAI_MULTI_AGENT_ORCHESTRATION_RESEARCH_2026-11-24.md`:** Manager / Agents-as-tools pattern, progressive tool discovery, task-centric persistent `TaskLedger` / Symphony-style durability (reference for Step 2 after Step 1 M5 closes).
+- All PRs in `OGAM` (`#1–#4`, `#6–#8`) and `Universal-AI-Factory` (`#27`, `#28`) remain **`OPEN / Draft / UNMERGED`**. Ready for user selection: **M5 Hardening (`M5-01`/`M5-02` + fault-injection/adversarial tests)** and/or **Этап 2 (`PR #1 Slice 9`, `@offgrid/models` `35 → 0`)**.
+
+
 
 
 
