@@ -420,6 +420,24 @@ Research-only update. No PR merged.
   - **`OPENAI_MULTI_AGENT_ORCHESTRATION_RESEARCH_2026-11-24.md`:** Manager / Agents-as-tools pattern, progressive tool discovery, task-centric persistent `TaskLedger` / Symphony-style durability (reference for Step 2 after Step 1 M5 closes).
 - All PRs in `OGAM` (`#1–#4`, `#6–#8`) and `Universal-AI-Factory` (`#27`, `#28`) remain **`OPEN / Draft / UNMERGED`**. Ready for user selection: **M5 Hardening (`M5-01`/`M5-02` + fault-injection/adversarial tests)** and/or **Этап 2 (`PR #1 Slice 9`, `@offgrid/models` `35 → 0`)**.
 
+## 2026-11-25 continuation — Step 1 M5 security & resilience hardening implemented and verified in CI + Android 15 emulator (PR #9)
+
+- User selected track `1` (M5 Hardening).
+- Created clean isolated branch `sokfrut-tech/OGAM:feature/jarvis-step-1-memory-m5-hardening-2026-11-25` based on PR #8 (`60746777c8f0b4afbef13ec709641290879b8c79`), and opened Draft PR #9 (`https://github.com/sokfrut-tech/OGAM/pull/9`, targeting PR #8, `OPEN / Draft / UNMERGED`, HEAD `820c6652af70316757a7cbcc7abd328a35f2f71c`).
+- Implemented fixes addressing all M5 findings without altering `schema.ts`, `database.ts`, `repository.ts`, or existing 9 M1–M4 Jest suites:
+  - **`M5-01` (`src/services/jarvisMemory/managementService.ts`):** wrapped `updateWithCheckpoint` (`SAVEPOINT jarvis_memory_update_with_cp`), `deleteWithCheckpoint` (`SAVEPOINT jarvis_memory_delete_with_cp` wrapping nested delete savepoint + tombstone + checkpoint insert), and `handleSourceConversationDeleted(..., 'delete_linked')` (`SAVEPOINT jarvis_memory_source_delete`) atomically in SQLite savepoints so checkpoint/tombstone insertion errors roll back all mutations cleanly.
+  - **`M5-02` (`src/services/jarvisMemory/secretGuard.ts`, `types.ts`):** replaced silent `depth > 8` early return with bounded iterative traversal `scanValueBounded` (`SECRET_SCAN_MAX_DEPTH = 8`, `SECRET_SCAN_MAX_NODES = 500`, branch-local cycle detection) failing closed with `'uninspectable_structure'`; stripped invisible zero-width/bidi characters, applied Unicode `NFKC`, and added mixed-script Latin/Cyrillic homoglyph folding (`pаssword` → `password`).
+  - **Prompt delimiter defense (`src/services/jarvisMemory/retrievalService.ts`):** neutralized embedded newlines/control chars and `[JARVIS_CONFIRMED_MEMORY_BEGIN/END]` markers via `sanitizePromptInlineText`.
+- Added 10th Jest suite `__tests__/unit/services/jarvisMemory/securityResilienceM5.test.ts` (SQLite `CREATE TEMP TRIGGER` fault injection + depth=8/9 + 501-node + circular + homoglyph + legacy depth-9 export redaction + prompt delimiter escaping + schema mismatch recovery), `.ci/run-jarvis-memory-m5.sh`, and upgraded standalone probe to **`Jarvis M5 Memory`** (`com.jarvism5probe`, uniquely named `dist/Jarvis-M5-Memory.apk`).
+- Exact-head GitHub Actions verification at `820c6652af70316757a7cbcc7abd328a35f2f71c`:
+  - **Focused M1–M5 Security CI (`45563132400`, https://github.com/sokfrut-tech/OGAM/actions/runs/45563132400):** `completed/success` (`31s`) — strict `tsc --noEmit`, **10/10 Jest suites (`43/43` tests)**, real `node:sqlite 3.54.1` fault-injection & M5 checks (`checksPassed: true`).
+  - **External Dependency Audit (`45563139910`, https://github.com/sokfrut-tech/OGAM/actions/runs/45563139910):** `completed/success` (`22s`).
+  - **Android Native OP-SQLite M5 Probe + Emulator (`45563132527`, https://github.com/sokfrut-tech/OGAM/actions/runs/45563132527):** `completed/success` (`13m35s`) — strict RN `0.83.1` + `op-sqlite 15.2.5` `tsc --noEmit`, release APK `dist/Jarvis-M5-Memory.apk` (`31,673,029` B, SHA-256 `a98ba075088f414d22652bb9ba1e037ef32fbb0f2a363d5fde00af4987ffb2c2`, APK v2 signed, 4-aligned `resources.arsc`, all 11 `arm64-v8a` `.so` libs 16 KB aligned `zip_mod16k=0` / `p_align>=0x4000`), live Android 15 emulator `PASS` (`pid 2055`, clean `launch-screen.png`):
+    `[JARVIS_M5_PROBE] PASS {"sqliteVersion":"3.50.4","schemaVersion":1,"json1":true,"foreignKeys":true,"secretGuardBlocked":true,"conflictDetected":true,"optimisticConcurrency":true,"deleteWithTombstone":true,"expiryBoundary":true,"savepointRollback":true,"checkConstraint":true,"disableFailClosed":true,"searchAndFilter":true,"editAndUndo":true,"deleteAndUndo":true,"sourceDeleteAndExport":true,"scopedPromptRetrieval":true,"atomicUndoRollback":true,"secretDepthAndDelimiterHardening":true,"databasePath":"/data/user/0/com.jarvism5probe/databases/jarvis_memory.db"}`
+- Artifact: `Jarvis-M5-OPSQLite-Native-Probe-APK` (`id=14999211878`, https://github.com/sokfrut-tech/OGAM/actions/runs/45563132527/artifacts/14999211878).
+- Evidence boundary preserved: CI + real SQLite fault injection + Android 15 emulator runtime verified green; physical `OPPO PGEM10` sanity check on `Jarvis-M5-Memory.apk` is available/optional while ready to advance to **Этап 2 (`OGAM PR #1 · Slice 9`, `@offgrid/models` `35 → 0`)**. All PRs remain `OPEN / Draft / UNMERGED`.
+
+
 
 
 
