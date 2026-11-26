@@ -455,3 +455,22 @@ Implementation currently committed (verification pending):
 
 Current OGAM branch HEAD: `4e15c83fcbefc962cb3669caffe77001b190904c`.
 Focused GitHub Actions run `45745636331` is in progress; no pass/fail result is recorded yet. No APK build, release or merge has been performed. Physical OPPO verification remains outstanding.
+
+
+### Corrected target branch: Russian-first Jarvis PR #12 — 2026-11-26
+
+A branch comparison found the active Russian-first Jarvis work is the draft PR #12:
+`feature/jarvis-ai-ru-pro-edition` at `524fcd201f7302ed723381f34c76410fec32a907`.
+The relevant original blobs in that branch match the previously audited APK-source baseline `0cbc605a2480823099e2b96a1ebcf084f0b2d990`, so the watchdog implementation has been ported without replacing the newer Russian UI / model-catalog work.
+
+Current implementation branch:
+`sokfrut-tech/OGAM:fix/jarvis-native-watchdog-2026-11-26`
+Target for a chained draft PR: `feature/jarvis-ai-ru-pro-edition` (PR #12's head; not main).
+The scratch branch based directly on main is not the intended merge target and its focused test job failed because it did not provision the sibling `@offgrid/models` shared package. That failure was a CI setup issue, not a watchdog test failure.
+
+On the Jarvis branch, the focused CI now provisions the existing shared/pro workspace via the repository's existing `PRO_SUBMODULE_PAT` secret (the same setup used by PR #12's successful CI). No secrets were created or changed; the workflow only reads the already-used repository secret. The UI status text was localized in Russian.
+
+Current checks on the Jarvis branch:
+- Focused workflow: `.github/workflows/jarvis-native-watchdog.yml`.
+- Latest queued/in-progress run will be recorded after its result is known.
+- No APK build, release, PR merge, or physical OPPO verification has been performed.
