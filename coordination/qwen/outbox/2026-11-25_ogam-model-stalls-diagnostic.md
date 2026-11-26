@@ -267,3 +267,24 @@ A final focused read of the APK commit confirms the precise lifecycle boundary:
 The only safe next implementation slice is a test-harness-only regression test with an explicitly deferred completion and a stop mode that does not release it. It must assert the context remains busy and unreleased, then resolve the deferred promise in test cleanup and verify normal drain. Production watchdog/recovery behavior remains out of scope until this lifecycle contract is proven.
 
 No OGAM files changed. No tests or builds run. The workspace engineering contract remains unavailable in the inspected repository trees; no local PC/workspace inspection was attempted.
+
+
+## Test-only implementation checkpoint — 2026-11-26
+
+User authorized proceeding with test-only changes under OGAM's repository-local rules because the parent workspace contract is unavailable.
+
+A focused regression test was added on a separate OGAM branch:
+
+- Branch: `test/native-completion-hang-2026-11-26`
+- Base: exact APK source commit `0cbc605a2480823099e2b96a1ebcf084f0b2d990`
+- Commits: `ceda9505f63691168ae1346f438ff5ec5f8139e5` (test), `cd435a85f0c15152d8fe2d00474249a274e9feab` (cleanup hardening)
+- File changed: `__tests__/unit/services/llm.test.ts` only.
+- The test supplies a deferred native completion whose `stopCompletion()` resolves immediately but does not resolve the completion itself. It checks Stop remains pending, `waitForIdle(10)` reports busy, unload does not release the context while native work is pending, and delayed native unwind permits generation/Stop/unload to drain.
+- The test explicitly resolves the deferred promise during cleanup and awaits outstanding operations to avoid leaving Jest teardown hung.
+
+Verification:
+- Branch diff inspected against the exact APK source base: one test file, 78 added lines, no production source changes.
+- Test suite has NOT been executed. No CI workflow was started because that would require creating a PR / consuming GitHub Actions minutes, and the user's Factory account previously reported an Actions budget warning.
+- No production watchdog, recovery state machine, harness-wide behavior change, APK build, merge, or device test was performed.
+
+This is a test implementation checkpoint, not a confirmed passing regression. Next: run the single focused Jest test in an approved free execution environment, inspect any failures, then add delayed-stop/recovery and tool/max-token path coverage only if the first test is sound.
