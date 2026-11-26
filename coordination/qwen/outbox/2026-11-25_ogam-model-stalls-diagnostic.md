@@ -379,3 +379,36 @@ Next engineering step (not yet implemented):
 - Keep the context and memory owned until the native promise really settles. Do not clear `nativeWork`, release context, or permit a second generation merely because a watchdog elapsed.
 - Instrument load/init time, time-to-first-token, token cadence, stop request, native completion settlement, backend, model/quantization, context and memory pressure. Use those measurements to distinguish initialization delay, slow prefill/reasoning, thermal throttling, and a genuinely stuck native promise.
 - Any production change requires a separate scoped implementation step and a full verification plan; current authorization was for test-only changes.
+
+
+### Follow-up source audit: existing telemetry and safe watchdog design — 2026-11-26
+
+Inspected the exact OGAM test branch source after the 150/150 focused Jest pass.
+
+Existing instrumentation already available:
+- `LLMPerformanceStats` stores last tokens/sec, decode tokens/sec, time-to-first-token, generation time and token count.
+- `generateResponse()` captures `startTime`, first-token time and token count, then calls `recordGenerationStats()` only after `safeCompletion()` resolves.
+- If native completion stays pending, the stats update is never reached; UI may continue to show the previous completed turn's values.
+- Existing `getGpuInfo()` exposes active backend/layers; `getBackendFallbackNotice()` reports requested-vs-active GPU fallback.
+- Existing logs include model path, context/threads/batch/GPU settings and a redacted completion-parameter record. Prompt text is redacted in the params log.
+- `getPerformanceStats()` returns the last completed snapshot, not live progress.
+
+Instrumentation gaps:
+- No live per-turn state/timestamp is exposed while completion is pending.
+- No heartbeat or inter-token cadence measurement is maintained.
+- No explicit phase marker separates prompt preparation, native completion start, first callback, stop request, and native Promise settlement.
+- Current first-token metric is set only when a callback contains `data.token`; it does not by itself distinguish time spent in hidden reasoning from native silence.
+- No timeout around `safeCompletion()`; this is intentional in current safety model because a JS timeout cannot cancel native work.
+
+Recommended implementation contract (proposal only; no production changes authorized):
+1. Add a per-turn diagnostic record with monotonic timestamps for request accepted, prompt preparation complete, native call entered, first callback/token, last callback, stop requested, and native promise settled.
+2. Publish a small live status enum: `preparing`, `generating`, `thinking/no visible text` only when the stream protocol actually proves reasoning activity, `stop requested / native draining`, `completed`, `failed`. Do not infer thinking solely from a long first-token delay.
+3. Track callback/token counts and inter-callback gap; do not store prompt, completion text, reasoning text, or tool arguments in diagnostics.
+4. Record selected model filename/quantization when reliably parsed, context length, requested and active backend/GPU layers, thread/batch settings, memory snapshot, Android thermal state if a supported API already exists, and app foreground/background transitions.
+5. A watchdog may update the UI to “ответ задерживается; нативная операция ещё завершается” and issue a single native stop request. It must not clear `nativeWork`, clear active promises, release the context, permit another generation, or claim cancellation until the original native promise settles.
+6. Keep model reload/eject queued behind the existing native-work drain. If the promise never settles, expose an explicit recovery-required state and require a safe process-level recovery path rather than releasing a live JSI context.
+7. Add deterministic tests for each phase and for callbacks that stop arriving while the native promise remains pending; preserve the passing 150-test baseline.
+
+Scope boundary:
+- This is a source-audit/design proposal only. No OGAM production code, APK, release, or merge was changed.
+- The only prior authorization was test-only changes. A separate explicit authorization is required before implementing production telemetry, watchdog/UI state, or recovery logic.
