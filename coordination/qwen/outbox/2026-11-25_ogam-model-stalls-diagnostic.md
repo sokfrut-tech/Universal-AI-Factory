@@ -250,3 +250,20 @@ A watchdog may transition the UI/service into a visible timeout state and reques
 
 - Direct read-only inspection of the exact APK commit's `llm.ts`, `llm.test.ts`, and `nativeBoundary.ts`.
 - No tests executed; no OGAM source, test, or harness files modified; no APK built; no physical-device reproduction.
+
+
+## Stop/unload lifecycle cross-check — 2026-11-26
+
+A final focused read of the APK commit confirms the precise lifecycle boundary:
+
+- `stopGeneration()` sends `context.stopCompletion()`, then awaits `activeCompletionPromise`; it clears `isGenerating` only after that promise settles.
+- `doUnloadModel()` sets `releasingContext`, requests native stop when `isGenerating` is true, waits for all `nativeWork` promises, and only then calls `context.release()`.
+- This protects against use-after-release and overlapping model memory, but it means a completion that never settles can also block Stop and unload/reload indefinitely.
+- The llama test harness's fake `stopCompletion()` always releases the held completion. Thus its prefill and mid-stream pause controls test cooperative cancellation, not a native completion that remains pending after stop.
+- `waitForIdle()` is only a bounded observation; it is not cancellation or recovery. It should not be used as authorization to release/reuse the context.
+
+### Gate before code changes
+
+The only safe next implementation slice is a test-harness-only regression test with an explicitly deferred completion and a stop mode that does not release it. It must assert the context remains busy and unreleased, then resolve the deferred promise in test cleanup and verify normal drain. Production watchdog/recovery behavior remains out of scope until this lifecycle contract is proven.
+
+No OGAM files changed. No tests or builds run. The workspace engineering contract remains unavailable in the inspected repository trees; no local PC/workspace inspection was attempted.
