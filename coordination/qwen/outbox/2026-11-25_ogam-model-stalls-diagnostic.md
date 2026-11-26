@@ -307,3 +307,21 @@ Execution availability:
 - Therefore the focused regression test remains **not executed / not passed**.
 
 No additional OGAM files were changed by this review. The test branch remains separate from the APK commit; no production source, APK, or device state was changed.
+
+
+### Follow-up overlap guard and CI execution review — 2026-11-26
+
+The focused regression test was strengthened with one additional assertion:
+
+- While the first native completion remains pending after Stop, a second `generateResponse()` must reject with `Generation already in progress`.
+- The mocked native context's `completion` must still have been called exactly once, proving the second request did not enter the occupied native context.
+
+The updated branch head is `d0be0ce31c153ea063b19c68b25d780720b146ca`. Comparing against the APK base still shows exactly one changed file: `__tests__/unit/services/llm.test.ts`, now +83 lines, with no production source changes.
+
+CI route review:
+- OGAM's `.github/workflows/ci.yml` supports `workflow_dispatch`, but that dispatch runs the repository-wide gates and an eight-shard Jest matrix, with additional coverage aggregation; it is not a focused single-test workflow.
+- The branch has no `.circleci/config.yml`, matching the CircleCI error state observed earlier.
+- No workflow was dispatched and no CI minutes were consumed for this checkpoint.
+- A narrow Jest run would require a suitable execution environment with the project's dependencies installed. No such free remote runner has been confirmed in the connected tools. The user's local PC/device were not used.
+
+Verification status remains **static review only; test not executed**. No production code, APK, or physical device was changed or tested.
