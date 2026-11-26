@@ -211,3 +211,42 @@ A watchdog may report slow/no-first-token progress and request native Stop, but 
 - Exact APK source commit and current `main` checked read-only.
 - Existing test and harness code inspected read-only.
 - No tests run, no app/test/harness source edits, no build/APK produced, and no OPPO device reproduction.
+
+
+## Native-boundary harness review — 2026-11-26
+
+A focused read of the exact APK-source test harness confirms why the current green stop tests do not reproduce the reported failure mode:
+
+- In `__tests__/harness/nativeBoundary.ts`, the scripted llama completion can pause before streaming (`holdBeforeStream`, around lines 524–532) or mid-stream (`pauseAfter`, around lines 604–613).
+- Its fake `stopCompletion()` (around lines 684–691) always sets the stop flag and invokes the stored release callback. The held completion therefore resumes and resolves with an interrupted result. The harness cannot currently represent “native stop acknowledged, but completion Promise remains pending”.
+- The `completion()` wrapper tracks the in-flight call until `runCompletion()` exits (around lines 662–681); there is no separate switch for a stop-resistant completion.
+- In `src/services/llm.ts`, `doUnloadModel()` requests stop when `isGenerating` is true, then waits for every tracked `nativeWork` item before releasing the context (around lines 390–414). This is the correct memory-safety invariant, but an indefinitely pending native call means unload/reload also waits indefinitely.
+- The existing “never releases the context under a completion that was still being set up” unit test (around lines 2083–2100) uses a completion that emits a token and immediately resolves. It does not keep the completion pending through Stop.
+- The existing active-completion Stop test resolves its injected promise before calling Stop (around lines 2310–2325), so it does not test a genuinely in-flight completion that ignores Stop.
+
+### Narrow test-harness extension proposal — not implemented
+
+Add an opt-in test-only mode for llama completion where `stopCompletion()` records the stop request but does not release the completion promise. Keep the deferred completion handle available to the test so it can be resolved during cleanup. Then cover:
+
+1. Stop resolves its native stop request but the completion remains pending; engine remains busy and `waitForIdle` returns false.
+2. A second completion is not sent to the same context.
+3. Unload/reload does not call `context.release()` while the old completion is pending.
+4. Once the test releases the deferred completion, Stop and unload drain in order and a fresh context can generate again.
+5. A separate delayed-settlement case proves normal recovery after native unwind.
+
+This should be a harness/test-only change first, not a production timeout. It can establish the lifecycle contract before any recovery mechanism is designed. Do not make the fake return an invented “successful cancellation” while the completion is still active.
+
+### Recommended recovery states — design only
+
+- `READY`: context can accept generation.
+- `GENERATING`: one native completion owns the context.
+- `STOP_REQUESTED`: stop sent; completion is still tracked.
+- `DRAINING`: stop requested and waiting for native unwind.
+- `QUARANTINED`: unwind did not complete within the observation window; no new completion, cache mutation, unload, release, or reload may reuse this context. Surface a clear recovery message rather than leaving an endless spinner.
+
+A watchdog may transition the UI/service into a visible timeout state and request native stop. It must not transition the context to `READY` or release it merely because the JavaScript timer elapsed. A safe in-process recovery from `QUARANTINED` requires a verified native cancellation/reinitialization boundary; absent that, process restart is safer than reusing or freeing a context still owned by native work.
+
+### Verification boundary
+
+- Direct read-only inspection of the exact APK commit's `llm.ts`, `llm.test.ts`, and `nativeBoundary.ts`.
+- No tests executed; no OGAM source, test, or harness files modified; no APK built; no physical-device reproduction.
