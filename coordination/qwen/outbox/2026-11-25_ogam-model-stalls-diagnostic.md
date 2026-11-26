@@ -1,6 +1,6 @@
 # OGAM Android model stalls: Qwen-focused source diagnosis
 
-Date: 2026-11-26
+Date: 2026-11-26 (Qwen3.5 variant confirmed)
 Repository: `sokfrut-tech/OGAM`
 Audited ref: `main`
 Device target: OPPO Find X6 Pro / Snapdragon 8 Gen 2 (user-reported target)
@@ -10,7 +10,7 @@ Scope: read-only source inspection. No source changes, tests, build, or on-devic
 
 The Russian-labeled APK starts and works, but the model being tried is Qwen; responses sometimes take a long time or remain stuck.
 
-The exact Qwen model variant, quantization, selected inference backend, and whether the stall occurs during load, prompt prefill, reasoning, or token decoding are still unknown. Do not assume every Qwen variant behaves the same.
+The user confirmed the family is Qwen3.5. The exact size variant (0.8B, 2B, or 9B), quantization, selected inference backend, and whether the stall occurs during load, prompt prefill, reasoning, or token decoding are still unknown. Do not assume every Qwen3.5 size behaves the same.
 
 ## Confirmed code facts
 
@@ -64,7 +64,13 @@ https://github.com/sokfrut-tech/OGAM/blob/main/src/services/generationService.ts
 
 These are hypotheses to distinguish with timing and logs, not grounds to change settings blindly.
 
-## Qwen-specific diagnostic plan
+## Qwen3.5-specific findings and diagnostic plan
+
+- OGAM `src/constants/models.ts` lists these trending Qwen3.5 repositories: `unsloth/Qwen3.5-0.8B-GGUF`, `unsloth/Qwen3.5-2B-GGUF`, and `unsloth/Qwen3.5-9B-GGUF`.
+- This is a trending-family list, not proof that one of these exact variants is installed or selected on the user's phone. The runtime model selection and downloaded GGUF metadata still need to be identified.
+- For the OPPO Find X6 Pro target, do not assume the 9B variant is appropriate merely because it appears in the trending list. A 0.8B or 2B quantized variant is a more conservative first performance baseline; this is a test recommendation, not a measured benchmark or a forced model change.
+
+
 
 1. Identify the exact Qwen entry and quantization selected in the app. Do not conflate Qwen3-ASR (speech recognition) with a conversational Qwen GGUF model.
 2. Record model load duration separately from time-to-first-token and decode speed.
@@ -85,6 +91,6 @@ These are hypotheses to distinguish with timing and logs, not grounds to change 
 - Confirmed: the standard generation path has no first-token or total-generation timeout; `safeCompletion` is error handling, not a watchdog.
 - Confirmed: native Stop, native-work tracking, and context-release ordering already exist and must be preserved.
 - Confirmed: `stopGeneration()` can still wait indefinitely for the active completion if native Stop fails to unwind it.
-- User confirmed the model being tried is Qwen; exact Qwen variant/quantization remains unknown.
+- User confirmed the model family is Qwen3.5; exact size (0.8B/2B/9B), quantization, and selected backend remain unknown. OGAM's trending list contains all three sizes.
 - Device reproduction: not performed.
 - Source changes, tests, and builds: none.
