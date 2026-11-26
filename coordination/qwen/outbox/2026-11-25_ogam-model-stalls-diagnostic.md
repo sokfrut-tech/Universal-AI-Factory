@@ -325,3 +325,25 @@ CI route review:
 - A narrow Jest run would require a suitable execution environment with the project's dependencies installed. No such free remote runner has been confirmed in the connected tools. The user's local PC/device were not used.
 
 Verification status remains **static review only; test not executed**. No production code, APK, or physical device was changed or tested.
+
+
+### Free focused GitHub Actions workflow prepared — 2026-11-26
+
+Repository billing check:
+- OGAM repository metadata confirms `visibility: public`.
+- Current GitHub documentation states standard GitHub-hosted runners in public repositories are free and unlimited; this does not consume the account's private-repository included compute allowance. Sources: GitHub Docs, “Billing and usage” and “GitHub-hosted runners reference”.
+- The earlier concern about exhausting paid/private Actions minutes therefore does not apply to a standard `ubuntu-latest` job in this public OGAM repository.
+
+A narrow workflow was added on the test branch:
+- `.github/workflows/focused-native-completion-test.yml`
+- Uses the repository's existing `.github/actions/setup-mobile` with empty private token, no shared/pro checkout, and cache saving disabled.
+- Runs only `npx jest __tests__/unit/services/llm.test.ts --runInBand --no-coverage --forceExit`.
+- No APK build, Android/iOS jobs, paid service, or private submodule access.
+
+Latest OGAM branch commit: `f8ed9bee39daf8758febbdae920be6acdd061a09`.
+Diff against APK base now contains exactly two files: the test file (+83 lines) and the focused workflow (+39 lines); no production source changes.
+
+Execution status:
+- No workflow run or check status has appeared for this commit in the connected GitHub status/run lookup. The available GitHub integration exposes workflow-run inspection and rerun actions but no workflow-dispatch action.
+- The focused workflow has therefore been prepared but **has not yet been confirmed running**. Do not report a test pass.
+- No PR was opened, avoiding triggering OGAM's existing broad pull-request CI.
