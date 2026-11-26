@@ -139,3 +139,30 @@ Do not introduce a bare `Promise.race` timeout around native JSI completion. Any
 - Additional source paths inspected: `src/services/llm.ts`, `src/services/llmToolGeneration.ts`, and `src/services/generationService.ts`.
 - Confirmed source-level risk: no first-token/generation watchdog in standard, tool, or max-token completion paths; Stop awaits native completion without a deadline.
 - No source edits, tests, builds, APK changes, or device reproduction performed.
+
+
+## Test-coverage follow-up — 2026-11-26
+
+Read-only inventory of the OGAM `main` test tree found relevant existing coverage:
+
+- `__tests__/unit/services/llmEarlyStop.test.ts`: Stop before native completion starts; next reply succeeds.
+- `__tests__/unit/services/generationService.test.ts`: Stop with partial output, Stop during prefill, ignore a late token after Stop, native Stop rejection handling, and queue drain ordering.
+- `__tests__/integration/generation/queueStoppedReplySettlesTwice.rendered.test.tsx`: late native-stop settlement and exactly-one-turn-at-a-time queue behavior.
+- `__tests__/unit/services/llmSafetyChecks.test.ts`: `safeCompletion` success and rejected-promise/native-error handling.
+
+### Specific gap relevant to the reported hang
+
+The inspected tests exercise completions that eventually settle (including a delayed native unwind) or reject. The `safeCompletion` tests do not cover a completion promise that remains pending forever. The Stop tests likewise do not establish recovery behavior when `stopCompletion()` resolves but the associated `completion()` promise never settles. There is therefore no demonstrated regression test for the exact indefinite-pending condition identified in the source trace.
+
+This is a test-coverage gap, not proof that the device has entered that condition. The next test design should use a deliberately never-settling native completion, assert that Stop cannot falsely mark the native engine idle, assert that the context is not released, and assert that a subsequent request is not sent into the still-busy context. A separate test should cover a completion that settles after a bounded native-stop delay and prove normal recovery. These tests should be added only alongside a reviewed recovery design; do not change production behavior with a JavaScript-only timeout.
+
+### Contract lookup status
+
+- `rules.md` on OGAM `main` explicitly gives priority to `../.codex/ENGINEERING_CONTRACT.md`.
+- The contract file is not present in the OGAM repository tree or the inspected Universal-AI-Factory repository tree. A GitHub code search scoped to the connected `sokfrut-tech` repositories did not locate it.
+- This does not prove the file is absent from a private/local parent workspace; the path is outside the OGAM repository. No attempt was made to inspect or alter the user's PC/workspace.
+
+### Verification boundary
+
+- Read-only source and test inventory only.
+- No tests executed; no source or test files modified; no build/APK produced; no device reproduction.
