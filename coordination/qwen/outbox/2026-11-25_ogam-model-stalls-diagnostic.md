@@ -412,3 +412,27 @@ Recommended implementation contract (proposal only; no production changes author
 Scope boundary:
 - This is a source-audit/design proposal only. No OGAM production code, APK, release, or merge was changed.
 - The only prior authorization was test-only changes. A separate explicit authorization is required before implementing production telemetry, watchdog/UI state, or recovery logic.
+
+
+### Hardware and telemetry reuse check — 2026-11-26
+
+Further checked `src/services/hardware.ts`, `src/services/llmTypes.ts`, `src/services/llmHelpers.ts`, and `src/utils/mobileRuntimePolicy.ts`.
+
+Confirmed reusable signals:
+- Memory: `hardwareService.getAppMemoryUsage()` returns used, available and total memory; comments warn that native allocations may not be fully reflected.
+- CPU topology: `getRecommendedThreadCount()` and `getPerformanceCoreCount()` identify Android performance cores.
+- Acceleration: `getAccelerationCapability()` checks Android NPU/HTP and OpenCL GPU capability.
+- Actual inference configuration is resolved centrally in `buildModelParams()`; backend can coerce effective KV cache to f16. Diagnostics should record effective values, not only user-selected preferences.
+- Completed-turn performance fields are already defined in `LLMPerformanceStats`.
+
+Not found in the inspected hardware/runtime policy files:
+- A device thermal-temperature or thermal-throttling signal.
+- A live per-token callback-gap metric.
+- A per-turn lifecycle/phase record.
+Therefore thermal status must be treated as unavailable unless a supported native Android API/dependency is separately identified; do not infer overheating from slow tokens or CPU usage.
+
+Recommendation:
+- First add non-sensitive lifecycle/timing diagnostics using existing signals and the existing LLM service boundary.
+- Treat thermal status as optional capability, not a required dependency.
+- Avoid high-frequency memory polling; snapshot at load/start and at a small number of meaningful state transitions to limit battery/CPU overhead.
+- Never persist prompt, response, reasoning or tool argument content as diagnostic telemetry.
