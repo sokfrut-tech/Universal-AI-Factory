@@ -106,3 +106,36 @@ For the next controlled comparison, keep the current 2B model unchanged and firs
 - Confirmed by user: Qwen3.5-2B is the selected model size.
 - Still unknown: exact GGUF variant/quantization, backend, context length actually applied at runtime, and failure phase.
 - No app code changed; no test/build or physical-device reproduction performed.
+
+## Follow-up source trace — standard and tool generation / Stop path
+
+Read-only inspection of the current `main` source on 2026-11-26 adds these details:
+
+- In `src/services/llm.ts`, the standard text path registers the entire generation operation in `nativeWork` before context-window and attachment preparation awaits. The native completion is awaited through `safeCompletion`; the first-token timestamp is recorded only when a token callback arrives. No watchdog checks elapsed time or lack of token callbacks.
+- `activeCompletionPromise` is a rejection-swallowing mirror of the full generation operation. `stopGeneration()` sets `stopRequested`, invokes native `context.stopCompletion()`, then awaits that mirror without a timeout. Thus the UI can show an immediate stop/partial reply at the generation-service layer, while the underlying native work may still remain pending and block safe reuse.
+- `waitForIdle(15000)` is a bounded observation only. It races the active promise against a timer and reports whether the service is idle; it does not cancel native work or make it safe to release the context.
+- The tool-call path (`generateResponseWithTools` → `generateWithToolsImpl`) also stores an active promise and awaits `safeCompletion` without a generation watchdog. It uses the same stop-aware context proxy supplied by `LLMService`.
+- `generateWithMaxTokens` is another unbounded native completion path, used by internal routing/summarization helpers.
+- Context release deliberately waits until all registered native work settles before calling `release()`. This is an important safety invariant: a timeout fix must not clear `isGenerating`, drop `nativeWork`, or release/reload the context merely because a JS timer expired.
+
+### Diagnostic conclusion refined
+
+The code supports a credible mechanism for a persistent spinner / blocked next turn: native completion can remain pending; `safeCompletion` does not time it out; Stop waits for that same completion to settle; and the queue's recovery depends on the generation operation finishing. This is a source-level explanation, not proof that this user's Qwen3.5-2B incident is caused by it. The same code paths serve other model families, so Qwen-specific attribution still requires runtime logs.
+
+### Safe next engineering step
+
+Before editing production code, obtain the missing parent workspace engineering contract referenced by OGAM `rules.md` (`../.codex/ENGINEERING_CONTRACT.md`) or an explicit confirmation that it is not available/required for this scoped audit. Then add a narrow instrumentation/test plan covering:
+1. time from send to native completion start;
+2. time to first visible answer token and first reasoning token separately;
+3. decode tokens/sec after first token;
+4. actual backend and GPU/HTP fallback;
+5. Stop during prefill, Stop during decode, and whether the next short turn starts;
+6. tool-call and internal max-token completion paths.
+
+Do not introduce a bare `Promise.race` timeout around native JSI completion. Any eventual watchdog needs a native-stop handshake, a bounded wait for unwind, explicit quarantined/busy state if unwind fails, preserved partial output, and tests proving the context is never released while native work remains active.
+
+## Follow-up status
+
+- Additional source paths inspected: `src/services/llm.ts`, `src/services/llmToolGeneration.ts`, and `src/services/generationService.ts`.
+- Confirmed source-level risk: no first-token/generation watchdog in standard, tool, or max-token completion paths; Stop awaits native completion without a deadline.
+- No source edits, tests, builds, APK changes, or device reproduction performed.
