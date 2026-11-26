@@ -636,3 +636,32 @@ Research-only update. No PR merged.
   - **Live `Build Jarvis Android APK` (`#45686338195` on `ci/jarvis-ogam-standalone-apk-ru-pro-2026-11-25`):** **`completed / success`**.
     - Artifact `Jarvis-OGAM-arm64-release` staged locally as `Jarvis-Ai-Pro-RU-arm64-release.apk` (`221,634,239` B, SHA-256 **`d22ea5ae64b23b50c1037835a7d9a209fcd17710738d673fcfa67f9f013dadbe`**), verified `apk-inspection.txt` (`assets/index.android.bundle` `6,222,124` B, `57` ARM64 `.so` libraries incl. `liboffgrid_video.so`, `libstable_diffusion_core.so`, `liblitertlm_jni.so`, `libop-sqlite.so`, `assets/qnnlibs/*`, `assets/video-hexagon/*`, APK Signature Scheme v2).
 - Acceptance boundary preserved: CI/Jest/Android/iOS/signed APK checks are verified green; real-device install & smoke-testing of Russian SpeechRecognizer, Voice Mode, streaming TTS, I2V, and Android actions on **OPPO Find X6 Pro (`PGEM10`)** (`UAF PR #30` acceptance gates) remain pending user verification. All OGAM PRs (`#1–#4, #6–#9, #11, #12`) and UAF PRs (`#27–#31` and prior open PRs) remain `OPEN / Draft / UNMERGED`.
+
+
+---
+
+## Обновление от 2026-11-26: нативный Jarvis Ai Core (Draft PR #152) и локальный стек обучения Soup v0.78.1
+
+### 1. Возврат к нативному Jarvis Ai Core (`sokfrut-tech/Gemeni`, Draft PR `#152`)
+- Ветка: `feat/jarvis-drawer-ui-and-ogam-features` (база `769e50e`, текущий HEAD `f855ae7`), [Draft PR #152](https://github.com/sokfrut-tech/Gemeni/pull/152) (НЕ мержится до проверки на устройстве).
+- Реализовано нативно на Kotlin/Compose (без React Native-клона OGAM), с сохранением 3D-сферы Ядра (`JarvisInteractiveOrb`), офлайн ASR `Sherpa-ONNX v1.13.8`, `Silero VAD`, `Piper TTS` (4 голоса), нативного `llama.cpp` (`libjarvis_llama.so`), 9 моделей каталога `LocalLlmModelManager.CATALOG`, Студии ИИ, SaveVideo и Центра управления:
+  - Главный экран с чистой 3D-сферой и нижней капсулой + левая выдвижная шторка `ModalNavigationDrawer` (Возможности и история диалогов по датам) (`JarvisDrawerAndHome.kt`).
+  - Структурированный экран настроек со сворачиваемыми группами (`JarvisSettingsScreen.kt`) и экраны управления памятью/документами (`DocumentsAndMemoryScreens.kt`).
+  - Перенесённые и улучшенные подсистемы: `JarvisSecretGuard`, SQLite v2 многосессионная память с паузой, отменой в 1 тап и JSON-экспортом (`JarvisMemoryRepository`), локальный RAG по документам (`JarvisDocumentStore`), безопасные действия на телефоне (`JarvisPhoneActions`), переводчик визуальных промптов (`RussianMediaPromptBridge`), HTTP JSON-RPC MCP-клиент (`JarvisMcpClient`), браузер/загрузчик GGUF с Hugging Face (`HuggingFaceGgufBrowser`), 45s watchdog подвисания генерации.
+- **Проверка CI (`Build Jarvis`, run [`45872879900`](https://github.com/sokfrut-tech/Gemeni/actions/runs/45872879900)):** `completed / success`.
+  - `Build debug APK`, `Run JVM unit tests`, `Security and native compatibility checks` (все ABI `.so` и 16 KB `zipalign`), `Inspect APK manifest, services and native ABIs` — **PASS**.
+  - `Runtime smoke tests on Android emulator` (Android 15, `emulator-5554`): **7/7 PASS** (`0 failures`, `0 errors`, `0 skipped`, `55.545s`, `TEST-emulator-5554 - 15-_app-.xml`).
+- **Собранный APK:**
+  - Локальный файл: `c:\Users\user\Desktop\codex\Jarvis-Ai-Core-arm64-debug.apk`
+  - Размер: `124910252` байт
+  - `SHA-256`: `F879834BDA0C8DDEF8F5EAFDEA0C3A7DCA37D54C8BC17BAF87E54B9856052B36` (записан также в `Jarvis-Ai-Core-arm64-debug.apk.sha256`)
+  - Прямой артефакт GitHub Actions: `https://github.com/sokfrut-tech/Gemeni/actions/runs/45872879900/artifacts/15144915484`
+  - Проверка на физическом телефоне `OPPO PGEM10`: **требует ручной проверки пользователем после установки APK**.
+
+### 2. Интеграция `MakazhanAlpamys/Soup` (`v0.78.1`, `Apache-2.0`, Алпамыс Макажан, Казахстан)
+- В [`training/soup/`](../../training/soup/README.md) добавлены конфигурации, стартовые русскоязычные наборы и конвейер подготовки данных под локальную видеокарту **NVIDIA GeForce RTX 4050 Laptop GPU (6 GB VRAM)** и последующий экспорт в GGUF для `Jarvis Ai`:
+  - Конфигурации: `configs/jarvis-ru-3b-sft.yaml`, `configs/jarvis-ru-8b-stream-6gb.yaml` (`stream_layers: true`, 6 GB VRAM), `configs/jarvis-ru-rag-raft.yaml` (`data.format: raft`, `raft_epoch_shuffle: true`) — все 3 прошли `soup doctor --config ...` (exit code `0`).
+  - Наборы данных: `data/jarvis_ru_starter.jsonl` (20 записей Alpaca; `soup data inspect`: `0` пустых, `0` дубликатов) и `data/jarvis_ru_raft.jsonl` (6 записей RAFT; `soup data inspect`: `0` пустых, `0` дубликатов).
+  - Скрипты и тесты: `scripts/export_jarvis_memory_to_jsonl.py`, `scripts/run_soup_train_and_gguf.ps1`, `tests/test_export_memory.py` (`Ran 2 tests ... OK`).
+- Локальное изолированное окружение `c:\Users\user\Desktop\codex\soup_env` (вне git-репозиториев): `soup v0.78.1`, `torch 2.14.1+cu126`, CUDA активна на `NVIDIA GeForce RTX 4050 Laptop GPU` (`BF16: hardware=yes`, `FP8: hardware=yes`), `soup_cli.mcp_server` импортируется без ошибок.
+- Обновлены записи в `docs/TECHNOLOGY_RADAR_AI_TOOLS_2026-11-06.md` и `docs/TOOL_INTEGRATION_REGISTRY.md`.

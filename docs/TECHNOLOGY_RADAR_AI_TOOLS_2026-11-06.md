@@ -50,6 +50,15 @@ Potential adaptations:
 - Validate model licenses, checksums, ABI/native library collisions, APK size, memory, latency, battery and Russian accuracy.
 - Do not claim a Russian wake word is solved until tested on the target phone.
 
+### 5. Soup (`MakazhanAlpamys/Soup`) — local low-VRAM LLM training & GGUF pipeline
+Source: https://github.com/MakazhanAlpamys/Soup (Apache-2.0, v0.78.1, Zenodo DOI `10.5281/zenodo.21918325`)
+Upstream provides declarative YAML-driven LLM post-training (`SFT`, `DPO`, `GRPO`, `RAFT`), **Exact Layer Streaming (`stream_layers: true`)** enabling 8B QLoRA fine-tuning on 4–6 GB laptop GPUs, data leakage & retention gates (`soup data leakage`, `soup eval retention`), `soup loop` feedback flywheel, GGUF export (`soup merge` / `soup export --format gguf --quant q4_k_m`), Web UI (`soup ui`), and a local MCP server.
+Adaptations in `training/soup/`:
+- Status: `PROTOTYPED` (external PC training pipeline integrated cleanly without embedding upstream Python code into the Android APK; Apache-2.0 attribution and Notice preserved).
+- Three RTX 4050 (6 GB VRAM) recipes in `training/soup/configs/`: `jarvis-ru-3b-sft.yaml`, `jarvis-ru-8b-stream-6gb.yaml` (`stream_layers: true`), and `jarvis-ru-rag-raft.yaml` (`data.format: raft` for Android `JarvisDocumentStore`).
+- Starter Russian SFT/RAFT datasets and `scripts/export_jarvis_memory_to_jsonl.py` enforcing fail-closed `SecretGuard` sanitization (verified by `training/soup/tests/test_export_memory.py`).
+- Exported `.gguf` weights load directly into `Jarvis Ai` (`sokfrut-tech/Gemeni`) via `LocalLlmModelManager` custom `.gguf` import.
+
 ## Reusable design patterns to evaluate across applications
 
 1. Tool registry: each capability has a stable ID, schema, permission requirements, timeout, and typed result.
@@ -88,7 +97,8 @@ Never describe DISCOVERED/REVIEWED/PROTOTYPED as integrated. Do not copy code or
 - Google ARTEMIS: https://github.com/google/artemis
 - PalmClaw: https://github.com/ModalityDance/PalmClaw
 - Sherpa-ONNX: https://github.com/k2-fsa/sherpa-onnx
+- Soup (`MakazhanAlpamys/Soup`, Apache-2.0): https://github.com/MakazhanAlpamys/Soup
 
-Last reviewed: 2026-11-06. Recheck upstream repositories and licenses before each actual adoption; this document is a research snapshot, not a permanent guarantee.
+Last reviewed: 2026-11-26. Recheck upstream repositories and licenses before each actual adoption; this document is a research snapshot, not a permanent guarantee.
 ## Jarvis is an AI agent — product-level requirement
 The owner explicitly clarified on 2026-11-06 that Jarvis is an artificial intelligence, not merely a voice assistant. The product architecture must provide reasoning/planning, persistent user-controlled memory, tool/skill use, device perception, voice, model routing, controlled learning, agent coordination and verified action execution. The full source inventory and current implementation gaps across all connected project repositories are documented in https://github.com/sokfrut-tech/Gemeni/blob/main/docs/REPOSITORY_WIDE_AI_AUDIT_2026-11-06.md.

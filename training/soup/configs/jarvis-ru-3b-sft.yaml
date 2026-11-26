@@ -1,0 +1,28 @@
+# Jarvis Ai RU SFT (3B QLoRA 4-bit — RTX 4050 6 GB VRAM)
+base: Qwen/Qwen2.5-3B-Instruct
+task: sft
+backend: transformers
+
+data:
+  train: training/soup/data/jarvis_ru_starter.jsonl
+  format: alpaca
+  val_split: 0.1
+  max_length: 1024
+
+training:
+  epochs: 3
+  lr: 2e-4
+  batch_size: 1
+  gradient_accumulation_steps: 4
+  quantization: 4bit
+  scheduler: cosine
+  warmup_ratio: 0.05
+  logging_steps: 5
+  save_steps: 50
+  lora:
+    r: 32
+    alpha: 64
+    dropout: 0.05
+    target_modules: auto
+
+output: ./output_jarvis_ru_3b
