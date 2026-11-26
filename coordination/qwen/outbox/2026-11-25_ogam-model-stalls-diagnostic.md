@@ -358,3 +358,24 @@ A second commit touched the focused workflow itself to trigger the push filter:
 - Job: `focused llm.test.ts`, job ID `139657888977`, runner `ubuntu-latest`.
 - Latest observed state: `in_progress`; job setup succeeded and checkout was running. Dependency setup and Jest had not yet started at the last poll.
 - This is a real run, but not a test result. Await completion before claiming pass/fail.
+
+
+### Focused regression test result — PASS — 2026-11-26
+
+GitHub Actions run #2 completed successfully:
+- Run: https://github.com/sokfrut-tech/OGAM/actions/runs/45744711759
+- Job `focused llm.test.ts` (job ID `139657888977`): completed / success.
+- Jest output: **1 suite passed, 150 tests passed**, 0 snapshots, 31.965 seconds.
+- The new regression test `keeps the native context busy and unreleased when completion ignores stop` passed (537 ms).
+- Its assertions cover: Stop remains pending while native completion remains unresolved; engine does not report idle; a second generation is rejected; unload does not release the context early; after native completion resolves, Stop/unload drain and release happens once.
+
+Interpretation:
+- The test validates the JS-side safety invariant under a mocked native completion that ignores stop.
+- It does **not** reproduce Qwen3.5-2B on the OPPO, prove that this is the user's observed hang, or establish a production recovery fix.
+- No production source changed; no APK was built or released. The test branch and focused workflow remain isolated from main.
+
+Next engineering step (not yet implemented):
+- Design a bounded *user-visible* wait/watchdog and a recoverable "native operation still draining" state, without treating a JS timeout as native cancellation.
+- Keep the context and memory owned until the native promise really settles. Do not clear `nativeWork`, release context, or permit a second generation merely because a watchdog elapsed.
+- Instrument load/init time, time-to-first-token, token cadence, stop request, native completion settlement, backend, model/quantization, context and memory pressure. Use those measurements to distinguish initialization delay, slow prefill/reasoning, thermal throttling, and a genuinely stuck native promise.
+- Any production change requires a separate scoped implementation step and a full verification plan; current authorization was for test-only changes.
