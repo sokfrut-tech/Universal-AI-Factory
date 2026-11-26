@@ -510,3 +510,24 @@ Latest focused rerun after the no-overlap assertion: run `45746790745`, still in
 A standalone ARM64 APK build has been started from the same implementation + documentation snapshot on branch:
 `ci/jarvis-ogam-standalone-apk-watchdog-2026-11-26`
 Build run `45746942158`: queued/in progress. This build is an artifact test only; no GitHub release or merge is being performed.
+
+
+### Final strengthened regression verification — 2026-11-26
+
+Final implementation regression run `45746790745` completed successfully on commit `2d6f24e2f76f009f6057bf1366b4db83f578a48f`:
+- ESLint passed.
+- Full `tsc --noEmit` app typecheck passed.
+- Focused Jest: **150/150 passed**, including the assertion that a second request is rejected while the stopped native completion is still pending.
+- External dependency audit on the latest docs-inclusive PR head `74d4af00af0c63f766515a08a513b1f41fabaea0`, run `45746915650`: success.
+
+Draft PR #13:
+https://github.com/sokfrut-tech/OGAM/pull/13
+- Base: PR #12 Russian-first branch `feature/jarvis-ai-ru-pro-edition`.
+- Head: `fix/jarvis-native-watchdog-2026-11-26`.
+- Open, draft, not merged.
+
+Standalone arm64 test APK build:
+- Branch `ci/jarvis-ogam-standalone-apk-watchdog-2026-11-26`.
+- Run `45746942158`: in progress at last status check; still in setup before native build/inspection/upload steps.
+- No release publication.
+- Physical OPPO validation remains outstanding.
