@@ -283,8 +283,27 @@ A focused regression test was added on a separate OGAM branch:
 - The test explicitly resolves the deferred promise during cleanup and awaits outstanding operations to avoid leaving Jest teardown hung.
 
 Verification:
-- Branch diff inspected against the exact APK source base: one test file, 78 added lines, no production source changes.
+- Branch diff inspected against the exact APK source base: one test file, 79 added lines, no production source changes.
 - Test suite has NOT been executed. No CI workflow was started because that would require creating a PR / consuming GitHub Actions minutes, and the user's Factory account previously reported an Actions budget warning.
 - No production watchdog, recovery state machine, harness-wide behavior change, APK build, merge, or device test was performed.
 
 This is a test implementation checkpoint, not a confirmed passing regression. Next: run the single focused Jest test in an approved free execution environment, inspect any failures, then add delayed-stop/recovery and tool/max-token path coverage only if the first test is sound.
+
+
+### Static review of the focused regression test — 2026-11-26
+
+A follow-up read-only review checked the exact branch test against the repository's current service and test helpers:
+
+- `createMockLlamaContext` accepts overrides for `completion`, `stopCompletion`, and `release`; the test's deferred native completion setup matches the helper contract.
+- `generateResponse()` returns `result.content` as a string, so the assertion on the delayed completion text matches the service's return type.
+- The test's stop/unload assertions match the implementation: Stop awaits `activeCompletionPromise`, and unload waits for tracked `nativeWork` before calling `release()`.
+- Jest's configured per-test timeout is 10 seconds; the added explicit waits are short (10 ms each). This is a static check, not execution evidence.
+- The package test script runs Jest coverage and then Android/iOS tests. A focused invocation of the single Jest file would avoid those extra suites, but no execution environment has yet been used.
+
+Execution availability:
+- GitHub combined commit status reports `CircleCI Pipeline: error` for the branch head.
+- `.circleci/config.yml` is absent from the branch. The CircleCI pipeline page could not be inspected, so the precise cause of the error is not confirmed.
+- No GitHub Actions run was started. No CircleCI rerun was attempted.
+- Therefore the focused regression test remains **not executed / not passed**.
+
+No additional OGAM files were changed by this review. The test branch remains separate from the APK commit; no production source, APK, or device state was changed.
