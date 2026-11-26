@@ -347,3 +347,14 @@ Execution status:
 - No workflow run or check status has appeared for this commit in the connected GitHub status/run lookup. The available GitHub integration exposes workflow-run inspection and rerun actions but no workflow-dispatch action.
 - The focused workflow has therefore been prepared but **has not yet been confirmed running**. Do not report a test pass.
 - No PR was opened, avoiding triggering OGAM's existing broad pull-request CI.
+
+
+### Workflow trigger confirmed — 2026-11-26
+
+A second commit touched the focused workflow itself to trigger the push filter:
+- OGAM commit: `09f678a9bc8ca76dfae8d5eae2e1a498183faf8d`.
+- GitHub Actions run #2: `45744711759`.
+- Run URL: https://github.com/sokfrut-tech/OGAM/actions/runs/45744711759
+- Job: `focused llm.test.ts`, job ID `139657888977`, runner `ubuntu-latest`.
+- Latest observed state: `in_progress`; job setup succeeded and checkout was running. Dependency setup and Jest had not yet started at the last poll.
+- This is a real run, but not a test result. Await completion before claiming pass/fail.
