@@ -474,3 +474,21 @@ Current checks on the Jarvis branch:
 - Focused workflow: `.github/workflows/jarvis-native-watchdog.yml`.
 - Latest queued/in-progress run will be recorded after its result is known.
 - No APK build, release, PR merge, or physical OPPO verification has been performed.
+
+
+### Verified focused regression and Jarvis draft PR — 2026-11-26
+
+Current implementation branch: `sokfrut-tech/OGAM:fix/jarvis-native-watchdog-2026-11-26`.
+Draft PR #13: https://github.com/sokfrut-tech/OGAM/pull/13
+Base is intentionally PR #12 head (`feature/jarvis-ai-ru-pro-edition`), not main.
+
+Successful focused verification for commit `d036246a5d205a58313620350742a21fcb71f5a2`:
+- GitHub Actions run `45746401528`: success.
+- ESLint: passed (no errors).
+- Jest `__tests__/unit/services/llm.test.ts`: 1 suite passed, **150 tests passed**, 0 snapshots, 29.727 s.
+- The new watchdog test verifies the delayed state at 60 seconds, callback recovery, a second quiet period, Stop remaining pending, and that context release waits until native completion settlement.
+- The job emitted Jest's existing `--forceExit` open-handles advisory after tests passed; this was not a test failure.
+
+A subsequent commit `9079fb213a6171d0b4ecd5391ae46979d1e04a17` added full app TypeScript checking to the focused workflow. Run `45746619216` is in progress; outcome is not yet known.
+
+PR #13 remains draft and unmerged. No APK build/release or physical OPPO verification yet.
