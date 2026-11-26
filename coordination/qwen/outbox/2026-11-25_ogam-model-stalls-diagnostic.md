@@ -492,3 +492,21 @@ Successful focused verification for commit `d036246a5d205a58313620350742a21fcb71
 A subsequent commit `9079fb213a6171d0b4ecd5391ae46979d1e04a17` added full app TypeScript checking to the focused workflow. Run `45746619216` is in progress; outcome is not yet known.
 
 PR #13 remains draft and unmerged. No APK build/release or physical OPPO verification yet.
+
+
+### Latest regression strengthening and ARM64 test build — 2026-11-26
+
+The Jarvis draft PR #13 now also asserts that a second generation is rejected while Stop is waiting for the native Promise to settle. This prevents an overlapping request from entering the occupied context.
+A project device-test note was added at:
+`docs/jarvis/NATIVE_GENERATION_WATCHDOG.md`
+
+Additional check results for the code before that final assertion:
+- Full app TypeScript `tsc --noEmit`: passed, run `45746619216`.
+- ESLint: passed in the same run.
+- External dependency audit: passed, run `45746626204`.
+- Focused Jest: 150/150 passed, run `45746401528`.
+
+Latest focused rerun after the no-overlap assertion: run `45746790745`, still in progress at this update.
+A standalone ARM64 APK build has been started from the same implementation + documentation snapshot on branch:
+`ci/jarvis-ogam-standalone-apk-watchdog-2026-11-26`
+Build run `45746942158`: queued/in progress. This build is an artifact test only; no GitHub release or merge is being performed.
