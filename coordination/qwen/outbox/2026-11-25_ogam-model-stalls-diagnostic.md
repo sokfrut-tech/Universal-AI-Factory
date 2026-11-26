@@ -436,3 +436,22 @@ Recommendation:
 - Treat thermal status as optional capability, not a required dependency.
 - Avoid high-frequency memory polling; snapshot at load/start and at a small number of meaningful state transitions to limit battery/CPU overhead.
 - Never persist prompt, response, reasoning or tool argument content as diagnostic telemetry.
+
+
+### Production watchdog implementation started — 2026-11-26
+
+User explicitly authorized production implementation. Work is isolated in OGAM branch:
+`fix/native-generation-watchdog-2026-11-26`
+Base: `09f678a9bc8ca76dfae8d5eae2e1a498183faf8d` (the previously passing test-only branch).
+
+Implementation currently committed (verification pending):
+- `src/services/llm.ts`: added lifecycle diagnostics (preparing, waiting, thinking, streaming, delayed, stopping, idle), callback/token counters, and a 60-second native-callback silence watchdog.
+- On a quiet period, logs model filename, effective backend, active/requested GPU layers, context length, configured threads/batch, callback/token counts and one memory snapshot. No prompt, response, reasoning or tool-argument text is added to diagnostics.
+- Watchdog only surfaces status and a UI notice. It does NOT automatically stop the model, clear native-work tracking, release the context, permit a second generation, or resolve a pending native Promise.
+- `src/services/llmToolGeneration.ts`: passes native-start/progress events into the shared diagnostic lifecycle for tool completions.
+- `src/screens/ChatScreen/ChatMessageArea.tsx`: shows a notice after 60 seconds without native callbacks and a separate message while Stop waits for the native operation to drain.
+- `__tests__/unit/services/llm.test.ts`: added a regression that simulates native silence, callback recovery, a second quiet period, and Stop remaining pending until the mocked native Promise actually settles.
+- The focused workflow now also lints the changed TS files and runs the LLM service Jest suite on this branch.
+
+Current OGAM branch HEAD: `4e15c83fcbefc962cb3669caffe77001b190904c`.
+Focused GitHub Actions run `45745636331` is in progress; no pass/fail result is recorded yet. No APK build, release or merge has been performed. Physical OPPO verification remains outstanding.
