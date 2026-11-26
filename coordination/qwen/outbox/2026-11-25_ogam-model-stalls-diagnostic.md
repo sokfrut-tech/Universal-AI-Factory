@@ -166,3 +166,48 @@ This is a test-coverage gap, not proof that the device has entered that conditio
 
 - Read-only source and test inventory only.
 - No tests executed; no source or test files modified; no build/APK produced; no device reproduction.
+
+
+## Released APK source cross-check and exact regression-test gap — 2026-11-26
+
+The source paths were re-checked at the exact OGAM commit used for the user's downloaded APK, `0cbc605a2480823099e2b96a1ebcf084f0b2d990`, as well as the current `main` source. The relevant completion/Stop behavior is present in both:
+
+- Standard generation and `generateWithMaxTokens` await `safeCompletion(... completion ...)`; `safeCompletion` catches rejected errors but has no deadline for a promise that stays pending.
+- Tool generation awaits the same `safeCompletion` wrapper and has no independent completion deadline.
+- `stopGeneration()` sends `context.stopCompletion()`, then waits for `activeCompletionPromise` to settle before clearing the active-generation state.
+- `waitForIdle(timeoutMs)` is a bounded observation only. A false result does not cancel native work or authorize context release.
+
+### Important existing protection — and its boundary
+
+OGAM already has `contextUnusable` / `isContextUsable()`. When a completion **returns** with an unexpected early-end result, `recordCompletionEnd()` marks the context unusable; the next model load replaces it, including when the same model file is selected again.
+
+That mechanism does not cover an operation whose completion promise never returns: `recordCompletionEnd()` is reached only after the awaited completion resolves. So the existing backend-fault recovery does not resolve the indefinite-pending case.
+
+### Existing test coverage, checked against the source
+
+- `__tests__/unit/services/llm.test.ts` has a valuable release-order test ("never releases the context under a completion that was still being set up"). Its mocked completion emits a token and resolves immediately; it does not simulate an operation that remains pending after Stop.
+- The same file's unload-while-generating test manually sets `isGenerating = true`; it verifies the Stop call precedes release but does not keep a real completion promise in flight.
+- Its `activeCompletionPromise` Stop test resolves the injected promise before invoking Stop, so it does not exercise a never-settling active operation.
+- `__tests__/harness/nativeBoundary.ts` can hold llama completions during prefill (`holdBeforeStream`) or mid-stream (`pauseAfter`), but its fake `stopCompletion()` releases those holds and lets the completion settle. It has no llama-completion mode that deliberately remains pending after Stop. The LiteRT fake does have a hang mode, but that is a different engine and does not exercise llama.rn's context lifecycle.
+
+### Proposed regression test shape — not implemented
+
+1. Load a fake llama context. Replace its next `completion()` with a deferred promise that remains pending; make `stopCompletion()` resolve immediately without resolving that completion.
+2. Start a real service generation and call Stop without awaiting it directly. After a bounded observation window, assert Stop is still pending, `waitForIdle(shortWindow)` is false, and no second completion is issued into that context.
+3. Start unload/reload and assert the old context's `release()` has not been called while the completion remains pending.
+4. Resolve the deferred completion as test cleanup. Then assert Stop/unload drain in the expected order and that a subsequent model load/reply works.
+5. Repeat with `stopCompletion()` rejecting, then repeat the core lifecycle assertions through the tool and max-token paths where applicable.
+
+The test must not leave a permanently pending promise in Jest teardown. It should hold the operation beyond the observation window, assert the safe-busy behavior, then explicitly resolve it for cleanup. This models a native operation that outlives the watchdog window without making the test process itself hang forever.
+
+### Engineering conclusion
+
+The downloaded APK commit confirms this is not only a later `main`-branch concern: the same no-deadline Stop/completion wait is in the code used for that build. This still does **not** prove that Qwen3.5-2B is the specific cause on the user's OPPO; no device logs or reproduction have been collected.
+
+A watchdog may report slow/no-first-token progress and request native Stop, but it must not treat the timer as cancellation. Until native completion actually settles, the engine/context must remain marked busy or quarantined; no new completion, cache mutation, context release, or reload may use that same live context. No production fix is chosen in this note.
+
+### Verification boundary
+
+- Exact APK source commit and current `main` checked read-only.
+- Existing test and harness code inspected read-only.
+- No tests run, no app/test/harness source edits, no build/APK produced, and no OPPO device reproduction.
