@@ -94,3 +94,15 @@ These are hypotheses to distinguish with timing and logs, not grounds to change 
 - User confirmed the model family is Qwen3.5; exact size (0.8B/2B/9B), quantization, and selected backend remain unknown. OGAM's trending list contains all three sizes.
 - Device reproduction: not performed.
 - Source changes, tests, and builds: none.
+
+## User confirmation — exact size
+
+On 2026-11-26 the user confirmed that the selected conversational model is **Qwen3.5-2B**. This narrows the investigation from the family to the 2B size, but does not yet identify the exact GGUF filename, quantization (Q4/Q5/etc.), backend actually used at runtime, or whether the delay occurs during load, prefill, reasoning, or decode. Do not describe the model as Q4 unless the app's selected file confirms it.
+
+For the next controlled comparison, keep the current 2B model unchanged and first capture its exact filename/quantization and backend. Compare a short prompt with reasoning disabled/enabled only if the UI exposes that setting; record time-to-first-token and tokens/sec. Test Stop and a subsequent short turn. Avoid changing multiple settings simultaneously.
+
+## Updated status
+
+- Confirmed by user: Qwen3.5-2B is the selected model size.
+- Still unknown: exact GGUF variant/quantization, backend, context length actually applied at runtime, and failure phase.
+- No app code changed; no test/build or physical-device reproduction performed.
