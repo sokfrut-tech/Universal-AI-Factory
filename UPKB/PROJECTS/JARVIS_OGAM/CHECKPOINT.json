@@ -1,45 +1,47 @@
 {
   "checkpoint_id": "JARVIS_OGAM_2026-11-24",
   "project_id": "JARVIS_OGAM",
-  "last_successful_step": "PR #7 M2 checks refreshed: isolated ARM64 APK build, import/workspace scan and focused M1+M2 TypeScript/Jest/SQLite integration all SUCCESS.",
-  "last_commit": "276f2f2ca489122b9145410b9552a199683604b3",
-  "last_verified_build": "Isolated M2 OP-SQLite ARM64 probe APK built in CI; package com.jarvism2probe is a test harness, not the primary Jarvis app.",
-  "last_test_result": "PR #7 3/3 checks SUCCESS on 2026-11-24. PR #1 latest head has zero check runs returned; current implementation handoff says standalone APK workflow is blocked by private workspace dependencies.",
+  "last_successful_step": "PR #12 (feature/jarvis-ai-ru-pro-edition, Slice 21+) fixed TypeScript navigation casts and achieved green CI (lint, types, architecture, 8/8 jest shards, android tests, ios tests, coverage) and external dependency audit; Engine updates cron workflow disabled on fork.",
+  "last_commit": "2905cf33deb94638645ed11f3ed69e0fa68b2f5f",
+  "last_verified_build": "Green OGAM CI run 45965021411 and external dependency audit 45965021429 on 2905cf33deb94638645ed11f3ed69e0fa68b2f5f (historical standalone APK 45833415628 prior head). Separate experimental RN fork from primary Gemeni native app.",
+  "last_test_result": "OGAM CI run 45965021411 (2026-11-27): lint/types/arch SUCCESS, jest 8/8 SUCCESS, android tests SUCCESS, ios tests SUCCESS, coverage SUCCESS; audit run 45965021429 SUCCESS. PR #1 and #12 remain Draft.",
   "known_problems": [
     "Physical OPPO install/launch and runtime PASS marker remain unverified.",
-    "PR #1 and #2 remain draft and unmerged; do not conflate OGAM with Gemeni primary Jarvis.",
-    "PR #1 standalone Android build requires private workspaces and is not proven self-contained."
+    "PR #1, #2, #7, #12 remain draft and unmerged; keep OGAM RN fork strictly separated from primary Gemeni Kotlin app.",
+    "Nov 22 Chinese speech models and Kotlin TTS review tasks audited and closed in coordination/{gemini,claude}/outbox/ (tiny-voca-ru HF SHA-256 + VoiceDesign provenance and Supertonic callback-stop C++ patch remain open gates)."
   ],
   "active_tasks": [
     "JARVIS-OGAM-MEM-001",
     "JARVIS-OGAM-DEVICE-001"
   ],
   "blocked_tasks": [
-    "Physical-device verification until exact APK provenance and safe install path are confirmed."
+    "Physical-device verification on OPPO PGEM10 and tiny-voca-ru/Supertonic production adoption until voice provenance, ONNX hashes, and device tests pass."
   ],
   "pending_tasks": [
-    "Refresh PR #1/#2/#6/#7 after next source change.",
-    "Run M2 probe on OPPO only after confirming artifact identity."
+    "Pin tiny-voca-ru HF ONNX revisions/SHA-256 and resolve VoiceDesign speaker provenance.",
+    "Run physical OPPO acceptance tests separating OGAM probe APKs from Gemeni Jarvis Ai Core."
   ],
-  "next_action": "Keep OGAM PR #7 probe separate from the primary Jarvis APK; verify package, version and SHA-256, then run the authorized physical OPPO probe and record process survival plus PASS marker.",
+  "next_action": "Keep OGAM PR #12/#1/#7 separate from primary Gemeni Jarvis Ai Core; resolve tiny-voca-ru provenance/hashes before ONNX Runtime integration and obtain user verification on physical OPPO PGEM10.",
   "required_files": [
     "docs/jarvis/IMPLEMENTATION_HANDOFF_2026-11-22.md",
-    "docs/DEVICE_CAPTURE_PROGRESS.md",
-    "docs/DEVICE_TEST_FINDINGS.md"
+    "docs/jarvis/LOCAL_RUSSIAN_TTS_RUNTIME_EVALUATION.md",
+    "coordination/gemini/outbox/REPORT_2026-11-22_OGAM_CHINESE_SPEECH_MODELS_REVIEW.md",
+    "coordination/claude/outbox/REPORT_2026-11-22_OGAM_JARVIS_TTS_KOTLIN_REVIEW.md"
   ],
   "required_access": [
-    "Read access to OGAM PRs and Actions; physical OPPO runtime evidence through authorized device route."
+    "Read access to OGAM PRs and Actions; physical OPPO runtime evidence through user device test."
   ],
   "environment_state": [
-    "CI ARM64 build and tests observed; physical device not inspected."
+    "CI lint/jest/android/ios checks verified green on 2026-11-27; Engine updates disabled manually; physical device not inspected."
   ],
   "evidence": [
     "https://github.com/sokfrut-tech/OGAM/pull/1",
-    "https://github.com/sokfrut-tech/OGAM/pull/2",
-    "https://github.com/sokfrut-tech/OGAM/pull/7",
-    "https://github.com/sokfrut-tech/OGAM/commit/276f2f2ca489122b9145410b9552a199683604b3"
+    "https://github.com/sokfrut-tech/OGAM/pull/12",
+    "https://github.com/sokfrut-tech/OGAM/actions/runs/45965021411",
+    "https://github.com/sokfrut-tech/OGAM/actions/runs/45965021429",
+    "https://github.com/sokfrut-tech/OGAM/commit/2905cf33deb94638645ed11f3ed69e0fa68b2f5f"
   ],
   "verification_status": "VERIFIED",
-  "updated_at": "2026-11-24T17:55:00Z",
-  "updated_by": "GPT"
+  "updated_at": "2026-11-27T09:23:00Z",
+  "updated_by": "Antigravity"
 }

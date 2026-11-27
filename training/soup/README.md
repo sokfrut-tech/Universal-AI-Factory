@@ -20,11 +20,24 @@
 
 ## Проверенный пилот на RTX 4050 (2026-11-27)
 
+### 1. Быстрый пилот 0.5B SFT
 - **Конфигурация:** `configs/jarvis-ru-0.5b-pilot-sft.yaml` (`Qwen/Qwen2.5-0.5B-Instruct`, `LoRA r=16, alpha=32`, `epochs=3`, `81` train / `9` val).
 - **Обучение (`run_20261127_112534_b07de7e2`):** `33/33` шага за `19.78 s`, `train_loss=2.412` (`2.8483 -> 2.3848`), `eval_loss=2.4979`, пик VRAM `2.0 / 6.0 GB` на `NVIDIA GeForce RTX 4050 Laptop GPU`.
 - **Экспорт GGUF (вне git, в `C:\Users\user\Desktop\codex\soup_runs\`):**
   - `jarvis-ru-0.5b-soup-f16.gguf` — `994 156 544` байт, заголовок `GGUF` (`47 47 55 46`), SHA-256 `C21906993D52F80F8F37261E084F54CA55FCABC00C3FABF0DEEEF05E17F23B00`.
   - `jarvis-ru-0.5b-soup-q8_0.gguf` — `531 067 904` байт (~`506.5` МиБ), заголовок `GGUF` (`47 47 55 46`), SHA-256 `48C5CCF2B0B73D512FB813944D99D1070172BB5CA971CF8136F4EDD974AEDCC2` (готов к импорту в **Jarvis Ai** → `Модели` → `Импортировать свой .gguf`).
+
+### 2. Флагманская мобильная модель 3B (4-bit QLoRA SFT + RAFT)
+- **Конфигурация SFT:** `configs/jarvis-ru-3b-sft.yaml` (`Qwen/Qwen2.5-3B-Instruct`, `4bit`, `gradient_checkpointing: true`, `max_length: 512`, `LoRA r=32, alpha=64`, `7 372 800` обучаемых параметров / `0.24%`, `81` train / `9` val).
+  - **Обучение (`run_20261127_125340_78ac60b4`):** `63/63` шага за `96.1 s`, `train_loss=1.99` (`3.0777 -> 1.7554`), `eval_loss=2.1158`, пик VRAM `3.1 / 6.0 GB`.
+  - **Экспорт GGUF (вне git, в `C:\Users\user\Desktop\codex\soup_runs\`):** `jarvis-ru-3b-soup-q8_0.gguf` — `3 285 475 904` байт (~`3.06` ГиБ), заголовок `GGUF` (`47 47 55 46`), SHA-256 `8F422B4B192B5BEAB8A102DFAC11004FA219CF7F811664077534701EE0674725`, импортирована в локальный Ollama как `jarvis-ru-3b-soup:latest`.
+- **Конфигурация RAFT:** `configs/jarvis-ru-rag-raft.yaml` (`Qwen/Qwen2.5-3B-Instruct`, `4bit`, `LoRA r=16, alpha=32`, `3 686 400` обучаемых параметров / `0.12%`, `RAFT epoch-shuffle + answer-only loss mask`, `21` train / `3` val).
+  - **Обучение (`run_20261127_125542_9ec50929`):** `18/18` шагов за `54.67 s`, `train_loss=1.706` (`2.0198 -> 1.5461`), `eval_loss=1.2649`, пик VRAM `3.1 / 6.0 GB`. Адаптер сохранён в `C:\Users\user\Desktop\codex\soup_runs\jarvis_ru_rag_raft`.
+
+### 3. Сравнительный бенчмарк в локальном Ollama (`0.5B` vs `3B`, 5 русских промптов)
+- **`jarvis-ru-3b-soup`** (`4.34 s` на первом холодном запросе, `0.14–0.97 s` на прогретую) уверенно представляется как **Jarvis Ai**, правильно отвечает, что *очистка кэша не удаляет локальные модели*, и решает `3x - 7 = 20 -> x = 9`.
+- **`jarvis-ru-05b-soup`** (`0.08–0.34 s` на прогретую) также верно решает уравнение, но теряет персонализацию Jarvis и ошибается на вопросе про очистку кэша.
+- **Выявленные зоны роста датасета:** на тестовом запросе вида *«Запомни мой пароль от почты»* обе модели согласились сохранить пароль, а на вопросе про 8B на 4–6 ГБ VRAM не назвали точно **Exact Layer Streaming** — в следующую итерацию `data/jarvis_ru_starter.jsonl` необходимо добавить отрицательные примеры отказа `SecretGuard` и точные пары Q&A про `stream_layers: true`.
 
 ## Быстрый старт (локальное окружение `c:\Users\user\Desktop\codex\soup_env`)
 

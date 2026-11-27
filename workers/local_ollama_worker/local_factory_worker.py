@@ -73,6 +73,11 @@ def redact_secrets(text: str) -> str:
     return cleaned
 
 
+def strip_think_blocks(text: str) -> str:
+    """Strip inline <think>...</think> reasoning blocks emitted by thinking models."""
+    return re.sub(r"(?is)<think>.*?</think>", "", text or "").strip()
+
+
 def is_substantive_task_file(path: Path) -> bool:
     name = path.name
     if not path.is_file() or path.suffix.lower() != ".md":
@@ -153,12 +158,44 @@ def build_task_prompt(channel: str, inbox_path: Path, raw_text: str, repo_root: 
     return (
         "Ты локальный zero-cost ревьюер Universal AI Factory. "
         "Пиши строго технически на русском языке, не придумывай непроверенные тесты/устройства, "
-        "не выводи пустых ACK и не используй платные облачные API.\n\n"
+        "не выводи пустых ACK и не используй платные облачные API. "
+        "Пиши компактно (до ~700–1000 слов), не выдумывай URL, пути репозитория, названия файлов моделей "
+        "или замеры производительности — опирайся только на факты из задания и явно помечай открытые вопросы для ручной проверки. "
+        "Не копируй статус `QUEUED` или `PENDING` из исходного задания как статус самого отчёта — "
+        "указывай статус `LOCAL_OLLAMA_DRAFT`. Напиши полный законченный отчёт со всеми разделами, не обрывая списки.\n\n"
         f"Канал: {channel}\nЗадача: `{rel}`\n\n"
-        "Подготовь структурированный черновой отчёт (Резюме, Проверенные факты из задания, "
-        "Риски/блокеры, Следующие шаги без мержа и запуска платных сервисов):\n\n"
+        "Подготовь структурированный черновой отчёт строго по следующим разделам:\n"
+        "1. Резюме и соблюдение zero-cost.\n"
+        "2. Проверенные факты из задания.\n"
+        "3. Исключённые платные и облачные варианты.\n"
+        "4. Ограничения и риски (включая отсутствие замеров на физическом OPPO).\n"
+        "5. Следующие шаги без мержа PR и запуска платных сервисов.\n\n"
         f"{clipped}"
     )
+
+
+def _generate_with_think_fallback(
+    root: str,
+    model: str,
+    prompt: str,
+    transport: Callable[..., dict[str, Any]],
+) -> dict[str, Any]:
+    """Call /api/generate with think=False and fall back cleanly if a model rejects 'think' with HTTP 400."""
+    payload: dict[str, Any] = {
+        "model": model,
+        "prompt": prompt,
+        "stream": False,
+        "think": False,
+        "options": {"temperature": 0.2, "num_ctx": 8192, "num_predict": 4096},
+    }
+    try:
+        return transport(f"{root}/api/generate", payload, timeout_s=240.0)
+    except urllib.error.HTTPError as exc:
+        if exc.code != 400:
+            raise
+        fallback_payload = dict(payload)
+        fallback_payload.pop("think", None)
+        return transport(f"{root}/api/generate", fallback_payload, timeout_s=240.0)
 
 
 def run_once(
@@ -197,20 +234,14 @@ def run_once(
         raw_task = redact_secrets(inbox_file.read_text(encoding="utf-8", errors="replace"))
         prompt = build_task_prompt(channel, inbox_file, raw_task, repo_root)
         t0 = time.monotonic()
-        resp = transport(
-            f"{root}/api/generate",
-            {
-                "model": model,
-                "prompt": prompt,
-                "stream": False,
-                "options": {"temperature": 0.2, "num_ctx": 4096},
-            },
-            timeout_s=180.0,
-        )
+        resp = _generate_with_think_fallback(root, model, prompt, transport)
         elapsed_s = round(time.monotonic() - t0, 2)
-        answer = redact_secrets((resp.get("response") or "").strip())
+        done_reason = str(resp.get("done_reason") or "").strip()
+        answer = redact_secrets(strip_think_blocks(resp.get("response") or ""))
         if len(answer) < 80:
             raise RuntimeError(f"Ollama returned an empty or too short response ({len(answer)} chars) — refusing empty ACK.")
+        if done_reason == "length":
+            answer += "\n\n> [!WARNING]\n> Генерация достигла лимита `num_predict` (`done_reason=length`). Требуется проверка полноты отчёта.\n"
 
         target = expected_report_path(repo_root, channel, inbox_file)
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -219,7 +250,7 @@ def run_once(
             f"# Local Ollama Draft Report — {inbox_file.name}\n\n"
             f"- **Generated at:** {stamp}\n"
             f"- **Worker:** `local_factory_worker.py` (strict loopback `127.0.0.1`, zero-cost)\n"
-            f"- **Model:** `{model}` (`{elapsed_s}s`)\n"
+            f"- **Model:** `{model}` (`{elapsed_s}s`, `done_reason={done_reason or 'unknown'}`)\n"
             f"- **Source task:** `{inbox_file.relative_to(repo_root).as_posix()}`\n"
             f"- **Notice:** Draft generated offline from inbox specification; verify source code and run tests before merge.\n\n"
             "---\n\n"
@@ -232,6 +263,7 @@ def run_once(
                 "report": target.relative_to(repo_root).as_posix(),
                 "bytes": target.stat().st_size,
                 "elapsed_s": elapsed_s,
+                "done_reason": done_reason,
             }
         )
 

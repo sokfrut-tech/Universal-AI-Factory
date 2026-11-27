@@ -1,72 +1,63 @@
 {
   "checkpoint_id": "UPKB_FACTORY_BOOTSTRAP_2026-11-24",
   "project_id": "UNIVERSAL_AI_FACTORY",
-  "last_successful_step": "Offline stub-provider dispatch E2E is implemented and verified. Latest validation run #171 passed on the exact referenced commit; all 15 project packets built and 39 tests passed.",
-  "last_commit": "82d4c9342c44c37ae30d15c73e7a263477cae061",
+  "last_successful_step": "Merged PRs #19, #20, #21, #23, #26, #28, #29, #30, #31 into main; closed stalled Nov 22 claude/gemini/qwen inbox queues via substantive Russian reviews; verified local Soup v0.78.1 training (0.5B SFT, 3B 4-bit QLoRA SFT + RAFT) + GGUF exports + Ollama benchmarks; executed live zero-cost loopback Ollama worker (qwen3.5:4b, done_reason=stop, 12457 B) with empty-ACK and <think>-overflow safeguards.",
+  "last_commit": "487b83f43d3c392c40209331323a773e8fcc11c8",
   "last_verified_build": null,
-  "last_test_result": "Run #171 SUCCESS on 82d4c9342c44c37ae30d15c73e7a263477cae061: 15 projects, 60 indexed records, 8 Draft 2020-12 JSON Schemas, 15 context packets and 39 tests passed. This is an offline stub-provider test only; no Gemini API/live agent execution.",
+  "last_test_result": "All 59 local Python unit tests (patch_validator, factory_runner_workflow, soup export_memory, local_factory_worker 5/5 with HTTP 400 fallback & <think> strip, UPKB context/dispatch suites) PASSED; Soup 3B SFT (63/63 steps, val_loss=2.1158) and 3B RAFT (18/18 steps, val_loss=1.2649) completed on RTX 4050; live qwen3.5:4b worker closed coordination/qwen/inbox.",
   "known_problems": [
-    "UPKB is not yet integrated into live agent workflows; the offline stub-provider E2E is not a live Gemini execution.",
-    "FOREST_LTE and IMAGE_TRANSLATOR_RU have no confirmed canonical repositories; their context is REPORTED only.",
-    "Research index is empty; environment index is seed-only. Source inventory and dependency map remain partial.",
-    "Draft PR #28 remains open and unmerged; local/remote environments and physical devices are not inventoried."
+    "FOREST_LTE and IMAGE_TRANSLATOR_RU still lack confirmed canonical source repositories; context remains REPORTED.",
+    "Physical OPPO Find X6 Pro (PGEM10) runtime validation for updated Gemeni PR #152 APK (D930A9B6...) and OGAM APKs remains pending user device testing.",
+    "Local Soup 0.5B/3B SFT pilot benchmark showed need for more SecretGuard refusal examples and Exact Layer Streaming Q&A pairs in training/soup/data/jarvis_ru_starter.jsonl.",
+    "Upstream Gemeni (#152) and OGAM (#12) Draft PRs remain open pending user device acceptance."
   ],
   "active_tasks": [
-    "Complete canonical source investigation for FOREST_LTE and IMAGE_TRANSLATOR_RU.",
-    "Prepare a separate reviewed Gemini workflow integration PR only after PR #28 is explicitly approved and merged by the owner.",
-    "Diagnose exact primary Jarvis APK runtime failure on OPPO, separate from OGAM test APKs.",
-    "Diagnose AVTOY PR #78/#81 CI failures from detailed logs."
+    "Await user installation and logcat/runtime confirmation of Gemeni PR #152 APK (D930A9B6...) on physical OPPO PGEM10.",
+    "Continue canonical source investigation for FOREST_LTE and IMAGE_TRANSLATOR_RU.",
+    "Expand training/soup/data/jarvis_ru_starter.jsonl with SecretGuard refusal and Layer Streaming accuracy samples before mobile Q4_K_M quantization."
   ],
   "blocked_tasks": [],
   "pending_tasks": [
-    "Populate research and environment indexes from verified evidence.",
-    "Implement and test live Gemini workflow integration after owner-approved merge; do not dispatch until separately reviewed.",
-    "Refresh project checkpoints when source PRs/builds/device evidence change."
+    "Quantize Soup-trained 3B model to mobile Q4_K_M and validate on OPPO PGEM10 inside Jarvis Ai.",
+    "Populate UPKB RESEARCH_INDEX and ENVIRONMENT_INDEX with verified local worker & Soup workstation evidence.",
+    "Diagnose AVTOY PR #78/#81 CI failures from detailed logs."
   ],
-  "next_action": "Wait for owner review/approval of draft PR #28 before touching production agent workflows. In the meantime continue source inventory and verify unknown canonical project sources. After merge approval, make a separate workflow PR implementing the already-tested context contract.",
+  "next_action": "Validate updated UPKB checkpoints and training docs via GitHub Actions UPKB validation on main; share updated Gemeni PR #152 APK, Soup GGUF artifacts, and zero-cost worker outputs with user for OPPO PGEM10 testing.",
   "required_files": [
     "UPKB/CORE/AGENT_START_PROTOCOL.md",
     "UPKB/CORE/RULES.md",
     "UPKB/CORE/SECURITY.md",
     "UPKB/INDEX/MASTER_INDEX.json",
-    "UPKB/INDEX/PROJECT_INDEX.json"
+    "UPKB/INDEX/PROJECT_INDEX.json",
+    "training/soup/README.md",
+    "workers/local_ollama_worker/local_factory_worker.py"
   ],
   "required_access": [
-    "Read access to sokfrut-tech repositories and workflow metadata"
+    "Read/write access to sokfrut-tech repositories, local loopback Ollama (127.0.0.1:11434), and physical OPPO runtime feedback from owner."
   ],
   "environment_state": [
-    "No test environment started or modified in this bootstrap."
+    "Workstation GPU: NVIDIA GeForce RTX 4050 Laptop GPU (6141 MiB VRAM); isolated Soup venv at c:/Users/user/Desktop/codex/soup_env (not in git).",
+    "Local loopback Ollama (http://127.0.0.1:11434) running qwen3.5:4b, jarvis-ru-05b-soup, and jarvis-ru-3b-soup at zero API cost.",
+    "All trained checkpoints and GGUF artifacts kept strictly outside git in C:/Users/user/Desktop/codex/soup_runs/."
   ],
   "evidence": [
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/tree/feature/upkb-knowledge-base-bootstrap/UPKB",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/05f0ff18f850f9f215f6d9f5b2e44d24e807bd89",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45445513254",
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/pull/19",
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/pull/20",
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/pull/21",
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/pull/23",
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/pull/26",
     "https://github.com/sokfrut-tech/Universal-AI-Factory/pull/28",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45446175813",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/af59276b5b2c2f6f885322d292ed8ff7cc32494c",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/4d57298d92866261193bdd9a8d3679584f206230",
-    "https://github.com/sokfrut-tech/OGAM/pull/7",
-    "https://github.com/sokfrut-tech/Gemeni/pull/148",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45446219548",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45446234464",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45450813762",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/a427b80027e3d608d78417b199602f0cdf9edd92",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45452470186",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/ae9ff40b1b7f71f7263f75f2e7587fc257107487",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45452947914",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/ff0e2e8224e7b44cebdb65466697ea40de63890e",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45453634896",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45453652249",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/a8240e7a05967743601e4994ef3519d7199161d8",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45454496038",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/c821b048de739ef542d8fc3cb94865f05e062ea8",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45455252421",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45476290511",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/351fe40dc62687d7ae69762c4c760dcb0c4a9935",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45476461757",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/82d4c9342c44c37ae30d15c73e7a263477cae061"
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/pull/29",
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/pull/30",
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/pull/31",
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/487b83f43d3c392c40209331323a773e8fcc11c8",
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45966052654",
+    "https://github.com/sokfrut-tech/Gemeni/actions/runs/45972892691",
+    "https://github.com/sokfrut-tech/OGAM/actions/runs/45965021411",
+    "coordination/qwen/outbox/REPORT_2026-11-25_JARVIS-QWEN-TECHNOLOGY-AND-FACTORY-ADAPTER-RESEARCH.md",
+    "training/soup/README.md"
   ],
   "verification_status": "VERIFIED",
-  "updated_at": "2026-11-24T20:03:00Z",
-  "updated_by": "GPT"
+  "updated_at": "2026-11-27T10:07:00Z",
+  "updated_by": "Antigravity"
 }

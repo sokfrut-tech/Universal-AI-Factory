@@ -1,8 +1,10 @@
+import io
 import json
 import sys
 import tempfile
 import threading
 import unittest
+import urllib.error
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -113,6 +115,55 @@ class LocalFactoryWorkerTests(unittest.TestCase):
 
             with self.assertRaises(RuntimeError):
                 w.run_once(root, base_url="http://127.0.0.1:11434", model="qwen3.5:4b", channels=["qwen"], transport=fake_transport)
+
+    def test_sends_no_think_extended_context_strips_think_and_falls_back_on_http_400(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            q_in = root / "coordination" / "qwen" / "inbox"
+            q_in.mkdir(parents=True)
+            (q_in / "task2.md").write_text("# Task 2\nAudit local Qwen runtime constraints.\n", encoding="utf-8")
+
+            seen_payloads = []
+
+            def fake_transport(url, payload=None, timeout_s=10.0):
+                if url.endswith("/api/tags"):
+                    return {"models": [{"name": "qwen3.5:4b"}]}
+                seen_payloads.append(dict(payload))
+                if len(seen_payloads) == 1:
+                    raise urllib.error.HTTPError(
+                        url=url,
+                        code=400,
+                        msg="Bad Request",
+                        hdrs=None,
+                        fp=io.BytesIO(b"think not supported"),
+                    )
+                return {
+                    "done_reason": "stop",
+                    "response": (
+                        "<think>скрытые рассуждения не должны попасть в отчёт</think>\n"
+                        "## Резюме\nПроверка выполнена офлайн без платных API и показала полную работоспособность.\n\n"
+                        "## Следующие шаги\nНе мержить PR без тестов на устройстве."
+                    ),
+                }
+
+            done = w.run_once(
+                root,
+                base_url="http://127.0.0.1:11434",
+                model="qwen3.5:4b",
+                channels=["qwen"],
+                transport=fake_transport,
+            )
+            self.assertEqual(len(seen_payloads), 2)
+            self.assertFalse(seen_payloads[0]["think"])
+            self.assertEqual(seen_payloads[0]["options"]["num_ctx"], 8192)
+            self.assertEqual(seen_payloads[0]["options"]["num_predict"], 4096)
+            self.assertNotIn("think", seen_payloads[1])
+            self.assertEqual(done["processed"][0]["done_reason"], "stop")
+
+            content = (root / done["processed"][0]["report"]).read_text(encoding="utf-8")
+            self.assertNotIn("<think>", content)
+            self.assertNotIn("скрытые рассуждения", content)
+            self.assertIn("done_reason=stop", content)
 
 
 if __name__ == "__main__":

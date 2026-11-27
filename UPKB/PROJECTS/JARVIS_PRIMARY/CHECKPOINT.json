@@ -1,44 +1,43 @@
 {
   "checkpoint_id": "JARVIS_PRIMARY_2026-11-24",
   "project_id": "JARVIS_PRIMARY",
-  "last_successful_step": "GitHub PR #148 metadata and its three checks refreshed: secret scanning, CodeQL and build all SUCCESS on the recorded head.",
-  "last_commit": "769e50e782aafb2698b9ff31f429725087c22ecc",
-  "last_verified_build": null,
-  "last_test_result": "PR #148: 3/3 checks SUCCESS (2026-11-21). This is CI evidence only; no proof of APK launch or working features on physical OPPO.",
+  "last_successful_step": "PR #152 (feat/jarvis-drawer-ui-and-ogam-features, 217df04ce6bd18b409c2c7f04355fdbf5153d36d) added Breeno-style navigation drawer, 3D Core Orb, expandable Settings, SecretGuard/RAG/PhoneActions/MCP/Qwen3-0.6B+4B GGUF catalog, Russian abbreviation TTS chunking, and incremental token-to-Piper-TTS streaming; green Build Jarvis CI 45972892691.",
+  "last_commit": "217df04ce6bd18b409c2c7f04355fdbf5153d36d",
+  "last_verified_build": "Gemeni Build Jarvis run 45972892691 (2026-11-27): debug APK 124929608 B, SHA-256 D930A9B6562FFC38A12474DD927455639B88774134FEA7F013248FDF9DEC5920, artifact 45972892691 jarvis-debug-apk.",
+  "last_test_result": "Build Jarvis CI 45972892691: all JVM unit tests (incl. streamingSpeechChunker + ModelCatalogValidationTest 11 packs), ABI/16KB native checks, and 7/7 Android 15 emulator smoke tests (57.649s) PASSED. Physical OPPO runtime remains unverified.",
   "known_problems": [
-    "User previously observed black screen with static Jarvis text; this is a release-blocking regression.",
-    "Physical OPPO runtime, microphone/ASR/tools/TTS/VoiceInteraction and native renderer remain unverified.",
-    "PR #133 is open draft and mergeable=false; PR #148 targets the integration branch, not main."
+    "Physical OPPO Find X6 Pro (PGEM10 / ColorOS) runtime, mic/ASR/speaker/VoiceInteraction playback remain pending user installation and testing of latest PR #152 APK.",
+    "PR #152 and PR #148 remain Draft/Open and unmerged pending device acceptance."
   ],
   "active_tasks": [
     "JARVIS-DEVICE-001",
     "JARVIS-GEM-001"
   ],
   "blocked_tasks": [
-    "Physical device acceptance until exact APK package/version/SHA and runtime diagnostics are captured."
+    "Physical device acceptance until user installs and validates PR #152 Jarvis-Ai-Core-arm64-debug.apk (SHA-256 D930A9B6562FFC38A12474DD927455639B88774134FEA7F013248FDF9DEC5920) on OPPO PGEM10."
   ],
   "pending_tasks": [
-    "Reconcile PR #148/#133 branch ancestry and integration path.",
-    "Run emulator and physical OPPO acceptance gates."
+    "Install and test PR #152 APK on OPPO Find X6 Pro (audio streaming TTS, local GGUF / Qwen3, drawer, Settings).",
+    "Reconcile/merge PR #152 after owner device verification."
   ],
-  "next_action": "Identify the exact APK installed by the user; correlate package/version/SHA-256 to Gemeni source branch and collect logcat, process PID, Activity start result and screenshot before changing runtime code.",
+  "next_action": "Install updated PR #152 APK (SHA-256 D930A9B6562FFC38A12474DD927455639B88774134FEA7F013248FDF9DEC5920) on physical OPPO PGEM10, verify streaming Piper TTS and local GGUF inference, and collect runtime confirmation/logcat before merging PR #152.",
   "required_files": [
     "docs/CONTINUATION_STATE.md",
     "docs/CURRENT_STATUS.md",
     "docs/RELEASE_CONTROL_AND_SECURITY.md"
   ],
   "required_access": [
-    "Read access to Gemeni branches, PRs and Actions; physical OPPO device evidence must be supplied through an authorized route."
+    "Read/write access to Gemeni branches, PRs and Actions; physical OPPO validation from user."
   ],
   "environment_state": [
-    "No physical OPPO device session or live runtime process was inspected in this checkpoint."
+    "Android 15 CI emulator smoke tests (7/7) and JVM unit tests verified on 217df04ce6bd18b409c2c7f04355fdbf5153d36d; physical OPPO PGEM10 not tested."
   ],
   "evidence": [
-    "https://github.com/sokfrut-tech/Gemeni/pull/148",
-    "https://github.com/sokfrut-tech/Gemeni/pull/133",
-    "https://github.com/sokfrut-tech/Gemeni/commit/769e50e782aafb2698b9ff31f429725087c22ecc"
+    "https://github.com/sokfrut-tech/Gemeni/pull/152",
+    "https://github.com/sokfrut-tech/Gemeni/actions/runs/45972892691",
+    "https://github.com/sokfrut-tech/Gemeni/commit/217df04ce6bd18b409c2c7f04355fdbf5153d36d"
   ],
-  "verification_status": "REPORTED",
-  "updated_at": "2026-11-24T17:55:00Z",
-  "updated_by": "GPT"
+  "verification_status": "VERIFIED",
+  "updated_at": "2026-11-27T09:31:00Z",
+  "updated_by": "Antigravity"
 }
