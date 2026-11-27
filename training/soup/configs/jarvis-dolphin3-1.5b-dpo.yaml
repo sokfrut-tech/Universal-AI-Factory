@@ -10,8 +10,8 @@ data:
   max_length: 512
 
 training:
-  epochs: 3
-  lr: 5e-5
+  epochs: 5
+  lr: 8e-5
   batch_size: 1
   gradient_accumulation_steps: 4
   quantization: 4bit

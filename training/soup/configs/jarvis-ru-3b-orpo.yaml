@@ -1,0 +1,30 @@
+# Jarvis Ai Qwen2.5 3B RU ORPO (Combined SFT + Preference Optimization on RTX 4050 6 GB VRAM)
+base: C:/Users/user/Desktop/codex/soup_runs/jarvis_ru_3b_sft_merged
+task: orpo
+backend: transformers
+
+data:
+  train: training/soup/data/jarvis_ru_dpo.jsonl
+  format: dpo
+  val_split: 0.1
+  max_length: 512
+
+training:
+  epochs: 4
+  lr: 1.5e-4
+  batch_size: 1
+  gradient_accumulation_steps: 4
+  quantization: 4bit
+  gradient_checkpointing: true
+  orpo_beta: 0.1
+  scheduler: cosine
+  warmup_ratio: 0.1
+  logging_steps: 5
+  save_steps: 50
+  lora:
+    r: 32
+    alpha: 64
+    dropout: 0.05
+    target_modules: auto
+
+output: C:/Users/user/Desktop/codex/soup_runs/jarvis_ru_3b_orpo
