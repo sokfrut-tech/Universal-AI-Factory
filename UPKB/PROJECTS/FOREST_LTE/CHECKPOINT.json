@@ -1,0 +1,39 @@
+{
+  "checkpoint_id": "FOREST_LTE_SOURCE_RECOVERY_2026-11-24",
+  "project_id": "FOREST_LTE",
+  "last_successful_step": "Located and preserved the original owner project-memory artifact from 2026-10-27 in the Library; added a provenance reference in UPKB. No field measurements or hardware verification performed.",
+  "last_commit": null,
+  "last_verified_build": null,
+  "last_test_result": "Not applicable; documentation/provenance inventory only.",
+  "known_problems": [
+    "No dedicated canonical repository confirmed.",
+    "B31/LTE450 availability at the eventual forest site is unknown.",
+    "Weather-sensitive reception is reported, but its cause is not established.",
+    "Exact cable type/length/losses, router model and site RF measurements are not verified."
+  ],
+  "active_tasks": [],
+  "blocked_tasks": [],
+  "pending_tasks": [
+    "Locate any newer site survey, operator coverage observations and equipment labels/photos.",
+    "Confirm cable type, length, connectors and mounting/power details.",
+    "Verify current official datasheets for candidate modem/router/antenna hardware and local B31 availability."
+  ],
+  "next_action": "Use the recovered original brief as the requirements baseline; gather site/equipment evidence and verify B31 coverage before any hardware recommendation or purchase.",
+  "required_files": [
+    "UPKB/SOURCES/FOREST_LTE_ORIGINAL_BRIEF_REFERENCE.md"
+  ],
+  "required_access": [
+    "Original Library artifact is available; newer field/equipment evidence may be needed from the owner."
+  ],
+  "environment_state": [
+    "No router, SIM, mast, antenna or field environment was inspected or changed."
+  ],
+  "evidence": [
+    "Library source file file_00000000d01c8211b6540c2541903399, Память_проект_интернет_в_лесу_2026-10-27.md, version 1.",
+    "Duplicate Library snapshot file_00000000ecd482118aa70e0b96d902b5.",
+    "UPKB/SOURCES/FOREST_LTE_ORIGINAL_BRIEF_REFERENCE.md"
+  ],
+  "verification_status": "REPORTED",
+  "updated_at": "2026-11-24T00:00:00Z",
+  "updated_by": "GPT"
+}

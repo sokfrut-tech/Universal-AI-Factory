@@ -1,0 +1,40 @@
+{
+  "checkpoint_id": "STAMPCLEANER_2026-11-24",
+  "project_id": "STAMPCLEANER",
+  "last_successful_step": "Refreshed PR #3/#4/#5 metadata; all remain open, with #4/#5 draft. No current check-run results were captured in this refresh.",
+  "last_commit": "68e1e9d1ca6ef73ba37529e56c0538dacc2d4519",
+  "last_verified_build": null,
+  "last_test_result": "No fresh CI result captured in this checkpoint; do not infer product readiness from PR metadata.",
+  "known_problems": [
+    "True-alpha PNG export, physical size/DPI and all removal modes require source/runtime verification.",
+    "Neon Club performer animation must not be described as full 360-degree motion unless proven.",
+    "Keep StampCleaner core separate from Neon Club visual experiment."
+  ],
+  "active_tasks": [],
+  "blocked_tasks": [],
+  "pending_tasks": [
+    "Inspect current PR #3/#4/#5 diffs and checks.",
+    "Verify import, crop, removal modes, alpha pixels and DPI metadata with tests."
+  ],
+  "next_action": "Refresh CI and inspect current source/diffs; test document-cleaning correctness before further visual changes.",
+  "required_files": [
+    "README.md",
+    "docs/PROJECT_HANDOFF_2026-11-06.md",
+    "docs/QA_AND_HIVE_REVIEW.md",
+    "docs/SMART_EXTRACTION_IMPLEMENTATION_BRIEF.md"
+  ],
+  "required_access": [
+    "Read access to StampCleaner source, PRs and Actions."
+  ],
+  "environment_state": [
+    "No Android device build or image-export runtime test was run in this checkpoint."
+  ],
+  "evidence": [
+    "https://github.com/sokfrut-tech/stamp-cleaner/pull/3",
+    "https://github.com/sokfrut-tech/stamp-cleaner/pull/4",
+    "https://github.com/sokfrut-tech/stamp-cleaner/pull/5"
+  ],
+  "verification_status": "REPORTED",
+  "updated_at": "2026-11-24T17:55:00Z",
+  "updated_by": "GPT"
+}

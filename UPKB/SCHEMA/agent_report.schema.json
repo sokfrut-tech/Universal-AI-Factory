@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UPKB Agent Execution Report Metadata",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "report_id",
+    "project_id",
+    "task_id",
+    "agent_id",
+    "agent_type",
+    "model",
+    "upkb_commit",
+    "context_id",
+    "execution_status",
+    "generated_at",
+    "summary",
+    "changed_files",
+    "evidence",
+    "checks",
+    "unverified",
+    "next_action",
+    "verification_status"
+  ],
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9][A-Z0-9._:-]+$"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agent_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agent_type": {
+      "enum": [
+        "GPT",
+        "CODEX",
+        "CLAUDE",
+        "GEMINI",
+        "KIMI",
+        "USER",
+        "OTHER"
+      ]
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1
+    },
+    "upkb_commit": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{40}$"
+    },
+    "context_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "execution_status": {
+      "enum": [
+        "completed",
+        "partial",
+        "blocked",
+        "failed"
+      ]
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "changed_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "result"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "command": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "exit_code": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "result": {
+            "enum": [
+              "passed",
+              "failed",
+              "skipped",
+              "not-run"
+            ]
+          },
+          "evidence": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "unverified": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "next_action": {
+      "type": "string",
+      "minLength": 1
+    },
+    "verification_status": {
+      "enum": [
+        "VERIFIED",
+        "REPORTED",
+        "PLANNED",
+        "UNKNOWN"
+      ]
+    },
+    "report_path": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

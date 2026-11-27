@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UPKB Environment Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "environment_id",
+    "project_id",
+    "host_type",
+    "purpose",
+    "created_by",
+    "status",
+    "cleanup_policy"
+  ],
+  "properties": {
+    "environment_id": {
+      "type": "string"
+    },
+    "project_id": {
+      "type": "string"
+    },
+    "host_type": {
+      "enum": [
+        "local",
+        "remote",
+        "android",
+        "docker",
+        "cloudflare",
+        "github-actions",
+        "test-stand",
+        "other"
+      ]
+    },
+    "host": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "port": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1,
+      "maximum": 65535
+    },
+    "working_directory": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "process_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "container_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "service_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "created_by": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "purpose": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "planned",
+        "running",
+        "stopped",
+        "unknown",
+        "removed"
+      ]
+    },
+    "last_activity": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "cleanup_policy": {
+      "enum": [
+        "never-auto-delete",
+        "owner-only-after-verification",
+        "user-approval-required"
+      ]
+    },
+    "cleanup_status": {
+      "enum": [
+        "not-needed",
+        "pending",
+        "verified-clean",
+        "blocked",
+        "unknown"
+      ]
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

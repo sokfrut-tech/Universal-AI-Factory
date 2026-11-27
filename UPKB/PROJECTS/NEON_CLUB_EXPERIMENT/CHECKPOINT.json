@@ -1,0 +1,35 @@
+{
+  "checkpoint_id": "NEON_CLUB_EXPERIMENT_2026-11-24",
+  "project_id": "NEON_CLUB_EXPERIMENT",
+  "last_successful_step": "UPKB project card and experiment brief reviewed; Neon Club remains a separate experimental visual direction within stamp-cleaner PRs.",
+  "last_commit": null,
+  "last_verified_build": null,
+  "last_test_result": "No fresh visual QA or runtime checks captured in this inventory step.",
+  "known_problems": [
+    "Experiment is not established as a separate product or merged StampCleaner core feature.",
+    "PR #4/#5 must be refreshed before action; animation claims require visual proof."
+  ],
+  "active_tasks": [],
+  "blocked_tasks": [],
+  "pending_tasks": [
+    "Inspect PR #4/#5 diffs and latest checks.",
+    "Separate core image-processing requirements from Neon Club visual experiment."
+  ],
+  "next_action": "Refresh PR #4/#5 and inspect actual UI changes; preserve separate project scope until owner confirms product integration.",
+  "required_files": [
+    "README.md"
+  ],
+  "required_access": [
+    "Read access to stamp-cleaner source, PRs and Actions."
+  ],
+  "environment_state": [
+    "No visual build or device/browser session executed in this checkpoint."
+  ],
+  "evidence": [
+    "https://github.com/sokfrut-tech/stamp-cleaner/pull/4",
+    "https://github.com/sokfrut-tech/stamp-cleaner/pull/5"
+  ],
+  "verification_status": "REPORTED",
+  "updated_at": "2026-11-24T18:00:00Z",
+  "updated_by": "GPT"
+}

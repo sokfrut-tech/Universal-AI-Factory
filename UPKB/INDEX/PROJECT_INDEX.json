@@ -1,0 +1,138 @@
+{
+  "schema_version": "1.0.0",
+  "updated_at": "2026-11-24",
+  "projects": [
+    {
+      "project_id": "UNIVERSAL_AI_FACTORY",
+      "name": "Universal AI Factory",
+      "repository": "sokfrut-tech/Universal-AI-Factory",
+      "status": "VERIFIED",
+      "status_note": "Repository and branch observed; project role documented in docs/MASTER_PROJECT_INDEX.md",
+      "primary_sources": [
+        "docs/MASTER_PROJECT_INDEX.md",
+        "docs/FACTORY_CONTINUATION_BRIEF.md"
+      ],
+      "next_action": "Audit agent dispatcher and define UPKB integration contract."
+    },
+    {
+      "project_id": "JARVIS_PRIMARY",
+      "name": "Jarvis AI primary",
+      "repository": "sokfrut-tech/Gemeni",
+      "status": "VERIFIED",
+      "status_note": "Gemeni is the primary Jarvis product repository. Main continuation handoff explicitly records the black-screen APK regression and NOT RELEASE READY status. PR #148 open non-draft; observed build, CodeQL and secret scanning checks pass, but physical OPPO runtime is unverified.",
+      "primary_sources": [
+        "https://github.com/sokfrut-tech/Gemeni",
+        "docs/MASTER_PROJECT_INDEX.md"
+      ],
+      "next_action": "Identify exact APK artifact installed by user and diagnose runtime with package/SHA/logcat; do not treat CI build as device acceptance."
+    },
+    {
+      "project_id": "JARVIS_OGAM",
+      "name": "OGAM / Jarvis Off Grid AI",
+      "repository": "sokfrut-tech/OGAM",
+      "status": "VERIFIED",
+      "status_note": "Separate Off Grid AI fork. PR #7 M2 memory work is open draft; focused TypeScript/Jest/SQLite, import scan and isolated OP-SQLite ARM64 probe build all passed. PR #7 probe package com.jarvism2probe is a test harness, not the primary Jarvis APK. Physical OPPO validation remains pending.",
+      "primary_sources": [
+        "https://github.com/sokfrut-tech/OGAM",
+        "docs/MASTER_PROJECT_INDEX.md"
+      ],
+      "next_action": "Test M2 probe on physical OPPO only after exact artifact identity and install safety are confirmed; keep its result separate from Gemeni main app."
+    },
+    {
+      "project_id": "RUSSSEARCH_OPPO",
+      "name": "RussSearchOPPO",
+      "repository": "sokfrut-tech/RussSearchOPPO",
+      "status": "VERIFIED",
+      "status_note": "Repository is present in GitHub inventory and master project index.",
+      "next_action": "Inspect current handoff, source tree and relationship to Jarvis."
+    },
+    {
+      "project_id": "ANTIGRAVITY_MOBILE",
+      "name": "Antigravity Mobile",
+      "repository": "sokfrut-tech/Antigravity-Mobile",
+      "status": "VERIFIED",
+      "status_note": "README documents Android 7/API24+ Compose Kanban, local persistence, Robolectric tests, Keystore AES-GCM token storage; Factory API bootstrap is not deployed and real provider dispatch is not enabled. Multiple open feature PRs including #19 provider dispatch and #20 API deployment status.",
+      "next_action": "Refresh PR #19/#20 CI and verify whether provider dispatch or API deployment is truly active; do not equate UI/API bootstrap with live agent execution."
+    },
+    {
+      "project_id": "AVTOY_KOREA",
+      "name": "AVTOY KOREA",
+      "repository": "sokfrut-tech/avtoy-korea-auto",
+      "status": "VERIFIED",
+      "status_note": "Current open PR #78 and #81 checks reported failures across tests/security/validation; key job records lacked step logs and runner IDs, so root cause remains unknown. Do not merge or deploy these branches.",
+      "next_action": "Retrieve detailed CI logs or reproduce in isolated branches; fix root cause before any merge/deploy."
+    },
+    {
+      "project_id": "FOREST_LTE",
+      "name": "Forest 4G connectivity",
+      "repository": null,
+      "status": "REPORTED",
+      "status_note": "Original owner project-memory file dated 2026-10-27 was located in the Library and preserved; source provenance indexed in UPKB/SOURCES. No canonical repo, site RF survey or equipment measurements confirmed. Requirements/equipment facts remain REPORTED.",
+      "next_action": "Recover newer site/operator/equipment evidence and verify B31/LTE450 coverage before hardware selection."
+    },
+    {
+      "project_id": "IMAGE_TRANSLATOR_RU",
+      "name": "Image Translator RU",
+      "repository": null,
+      "status": "REPORTED",
+      "status_note": "Exact Windows-app requirements recovered from prior conversation dated 2026-11-11 and preserved in UPKB/SOURCES. No canonical repository or actual v0.1-v0.3 ZIP bytes located; historical implementation/dependency claims remain REPORTED.",
+      "next_action": "Recover original ZIP/source attachments and verify their contents before implementation or creating a repository."
+    },
+    {
+      "project_id": "STAMPCLEANER",
+      "name": "StampCleaner / Neon Club",
+      "repository": "sokfrut-tech/stamp-cleaner",
+      "status": "VERIFIED",
+      "status_note": "README documents Android + local-browser image background removal with transparent PNG export; local-only image processing. Open PR #5/#4 Neon Club theme and #3 Android/web parity.",
+      "next_action": "Separate StampCleaner core from Neon Club experiment; inspect PR tests and deployment state."
+    },
+    {
+      "project_id": "SLEEP_BUTTON",
+      "name": "sleep-button",
+      "repository": "sokfrut-tech/sleep-button",
+      "status": "UNKNOWN",
+      "status_note": "README confirms placeholder only; 2 files total, no source/build/config; no open PRs. Purpose must be recovered from owner brief.",
+      "next_action": "Ask owner for intended scope or locate original brief in project portfolio before any coding."
+    },
+    {
+      "project_id": "VOICE_ASSISTANT",
+      "name": "voice-assistant",
+      "repository": "sokfrut-tech/voice-assistant",
+      "status": "VERIFIED",
+      "status_note": "README documents a basic Russian Android voice assistant: speech recognition, navigation handoff to Yandex/Google Maps and Russian TTS; Vosk offline work is planned. Open PR #16 continuation brief and #15 security tooling; several dependency PRs open.",
+      "next_action": "Determine whether this is a predecessor/standalone app or shared Jarvis component; review latest CI and open PRs."
+    },
+    {
+      "project_id": "BREENO_APKS",
+      "name": "breeno-apks",
+      "repository": "sokfrut-tech/breeno-apks",
+      "status": "UNKNOWN",
+      "status_note": "README confirms placeholder only; 2 files total, no APK/source inventory or open PRs.",
+      "next_action": "Recover intended APK archive/source scope and verify provenance/licensing before adding artifacts."
+    },
+    {
+      "project_id": "RUSSIAN_TRANSLATION_MODELS",
+      "name": "russ-translation-models",
+      "repository": "sokfrut-tech/russ-translation-models",
+      "status": "VERIFIED",
+      "status_note": "README identifies offline Helsinki-NLP Opus-MT ONNX int8 model archives for ru-en/en-ru/zh-en/en-zh; app code is in private RussSearchOPPO. README says release translation-models-v1 archives still need owner upload. Open PR #3 continuation brief, #2 security tooling.",
+      "next_action": "Verify translation-manifest hashes against actual downloadable artifacts and release state; link to RussSearchOPPO docs/hive/ml-translation."
+    },
+    {
+      "project_id": "HAPP_PROXY_POOL",
+      "name": "happ-proxy-pool",
+      "repository": "sokfrut-tech/happ-proxy-pool",
+      "status": "VERIFIED",
+      "status_note": "README documents scheduled public Shadowsocks/VLESS/VMess link collection and Xray/Happ JSON generation; only TCP reachability is checked, not protocol/auth/UDP. Open PR #4 brief, #3 security tooling, #1 Xray HTTPS prototype.",
+      "next_action": "Review public-node safety, generator and workflow; clearly retain limitation that TCP-open is not proof of working VPN."
+    },
+    {
+      "project_id": "NEON_CLUB_EXPERIMENT",
+      "name": "Neon Club visual studio experiment",
+      "repository": "sokfrut-tech/stamp-cleaner",
+      "status": "REPORTED",
+      "status_note": "Open draft PRs #4 and #5 add a Cyber Glam theme and portrait-video side panel; relationship to StampCleaner core is experimental.",
+      "next_action": "Inspect PR diffs and keep scope separated unless owner confirms product merge."
+    }
+  ]
+}

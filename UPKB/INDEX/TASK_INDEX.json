@@ -1,0 +1,248 @@
+{
+  "schema_version": "1.0.0",
+  "updated_at": "2026-11-24",
+  "records": [
+    {
+      "task_id": "UPKB-INV-001",
+      "project_id": "UNIVERSAL_AI_FACTORY",
+      "title": "Complete repository and project inventory",
+      "status": "active",
+      "priority": "high",
+      "owner": "GPT",
+      "next_action": "Locate canonical repositories/original briefs for FOREST_LTE and IMAGE_TRANSLATOR_RU; complete remaining project dependency mapping and refresh source records where handoffs are historical.",
+      "evidence": [
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/tree/feature/upkb-knowledge-base-bootstrap",
+        "UPKB/INDEX/DOCUMENT_INDEX.json",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/b6bfdecd95d2af502c8c1891f8d6cd9b1eac4fb3",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/a427b80027e3d608d78417b199602f0cdf9edd92",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45452470186",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/78e9115c792aa05a652100c76fb1f71dc3d962e7",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45452715486"
+      ],
+      "verification_status": "REPORTED"
+    },
+    {
+      "task_id": "UPKB-VAL-001",
+      "project_id": "UNIVERSAL_AI_FACTORY",
+      "title": "Execute UPKB validator in CI and validate schemas",
+      "status": "completed",
+      "priority": "high",
+      "owner": "GPT",
+      "next_action": "Maintain schema and validator contracts; extend semantic cross-reference validation as the project inventory grows.",
+      "evidence": [
+        "UPKB/tools/validate_upkb.py",
+        ".github/workflows/upkb-validation.yml",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45450813762",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/4154388be3cd17847d696872c657dffc2824fa6a",
+        "UPKB/SCHEMA/task.schema.json",
+        "UPKB/SCHEMA/research.schema.json",
+        "UPKB/SCHEMA/agent.schema.json",
+        "UPKB/SCHEMA/pull_request.schema.json",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/ae9ff40b1b7f71f7263f75f2e7587fc257107487",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45452947914",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45454496038"
+      ],
+      "verification_status": "VERIFIED"
+    },
+    {
+      "task_id": "UPKB-INT-001",
+      "project_id": "UNIVERSAL_AI_FACTORY",
+      "title": "Integrate mandatory UPKB context load and write-back into Factory agents",
+      "status": "pending",
+      "priority": "critical",
+      "owner": "GPT",
+      "next_action": "Inspect dispatcher and agent policies; design read-before-work and durable write-back contract; prove end-to-end with a test task.",
+      "evidence": [
+        "UPKB/CORE/AGENT_START_PROTOCOL.md"
+      ],
+      "verification_status": "PLANNED"
+    },
+    {
+      "task_id": "JARVIS-OGAM-MEM-001",
+      "project_id": "JARVIS_OGAM",
+      "title": "Refresh Jarvis memory M1/M2 Android probe and runtime evidence",
+      "status": "active",
+      "priority": "high",
+      "owner": "unassigned",
+      "next_action": "Inspect OGAM PR #4/#6/#7, Actions logs and device probe outputs; distinguish CI success from real OPPO launch.",
+      "evidence": [
+        "https://github.com/sokfrut-tech/OGAM/pull/4",
+        "https://github.com/sokfrut-tech/OGAM/pull/6",
+        "https://github.com/sokfrut-tech/OGAM/pull/7"
+      ],
+      "verification_status": "REPORTED"
+    },
+    {
+      "task_id": "JARVIS-GEM-001",
+      "project_id": "JARVIS_PRIMARY",
+      "title": "Reconcile Jarvis integration branch and open feature PR chain",
+      "status": "active",
+      "priority": "high",
+      "owner": "unassigned",
+      "next_action": "Review PR #148 and #133, branch ancestry, checks and APK/runtime acceptance; do not merge disconnected chains blindly.",
+      "evidence": [
+        "https://github.com/sokfrut-tech/Gemeni/pull/148",
+        "https://github.com/sokfrut-tech/Gemeni/pull/133"
+      ],
+      "verification_status": "REPORTED"
+    },
+    {
+      "task_id": "ANTIGRAVITY-DISPATCH-001",
+      "project_id": "ANTIGRAVITY_MOBILE",
+      "title": "Verify actual Factory API deployment and provider dispatch",
+      "status": "pending",
+      "priority": "high",
+      "owner": "unassigned",
+      "next_action": "Inspect PR #19/#20 and runtime endpoints; prove provider accepted/executed task rather than relying on UI/ACK.",
+      "evidence": [
+        "https://github.com/sokfrut-tech/Antigravity-Mobile/pull/19",
+        "https://github.com/sokfrut-tech/Antigravity-Mobile/pull/20"
+      ],
+      "verification_status": "REPORTED"
+    },
+    {
+      "task_id": "AVTOY-MEDIA-001",
+      "project_id": "AVTOY_KOREA",
+      "title": "Verify Telegram album ordering and duplicate prevention",
+      "status": "pending",
+      "priority": "high",
+      "owner": "unassigned",
+      "next_action": "Inspect PR #78 tests and current main behavior; do not deploy without all required tests passing.",
+      "evidence": [
+        "https://github.com/sokfrut-tech/avtoy-korea-auto/pull/78"
+      ],
+      "verification_status": "REPORTED"
+    },
+    {
+      "task_id": "JARVIS-DEVICE-001",
+      "project_id": "JARVIS_PRIMARY",
+      "title": "Identify exact APK that collapses on OPPO and capture runtime evidence",
+      "status": "active",
+      "priority": "critical",
+      "owner": "unassigned",
+      "next_action": "Correlate package/version/SHA-256 to Gemeni or OGAM probe artifact; obtain logcat, process PID, Activity start result and screenshot; do not infer from CI.",
+      "evidence": [
+        "https://github.com/sokfrut-tech/Gemeni/blob/main/docs/CONTINUATION_STATE.md",
+        "https://github.com/sokfrut-tech/OGAM/pull/7"
+      ],
+      "verification_status": "REPORTED"
+    },
+    {
+      "task_id": "JARVIS-OGAM-DEVICE-001",
+      "project_id": "JARVIS_OGAM",
+      "title": "Run M2 memory probe on physical OPPO Find X6 Pro PGEM10",
+      "status": "pending",
+      "priority": "high",
+      "owner": "unassigned",
+      "next_action": "After confirming exact APK identity and safe install path, install package com.jarvism2probe and capture PASS marker, process survival and screenshot; keep separate from primary Jarvis app.",
+      "evidence": [
+        "https://github.com/sokfrut-tech/OGAM/pull/7"
+      ],
+      "verification_status": "PLANNED"
+    },
+    {
+      "task_id": "AVTOY-CI-ROOT-001",
+      "project_id": "AVTOY_KOREA",
+      "title": "Diagnose PR #78 and #81 failed CI/security/validation checks",
+      "status": "blocked",
+      "priority": "high",
+      "owner": "unassigned",
+      "next_action": "Retrieve detailed run logs or reproduce checks in isolated branch. Job records showed runner_id=0 and empty steps for key failures, so no root cause is established.",
+      "evidence": [
+        "https://github.com/sokfrut-tech/avtoy-korea-auto/pull/78",
+        "https://github.com/sokfrut-tech/avtoy-korea-auto/pull/81"
+      ],
+      "verification_status": "VERIFIED"
+    },
+    {
+      "task_id": "UPKB-CP-001",
+      "project_id": "UNIVERSAL_AI_FACTORY",
+      "title": "Seed source-backed project checkpoints",
+      "status": "completed",
+      "priority": "high",
+      "owner": "GPT",
+      "next_action": "Refresh all project checkpoints when source PRs, builds or device evidence change; recover canonical sources for user-reported projects.",
+      "evidence": [
+        "UPKB/INDEX/CHECKPOINT_INDEX.json",
+        "UPKB/PROJECTS/JARVIS_PRIMARY/CHECKPOINT.json",
+        "UPKB/PROJECTS/JARVIS_OGAM/CHECKPOINT.json",
+        "UPKB/PROJECTS/ANTIGRAVITY_MOBILE/CHECKPOINT.json",
+        "UPKB/PROJECTS/AVTOY_KOREA/CHECKPOINT.json",
+        "UPKB/PROJECTS/STAMPCLEANER/CHECKPOINT.json",
+        "UPKB/PROJECTS/RUSSSEARCH_OPPO/CHECKPOINT.json",
+        "UPKB/PROJECTS/FOREST_LTE/CHECKPOINT.json",
+        "UPKB/PROJECTS/IMAGE_TRANSLATOR_RU/CHECKPOINT.json",
+        "UPKB/PROJECTS/VOICE_ASSISTANT/CHECKPOINT.json",
+        "UPKB/PROJECTS/RUSSIAN_TRANSLATION_MODELS/CHECKPOINT.json",
+        "UPKB/PROJECTS/HAPP_PROXY_POOL/CHECKPOINT.json",
+        "UPKB/PROJECTS/SLEEP_BUTTON/CHECKPOINT.json",
+        "UPKB/PROJECTS/BREENO_APKS/CHECKPOINT.json",
+        "UPKB/PROJECTS/NEON_CLUB_EXPERIMENT/CHECKPOINT.json"
+      ],
+      "verification_status": "VERIFIED"
+    },
+    {
+      "task_id": "UPKB-CTX-001",
+      "project_id": "UNIVERSAL_AI_FACTORY",
+      "title": "Build fail-closed project context packets",
+      "status": "completed",
+      "priority": "critical",
+      "owner": "GPT",
+      "next_action": "Implement strict project/task metadata parsing for explicit Gemini dispatch; validate packet size and report schema, then prepare a separate workflow PR after UPKB merge approval.",
+      "evidence": [
+        "UPKB/tools/build_context.py",
+        "UPKB/tests/test_build_context.py",
+        "UPKB/tests/test_upkb_validation.py",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45454496038",
+        "UPKB/INTEGRATION/FACTORY_AGENT_CONTEXT_INTEGRATION_DESIGN_2026-11-24.md",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45454739417"
+      ],
+      "verification_status": "VERIFIED"
+    },
+    {
+      "task_id": "UPKB-DISPATCH-001",
+      "project_id": "UNIVERSAL_AI_FACTORY",
+      "title": "Define safe UPKB context contract for explicit Gemini dispatch",
+      "status": "active",
+      "priority": "critical",
+      "owner": "GPT",
+      "next_action": "After PR #28 is explicitly approved and merged by the owner, prepare a separate reviewed workflow PR that loads the exact-commit UPKB packet before Gemini API invocation and validates structured report metadata. Do not alter production dispatch before that gate.",
+      "evidence": [
+        "UPKB/INTEGRATION/FACTORY_AGENT_CONTEXT_INTEGRATION_DESIGN_2026-11-24.md",
+        ".github/workflows/real-ai-agent-execution.yml",
+        "coordination/gemini/scripts/resolve-task.sh",
+        "UPKB/tools/resolve_dispatch_metadata.py",
+        "UPKB/tests/test_resolve_dispatch_metadata.py",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45455079235",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45455099807",
+        "UPKB/SCHEMA/agent_report.schema.json",
+        "UPKB/tests/test_upkb_validation.py",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45455252421",
+        "UPKB/tests/test_dispatch_metadata.py",
+        "UPKB/tests/test_agent_dispatch_e2e.py",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45476290511"
+      ],
+      "verification_status": "PLANNED"
+    },
+    {
+      "task_id": "UPKB-E2E-001",
+      "project_id": "UNIVERSAL_AI_FACTORY",
+      "title": "Prove offline dispatch-to-context-to-report flow with stub provider",
+      "status": "completed",
+      "priority": "critical",
+      "owner": "GPT",
+      "next_action": "Use this tested contract as the acceptance baseline for a separate Gemini workflow integration PR after owner-approved UPKB merge.",
+      "evidence": [
+        "UPKB/tests/test_dispatch_metadata.py",
+        "UPKB/tests/test_agent_dispatch_e2e.py",
+        "UPKB/tools/resolve_dispatch_metadata.py",
+        "UPKB/tools/build_context.py",
+        "UPKB/SCHEMA/agent_report.schema.json",
+        "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45476290511"
+      ],
+      "verification_status": "VERIFIED",
+      "branch": "feature/upkb-knowledge-base-bootstrap",
+      "checkpoint_id": "UNIVERSAL_AI_FACTORY_2026-11-24"
+    }
+  ]
+}

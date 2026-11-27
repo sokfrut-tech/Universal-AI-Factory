@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UPKB Pull Request Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "project_id",
+    "repository",
+    "number",
+    "title",
+    "head",
+    "head_sha",
+    "base",
+    "draft",
+    "url",
+    "verification_status"
+  ],
+  "properties": {
+    "project_id": {
+      "type": "string"
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^[^/]+/[^/]+$"
+    },
+    "number": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "head": {
+      "type": "string",
+      "minLength": 1
+    },
+    "head_sha": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{7,40}$"
+    },
+    "base": {
+      "type": "string",
+      "minLength": 1
+    },
+    "draft": {
+      "type": "boolean"
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "verification_status": {
+      "enum": [
+        "VERIFIED",
+        "REPORTED",
+        "PLANNED",
+        "UNKNOWN"
+      ]
+    },
+    "check_summary": {
+      "type": "string"
+    },
+    "state": {
+      "enum": [
+        "open",
+        "closed",
+        "merged"
+      ]
+    },
+    "checked_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "labels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
