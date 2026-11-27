@@ -16,7 +16,9 @@
 | [jarvis-ru-0.5b-pilot-sft.yaml](configs/jarvis-ru-0.5b-pilot-sft.yaml) | Быстрый пилот SFT (`BF16/FP16 LoRA`) на 6 ГБ VRAM | `Qwen/Qwen2.5-0.5B-Instruct` | [jarvis_ru_starter.jsonl](data/jarvis_ru_starter.jsonl) (`130` зап.) |
 | [jarvis-dolphin3-1.5b-sft.yaml](configs/jarvis-dolphin3-1.5b-sft.yaml) | Прямой стиль (без нравоучений) SFT 4-bit QLoRA | `dphn/Dolphin3.0-Qwen2.5-1.5B` | [jarvis_ru_starter.jsonl](data/jarvis_ru_starter.jsonl) (`130` зап.) |
 | [jarvis-dolphin3-1.5b-raft.yaml](configs/jarvis-dolphin3-1.5b-raft.yaml) | RAFT-дообучение по RAG-фрагментам для Dolphin 1.5B | `dphn/Dolphin3.0-Qwen2.5-1.5B` | [jarvis_ru_raft.jsonl](data/jarvis_ru_raft.jsonl) (`24` зап.) |
+| [jarvis-dolphin3-1.5b-dpo.yaml](configs/jarvis-dolphin3-1.5b-dpo.yaml) | Стадия 2 DPO (Direct Preference Optimization) поверх SFT 1.5B | `jarvis_dolphin3_1.5b_sft_merged` | [jarvis_ru_dpo.jsonl](data/jarvis_ru_dpo.jsonl) (`50` пар) |
 | [jarvis-ru-3b-sft.yaml](configs/jarvis-ru-3b-sft.yaml) | SFT / 4-bit QLoRA (умещается в 6 ГБ VRAM целиком) | `Qwen/Qwen2.5-3B-Instruct` | [jarvis_ru_starter.jsonl](data/jarvis_ru_starter.jsonl) (`130` зап.) |
+| [jarvis-ru-3b-dpo.yaml](configs/jarvis-ru-3b-dpo.yaml) | Стадия 2 DPO поверх SFT 3B | `jarvis_ru_3b_sft_merged` | [jarvis_ru_dpo.jsonl](data/jarvis_ru_dpo.jsonl) (`50` пар) |
 | [jarvis-ru-8b-stream-6gb.yaml](configs/jarvis-ru-8b-stream-6gb.yaml) | Layer Streaming (`stream_layers: true`) для 8B моделей | `meta-llama/Llama-3.1-8B-Instruct` (или открытая 8B) | [jarvis_ru_starter.jsonl](data/jarvis_ru_starter.jsonl) (`130` зап.) |
 | [jarvis-ru-rag-raft.yaml](configs/jarvis-ru-rag-raft.yaml) | RAFT-дообучение ответам по документам RAG | `Qwen/Qwen2.5-3B-Instruct` | [jarvis_ru_raft.jsonl](data/jarvis_ru_raft.jsonl) (`24` зап.) |
 
@@ -51,7 +53,17 @@
   - `jarvis-dolphin3-1.5b-soup-q8_0.gguf` — `1 646 572 480` байт (~`1.53` ГиБ), `338` тензоров, заголовок `GGUF` (`47 47 55 46`), SHA-256 `94FDF71CAD5EA2799252F807DC5C7DA6B736CCC0A7B866F4CBBE5502FE4DDC94`, зарегистрирован в Ollama как `jarvis-dolphin3-15b-soup:latest`.
 - **Бенчмарк в локальном Ollama (`jarvis-dolphin3-15b-soup`, 7 русских промптов, затем выгружена из VRAM):**
   - Скорость генерации на RTX 4050: `6.77 s` холодный старт, `0.12–0.84 s` на прогретую модель.
-  - Модель корректно представляется как **Jarvis Ai**, решает `3x - 7 = 20 -> x = 9`, даёт прямые ответы на ролевой запрос и технический вопрос без нравоучений, но при текущем объёме 1.5B-весов и `3` эпохах ещё допускает неточности на фактах про очистку кэша, `Exact Layer Streaming` и соглашается запомнить пароль (на смартфоне запись секретов всё равно блокируется детерминированным `JarvisSecretGuard`). Для более жёсткой выучки доменных правил целесообразен переход к `DPO` или дообучению на 3B/4B-версии с большим числом примеров.
+  - Модель корректно представляется как **Jarvis Ai**, решает `3x - 7 = 20 -> x = 9`, даёт прямые ответы на ролевой запрос и технический вопрос без нравоучений, но при текущем объёме 1.5B-весов и `3` эпохах ещё допускает неточности на фактах про очистку кэша, `Exact Layer Streaming` и соглашается запомнить пароль (на смартфоне запись секретов всё равно блокируется детерминированным `JarvisSecretGuard`).
+
+### 5. Стадия 2 DPO (`SFT -> DPO`) и автоматический Quality Gate Фабрики
+- **DPO-датасет:** [jarvis_ru_dpo.jsonl](data/jarvis_ru_dpo.jsonl) — `50` сбалансированных по длине русских контрастных пар `(prompt, chosen, rejected)`, проверенных `soup data validate` (`50/50`) и `soup data lint` (`OK`, `length_bias Cohen's d = -0.135`, разница длин `3.9%`, `0` дублей и утечек промпта).
+- **Обучение DPO (`run_20261127_165525_7669797c`):** `configs/jarvis-dolphin3-1.5b-dpo.yaml` поверх `jarvis_dolphin3_1.5b_sft_merged` (`4bit`, `LoRA r=16, alpha=32`, `2 179 072` обуч. параметров / `0.14%`, `dpo_beta=0.1`, `45` train / `5` val): `Loss: 0.6920 -> 0.5650`, `Val loss: 0.6561`, `eval_rewards/accuracies: 1.0`, пик GPU `2.8/6.0 GB`.
+- **Экспорт GGUF (вне git, в `C:\Users\user\Desktop\codex\soup_runs\`):**
+  - `jarvis-dolphin3-1.5b-dpo-q8_0.gguf` — `1 646 572 480` байт, заголовок `GGUF` (`47 47 55 46`), SHA-256 `97E4A1656E6A763117065F455ED1AFFE4F3361F9D42885E7F70467CFBDAEE0DF`, зарегистрирован в Ollama как `jarvis-dolphin3-15b-dpo:latest`.
+- **Автоматический Quality Gate Фабрики:** внедрён [eval_jarvis_ollama.py](scripts/eval_jarvis_ollama.py) (+ юнит-тесты [test_eval_jarvis_ollama.py](tests/test_eval_jarvis_ollama.py)), работающий строго по loopback `127.0.0.1:11434` (0 внешних API) и оценивающий `7` ключевых сценариев (`identity_jarvis`, `secretguard_password`, `cache_safe`, `layer_streaming`, `math_linear`, `direct_roleplay`, `gguf_header`):
+  - `jarvis-dolphin3-15b-soup` (`1.5B SFT`): `3/7` (`42.9%`, до ужесточения `gguf_header`), `~73–97 tok/s`.
+  - `jarvis-ru-3b-soup` (`3B SFT`): `3/7` (`42.9%`), `~43–51 tok/s`.
+  - `jarvis-dolphin3-15b-dpo` (`1.5B SFT+DPO`): **`4/7` (`57.1%`)**, `~78–97 tok/s` — исправлены `cache_safe` и `direct_roleplay`; для взятия порога `>=70%` в следующей итерации стоит перевести `jarvis_ru_dpo.jsonl` в conversational ChatML-формат и прогнать `jarvis-ru-3b-dpo.yaml`.
 
 ## Быстрый старт (локальное окружение `c:\Users\user\Desktop\codex\soup_env`)
 
