@@ -1,0 +1,29 @@
+# Jarvis Ai Dolphin 3.0 Qwen2.5 1.5B RU SFT (4-bit QLoRA — RTX 4050 6 GB VRAM)
+base: dphn/Dolphin3.0-Qwen2.5-1.5B
+task: sft
+backend: transformers
+
+data:
+  train: training/soup/data/jarvis_ru_starter.jsonl
+  format: alpaca
+  val_split: 0.1
+  max_length: 512
+
+training:
+  epochs: 3
+  lr: 2e-4
+  batch_size: 1
+  gradient_accumulation_steps: 4
+  quantization: 4bit
+  gradient_checkpointing: true
+  scheduler: cosine
+  warmup_ratio: 0.05
+  logging_steps: 5
+  save_steps: 50
+  lora:
+    r: 32
+    alpha: 64
+    dropout: 0.05
+    target_modules: auto
+
+output: C:/Users/user/Desktop/codex/soup_runs/jarvis_dolphin3_1.5b_sft

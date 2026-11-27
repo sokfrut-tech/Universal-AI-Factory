@@ -1,28 +1,28 @@
 {
   "checkpoint_id": "UPKB_FACTORY_BOOTSTRAP_2026-11-24",
   "project_id": "UNIVERSAL_AI_FACTORY",
-  "last_successful_step": "Merged PRs #19, #20, #21, #23, #26, #28, #29, #30, #31 into main; closed stalled Nov 22 claude/gemini/qwen inbox queues via substantive Russian reviews; verified local Soup v0.78.1 training (0.5B SFT, 3B 4-bit QLoRA SFT + RAFT) + GGUF exports + Ollama benchmarks; executed live zero-cost loopback Ollama worker (qwen3.5:4b, done_reason=stop, 12457 B) with empty-ACK and <think>-overflow safeguards.",
-  "last_commit": "487b83f43d3c392c40209331323a773e8fcc11c8",
+  "last_successful_step": "Expanded training/soup/data/jarvis_ru_starter.jsonl (90 -> 130 samples) and trained dphn/Dolphin3.0-Qwen2.5-1.5B offline via Soup v0.78.1 (SFT 90/90 val_loss=2.2233 + RAFT 18/18 val_loss=1.3448) on RTX 4050; exported jarvis-dolphin3-1.5b-soup-q8_0.gguf (1,646,572,480 B, SHA-256 94FDF71CAD5EA2799252F807DC5C7DA6B736CCC0A7B866F4CBBE5502FE4DDC94) and benchmarked in local Ollama; synced updated Gemeni PR #152 green Build Jarvis CI 45997351012.",
+  "last_commit": "d46c87c74d3d74d2a2fda0b9d8cd39fd1bb1ac11",
   "last_verified_build": null,
-  "last_test_result": "All 59 local Python unit tests (patch_validator, factory_runner_workflow, soup export_memory, local_factory_worker 5/5 with HTTP 400 fallback & <think> strip, UPKB context/dispatch suites) PASSED; Soup 3B SFT (63/63 steps, val_loss=2.1158) and 3B RAFT (18/18 steps, val_loss=1.2649) completed on RTX 4050; live qwen3.5:4b worker closed coordination/qwen/inbox.",
+  "last_test_result": "All 59 local Python unit tests (patch_validator, factory_runner_workflow, soup export_memory, local_factory_worker 5/5, UPKB build_context/dispatch) PASSED; Soup Dolphin 3.0 1.5B SFT (90/90 steps, 87.65s, val_loss=2.2233) & RAFT (18/18 steps, 18.11s, val_loss=1.3448) + Ollama 7-prompt benchmark completed and unloaded from VRAM.",
   "known_problems": [
     "FOREST_LTE and IMAGE_TRANSLATOR_RU still lack confirmed canonical source repositories; context remains REPORTED.",
-    "Physical OPPO Find X6 Pro (PGEM10) runtime validation for updated Gemeni PR #152 APK (D930A9B6...) and OGAM APKs remains pending user device testing.",
-    "Local Soup 0.5B/3B SFT pilot benchmark showed need for more SecretGuard refusal examples and Exact Layer Streaming Q&A pairs in training/soup/data/jarvis_ru_starter.jsonl.",
+    "Physical OPPO Find X6 Pro (PGEM10) runtime validation for updated Gemeni PR #152 APK (F980BCB6...) and Soup GGUF models remains pending user device testing.",
+    "Ollama benchmark of 1.5B SFT (3 epochs) showed direct roleplay/technical style and 0.12-0.84s latency, but still missed exact Layer Streaming recall and password refusal (mitigated deterministically on Android by JarvisSecretGuard; DPO or 3B/4B next).",
     "Upstream Gemeni (#152) and OGAM (#12) Draft PRs remain open pending user device acceptance."
   ],
   "active_tasks": [
-    "Await user installation and logcat/runtime confirmation of Gemeni PR #152 APK (D930A9B6...) on physical OPPO PGEM10.",
+    "Await user installation and testing of Gemeni PR #152 APK (F980BCB6...) and Dolphin 1.5B / Qwen 0.5B Soup GGUF on physical OPPO PGEM10.",
     "Continue canonical source investigation for FOREST_LTE and IMAGE_TRANSLATOR_RU.",
-    "Expand training/soup/data/jarvis_ru_starter.jsonl with SecretGuard refusal and Layer Streaming accuracy samples before mobile Q4_K_M quantization."
+    "Evaluate DPO / 3B+ Soup tuning on expanded dataset for stronger factual retention."
   ],
   "blocked_tasks": [],
   "pending_tasks": [
-    "Quantize Soup-trained 3B model to mobile Q4_K_M and validate on OPPO PGEM10 inside Jarvis Ai.",
+    "Validate Dolphin 1.5B Soup Q8_0 and mobile Q4_K_M quantization on OPPO PGEM10 inside Jarvis Ai.",
     "Populate UPKB RESEARCH_INDEX and ENVIRONMENT_INDEX with verified local worker & Soup workstation evidence.",
     "Diagnose AVTOY PR #78/#81 CI failures from detailed logs."
   ],
-  "next_action": "Validate updated UPKB checkpoints and training docs via GitHub Actions UPKB validation on main; share updated Gemeni PR #152 APK, Soup GGUF artifacts, and zero-cost worker outputs with user for OPPO PGEM10 testing.",
+  "next_action": "Validate updated UPKB checkpoints and Dolphin Soup docs via GitHub Actions UPKB validation on main; deliver updated Gemeni PR #152 APK and Soup GGUF artifacts for OPPO PGEM10 verification.",
   "required_files": [
     "UPKB/CORE/AGENT_START_PROTOCOL.md",
     "UPKB/CORE/RULES.md",
@@ -37,7 +37,7 @@
   ],
   "environment_state": [
     "Workstation GPU: NVIDIA GeForce RTX 4050 Laptop GPU (6141 MiB VRAM); isolated Soup venv at c:/Users/user/Desktop/codex/soup_env (not in git).",
-    "Local loopback Ollama (http://127.0.0.1:11434) running qwen3.5:4b, jarvis-ru-05b-soup, and jarvis-ru-3b-soup at zero API cost.",
+    "Local loopback Ollama (http://127.0.0.1:11434) registered qwen3.5:4b, jarvis-ru-05b-soup, jarvis-ru-3b-soup, and jarvis-dolphin3-15b-soup at zero API cost (unloaded after benchmark).",
     "All trained checkpoints and GGUF artifacts kept strictly outside git in C:/Users/user/Desktop/codex/soup_runs/."
   ],
   "evidence": [
@@ -50,14 +50,14 @@
     "https://github.com/sokfrut-tech/Universal-AI-Factory/pull/29",
     "https://github.com/sokfrut-tech/Universal-AI-Factory/pull/30",
     "https://github.com/sokfrut-tech/Universal-AI-Factory/pull/31",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/487b83f43d3c392c40209331323a773e8fcc11c8",
-    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45966052654",
-    "https://github.com/sokfrut-tech/Gemeni/actions/runs/45972892691",
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/commit/d46c87c74d3d74d2a2fda0b9d8cd39fd1bb1ac11",
+    "https://github.com/sokfrut-tech/Universal-AI-Factory/actions/runs/45979299394",
+    "https://github.com/sokfrut-tech/Gemeni/actions/runs/45997351012",
     "https://github.com/sokfrut-tech/OGAM/actions/runs/45965021411",
     "coordination/qwen/outbox/REPORT_2026-11-25_JARVIS-QWEN-TECHNOLOGY-AND-FACTORY-ADAPTER-RESEARCH.md",
     "training/soup/README.md"
   ],
   "verification_status": "VERIFIED",
-  "updated_at": "2026-11-27T10:07:00Z",
+  "updated_at": "2026-11-27T12:27:00Z",
   "updated_by": "Antigravity"
 }

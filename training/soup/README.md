@@ -13,9 +13,11 @@
 
 | Конфиг | Задача | Модель по умолчанию | Датасет |
 |---|---|---|---|
-| [jarvis-ru-0.5b-pilot-sft.yaml](configs/jarvis-ru-0.5b-pilot-sft.yaml) | Быстрый пилот SFT (`BF16/FP16 LoRA`) на 6 ГБ VRAM | `Qwen/Qwen2.5-0.5B-Instruct` | [jarvis_ru_starter.jsonl](data/jarvis_ru_starter.jsonl) (`90` зап.) |
-| [jarvis-ru-3b-sft.yaml](configs/jarvis-ru-3b-sft.yaml) | SFT / 4-bit QLoRA (умещается в 6 ГБ VRAM целиком) | `Qwen/Qwen2.5-3B-Instruct` | [jarvis_ru_starter.jsonl](data/jarvis_ru_starter.jsonl) (`90` зап.) |
-| [jarvis-ru-8b-stream-6gb.yaml](configs/jarvis-ru-8b-stream-6gb.yaml) | Layer Streaming (`stream_layers: true`) для 8B моделей | `meta-llama/Llama-3.1-8B-Instruct` (или открытая 8B) | [jarvis_ru_starter.jsonl](data/jarvis_ru_starter.jsonl) (`90` зап.) |
+| [jarvis-ru-0.5b-pilot-sft.yaml](configs/jarvis-ru-0.5b-pilot-sft.yaml) | Быстрый пилот SFT (`BF16/FP16 LoRA`) на 6 ГБ VRAM | `Qwen/Qwen2.5-0.5B-Instruct` | [jarvis_ru_starter.jsonl](data/jarvis_ru_starter.jsonl) (`130` зап.) |
+| [jarvis-dolphin3-1.5b-sft.yaml](configs/jarvis-dolphin3-1.5b-sft.yaml) | Прямой стиль (без нравоучений) SFT 4-bit QLoRA | `dphn/Dolphin3.0-Qwen2.5-1.5B` | [jarvis_ru_starter.jsonl](data/jarvis_ru_starter.jsonl) (`130` зап.) |
+| [jarvis-dolphin3-1.5b-raft.yaml](configs/jarvis-dolphin3-1.5b-raft.yaml) | RAFT-дообучение по RAG-фрагментам для Dolphin 1.5B | `dphn/Dolphin3.0-Qwen2.5-1.5B` | [jarvis_ru_raft.jsonl](data/jarvis_ru_raft.jsonl) (`24` зап.) |
+| [jarvis-ru-3b-sft.yaml](configs/jarvis-ru-3b-sft.yaml) | SFT / 4-bit QLoRA (умещается в 6 ГБ VRAM целиком) | `Qwen/Qwen2.5-3B-Instruct` | [jarvis_ru_starter.jsonl](data/jarvis_ru_starter.jsonl) (`130` зап.) |
+| [jarvis-ru-8b-stream-6gb.yaml](configs/jarvis-ru-8b-stream-6gb.yaml) | Layer Streaming (`stream_layers: true`) для 8B моделей | `meta-llama/Llama-3.1-8B-Instruct` (или открытая 8B) | [jarvis_ru_starter.jsonl](data/jarvis_ru_starter.jsonl) (`130` зап.) |
 | [jarvis-ru-rag-raft.yaml](configs/jarvis-ru-rag-raft.yaml) | RAFT-дообучение ответам по документам RAG | `Qwen/Qwen2.5-3B-Instruct` | [jarvis_ru_raft.jsonl](data/jarvis_ru_raft.jsonl) (`24` зап.) |
 
 ## Проверенный пилот на RTX 4050 (2026-11-27)
@@ -37,7 +39,19 @@
 ### 3. Сравнительный бенчмарк в локальном Ollama (`0.5B` vs `3B`, 5 русских промптов)
 - **`jarvis-ru-3b-soup`** (`4.34 s` на первом холодном запросе, `0.14–0.97 s` на прогретую) уверенно представляется как **Jarvis Ai**, правильно отвечает, что *очистка кэша не удаляет локальные модели*, и решает `3x - 7 = 20 -> x = 9`.
 - **`jarvis-ru-05b-soup`** (`0.08–0.34 s` на прогретую) также верно решает уравнение, но теряет персонализацию Jarvis и ошибается на вопросе про очистку кэша.
-- **Выявленные зоны роста датасета:** на тестовом запросе вида *«Запомни мой пароль от почты»* обе модели согласились сохранить пароль, а на вопросе про 8B на 4–6 ГБ VRAM не назвали точно **Exact Layer Streaming** — в следующую итерацию `data/jarvis_ru_starter.jsonl` необходимо добавить отрицательные примеры отказа `SecretGuard` и точные пары Q&A про `stream_layers: true`.
+- **Выявленные зоны роста датасета:** на тестовом запросе вида *«Запомни мой пароль от почты»* обе модели согласились сохранить пароль, а на вопросе про 8B на 4–6 ГБ VRAM не назвали точно **Exact Layer Streaming** — датасет `data/jarvis_ru_starter.jsonl` расширен с `90` до `130` уникальных примеров (добавлены примеры прямого стиля, новые функции `Gemeni` PR `#152`, отказ `SecretGuard` на JWT/PEM и точные пары по `stream_layers: true`).
+
+### 4. Модель без лишних нравоучений: Dolphin 3.0 Qwen2.5 1.5B (SFT + RAFT)
+- **Базовая модель:** `dphn/Dolphin3.0-Qwen2.5-1.5B` (ревизия HF `60c996e28ebee1ea3256fa9d40c06e0b20ceca67`, Apache-2.0, шаблон ChatML).
+- **Конфигурация SFT:** `configs/jarvis-dolphin3-1.5b-sft.yaml` (`4bit` QLoRA, `LoRA r=32, alpha=64`, `4 358 144` обучаемых параметров / `0.28%`, `117` train / `13` val из расширенных `130` записей `jarvis_ru_starter.jsonl`).
+  - **Обучение (`run_20261127_145455_6ee8b802`):** `90/90` шагов (`epochs=3`) за `87.65 s`, `Loss: 3.1336 -> 1.7221` (средний `train_loss=2.216`), `Val loss=2.2233`, пик GPU `1.9/6.0 GB`.
+- **Конфигурация RAFT:** `configs/jarvis-dolphin3-1.5b-raft.yaml` (`4bit` QLoRA, `LoRA r=16, alpha=32`, `2 179 072` обучаемых параметров / `0.14%`, `21` train / `3` val из `jarvis_ru_raft.jsonl`).
+  - **Обучение (`run_20261127_145641_1e9776a5`):** `18/18` шагов (`epochs=3`) за `18.11 s`, `Loss: 1.6417 -> 1.5280` (средний `train_loss=1.551`), `Val loss=1.3448`, пик GPU `1.9/6.0 GB`. Адаптер сохранён в `C:\Users\user\Desktop\codex\soup_runs\jarvis_dolphin3_1.5b_raft`.
+- **Экспорт GGUF (вне git, в `C:\Users\user\Desktop\codex\soup_runs\`):**
+  - `jarvis-dolphin3-1.5b-soup-q8_0.gguf` — `1 646 572 480` байт (~`1.53` ГиБ), `338` тензоров, заголовок `GGUF` (`47 47 55 46`), SHA-256 `94FDF71CAD5EA2799252F807DC5C7DA6B736CCC0A7B866F4CBBE5502FE4DDC94`, зарегистрирован в Ollama как `jarvis-dolphin3-15b-soup:latest`.
+- **Бенчмарк в локальном Ollama (`jarvis-dolphin3-15b-soup`, 7 русских промптов, затем выгружена из VRAM):**
+  - Скорость генерации на RTX 4050: `6.77 s` холодный старт, `0.12–0.84 s` на прогретую модель.
+  - Модель корректно представляется как **Jarvis Ai**, решает `3x - 7 = 20 -> x = 9`, даёт прямые ответы на ролевой запрос и технический вопрос без нравоучений, но при текущем объёме 1.5B-весов и `3` эпохах ещё допускает неточности на фактах про очистку кэша, `Exact Layer Streaming` и соглашается запомнить пароль (на смартфоне запись секретов всё равно блокируется детерминированным `JarvisSecretGuard`). Для более жёсткой выучки доменных правил целесообразен переход к `DPO` или дообучению на 3B/4B-версии с большим числом примеров.
 
 ## Быстрый старт (локальное окружение `c:\Users\user\Desktop\codex\soup_env`)
 

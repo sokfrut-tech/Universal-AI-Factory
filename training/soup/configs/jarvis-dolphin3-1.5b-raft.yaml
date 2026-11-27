@@ -1,0 +1,28 @@
+# Jarvis Ai Dolphin 3.0 Qwen2.5 1.5B RAFT (Retrieval-Augmented Fine-Tuning for DocumentStore RAG)
+base: dphn/Dolphin3.0-Qwen2.5-1.5B
+task: sft
+backend: transformers
+
+data:
+  train: training/soup/data/jarvis_ru_raft.jsonl
+  format: raft
+  val_split: 0.1
+  max_length: 512
+  raft_epoch_shuffle: true
+
+training:
+  epochs: 3
+  lr: 1.5e-4
+  batch_size: 1
+  gradient_accumulation_steps: 4
+  quantization: 4bit
+  gradient_checkpointing: true
+  logging_steps: 5
+  save_steps: 50
+  lora:
+    r: 16
+    alpha: 32
+    dropout: 0.05
+    target_modules: auto
+
+output: C:/Users/user/Desktop/codex/soup_runs/jarvis_dolphin3_1.5b_raft

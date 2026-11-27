@@ -1,12 +1,12 @@
 {
   "checkpoint_id": "JARVIS_PRIMARY_2026-11-24",
   "project_id": "JARVIS_PRIMARY",
-  "last_successful_step": "PR #152 (feat/jarvis-drawer-ui-and-ogam-features, 217df04ce6bd18b409c2c7f04355fdbf5153d36d) added Breeno-style navigation drawer, 3D Core Orb, expandable Settings, SecretGuard/RAG/PhoneActions/MCP/Qwen3-0.6B+4B GGUF catalog, Russian abbreviation TTS chunking, and incremental token-to-Piper-TTS streaming; green Build Jarvis CI 45972892691.",
-  "last_commit": "217df04ce6bd18b409c2c7f04355fdbf5153d36d",
-  "last_verified_build": "Gemeni Build Jarvis run 45972892691 (2026-11-27): debug APK 124929608 B, SHA-256 D930A9B6562FFC38A12474DD927455639B88774134FEA7F013248FDF9DEC5920, artifact 45972892691 jarvis-debug-apk.",
-  "last_test_result": "Build Jarvis CI 45972892691: all JVM unit tests (incl. streamingSpeechChunker + ModelCatalogValidationTest 11 packs), ABI/16KB native checks, and 7/7 Android 15 emulator smoke tests (57.649s) PASSED. Physical OPPO runtime remains unverified.",
+  "last_successful_step": "PR #152 (feat/jarvis-drawer-ui-and-ogam-features, 42a4da680163cf01608b9bb3494419fba3f35656) fixed Android SAF/ZIP/GZIP custom .gguf import with exact HEX diagnostics, redesigned Model UI with dropdowns/family filters, added 5 Iron Man HUD themes + 3 fonts + glassmorphic tiles, ported zero-cost OGAM features (DuckDuckGo/Wikipedia/Brave web search, SSRF-safe URL reader, offline unit converter, generation sliders + CUSTOM prompt, RAG notes, diagnostics, reply regeneration, Markdown export); green Build Jarvis CI 45997351012.",
+  "last_commit": "42a4da680163cf01608b9bb3494419fba3f35656",
+  "last_verified_build": "Gemeni Build Jarvis run 45997351012 (2026-11-27): debug APK 125263892 B, SHA-256 F980BCB6F49BE3E228F213C5D8AB320ED452C0DE8E05BC11AF5C9FAD6F5B065D, artifact 45997351012 jarvis-debug-apk.",
+  "last_test_result": "Build Jarvis CI 45997351012: all JVM unit tests (incl. ModelCatalogValidationTest SAF/ZIP/clamp + JarvisWebToolsTest), ABI/16KB zipalign checks, and 7/7 Android 15 emulator smoke tests (0 skipped, 0 failed) PASSED. Physical OPPO runtime remains unverified.",
   "known_problems": [
-    "Physical OPPO Find X6 Pro (PGEM10 / ColorOS) runtime, mic/ASR/speaker/VoiceInteraction playback remain pending user installation and testing of latest PR #152 APK.",
+    "Physical OPPO Find X6 Pro (PGEM10 / ColorOS) runtime, custom GGUF import UX, UI themes, mic/ASR/speaker/VoiceInteraction playback remain pending user installation and testing of latest PR #152 APK.",
     "PR #152 and PR #148 remain Draft/Open and unmerged pending device acceptance."
   ],
   "active_tasks": [
@@ -14,13 +14,13 @@
     "JARVIS-GEM-001"
   ],
   "blocked_tasks": [
-    "Physical device acceptance until user installs and validates PR #152 Jarvis-Ai-Core-arm64-debug.apk (SHA-256 D930A9B6562FFC38A12474DD927455639B88774134FEA7F013248FDF9DEC5920) on OPPO PGEM10."
+    "Physical device acceptance until user installs and validates PR #152 Jarvis-Ai-Core-arm64-debug.apk (SHA-256 F980BCB6F49BE3E228F213C5D8AB320ED452C0DE8E05BC11AF5C9FAD6F5B065D) on OPPO PGEM10."
   ],
   "pending_tasks": [
-    "Install and test PR #152 APK on OPPO Find X6 Pro (audio streaming TTS, local GGUF / Qwen3, drawer, Settings).",
+    "Install and test PR #152 APK on OPPO Find X6 Pro (GGUF import + Dolphin 1.5B Soup GGUF, dropdown/HUD themes, free web search/RAG notes, streaming Piper TTS).",
     "Reconcile/merge PR #152 after owner device verification."
   ],
-  "next_action": "Install updated PR #152 APK (SHA-256 D930A9B6562FFC38A12474DD927455639B88774134FEA7F013248FDF9DEC5920) on physical OPPO PGEM10, verify streaming Piper TTS and local GGUF inference, and collect runtime confirmation/logcat before merging PR #152.",
+  "next_action": "Install updated PR #152 APK (SHA-256 F980BCB6F49BE3E228F213C5D8AB320ED452C0DE8E05BC11AF5C9FAD6F5B065D) on physical OPPO PGEM10, import verified GGUF models, verify UI themes and zero-cost OGAM tools, and collect runtime confirmation before merging PR #152.",
   "required_files": [
     "docs/CONTINUATION_STATE.md",
     "docs/CURRENT_STATUS.md",
@@ -30,14 +30,14 @@
     "Read/write access to Gemeni branches, PRs and Actions; physical OPPO validation from user."
   ],
   "environment_state": [
-    "Android 15 CI emulator smoke tests (7/7) and JVM unit tests verified on 217df04ce6bd18b409c2c7f04355fdbf5153d36d; physical OPPO PGEM10 not tested."
+    "Android 15 CI emulator smoke tests (7/7) and JVM unit tests verified on 42a4da680163cf01608b9bb3494419fba3f35656; physical OPPO PGEM10 not tested."
   ],
   "evidence": [
     "https://github.com/sokfrut-tech/Gemeni/pull/152",
-    "https://github.com/sokfrut-tech/Gemeni/actions/runs/45972892691",
-    "https://github.com/sokfrut-tech/Gemeni/commit/217df04ce6bd18b409c2c7f04355fdbf5153d36d"
+    "https://github.com/sokfrut-tech/Gemeni/actions/runs/45997351012",
+    "https://github.com/sokfrut-tech/Gemeni/commit/42a4da680163cf01608b9bb3494419fba3f35656"
   ],
   "verification_status": "VERIFIED",
-  "updated_at": "2026-11-27T09:31:00Z",
+  "updated_at": "2026-11-27T12:27:00Z",
   "updated_by": "Antigravity"
 }
