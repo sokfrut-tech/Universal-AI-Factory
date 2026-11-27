@@ -26,7 +26,8 @@
 | Antigravity SDK | No dedicated Antigravity SDK connector is exposed | Use the SDK's official package/docs and repository-specific build/test workflow; do not invent SDK endpoints or claim a live SDK connection. |
 | Universal AI Factory roles/skills | Factory standards and repo workflows exist | Apply dispatcher/architect, implementer, independent reviewer and QA/security roles. If separate agents are not actually invoked, label the review as a separate self-review. |
 | Factory API / MCP Gateway | API code and Android client integration exist; provider execution was previously reported as not configured | Keep task submission, event transport and actual provider execution as separate health states. Never report a task as executed until a configured runner returns real execution evidence. |
-| Soup CLI (`MakazhanAlpamys/Soup` v0.78.1) | **OPERATIONAL** in isolated `c:\Users\user\Desktop\codex\soup_env` (`torch-2.14.1+cu126`, RTX 4050 6 GB VRAM, `BF16=yes`; verified 2026-11-26) | Local LLM fine-tuning (`SFT`, `RAFT`, `stream_layers: true`), dataset checks (`soup data inspect`), and GGUF export for Android `Jarvis Ai`. Keep `.venv` outside git repos; honor Apache-2.0 attribution. |
+| Soup CLI (`MakazhanAlpamys/Soup` v0.78.1) | **OPERATIONAL** in isolated `c:\Users\user\Desktop\codex\soup_env` (`torch-2.14.1+cu126`, RTX 4050 6 GB VRAM, `BF16=yes`, `~/.soup/llama.cpp` cloned; pilot trained + GGUF `f16`/`q8_0` verified 2026-11-27) | Local LLM fine-tuning (`SFT`, `RAFT`, `stream_layers: true`), dataset checks (`soup data inspect`: `90` SFT + `24` RAFT), adapter merge, and GGUF export for Android `Jarvis Ai`. Keep `.venv` and model weights outside git repos; honor Apache-2.0 attribution. |
+| Local Ollama Factory Worker (`workers/local_ollama_worker/local_factory_worker.py`) | **OPERATIONAL** (loopback `http://127.0.0.1:11434`, `qwen3.5:4b`, `4/4` unit tests + live `--health`/`--dry-run` verified 2026-11-27) | Zero-cost offline scanner & draft report generator for `coordination/<channel>/inbox/*.md`; refuses non-loopback/external hosts, paid endpoints, empty ACK placeholders, and credential leaks. |
 
 ## 3. Default tool selection by project
 
@@ -59,10 +60,12 @@ For every onboarding change, record:
 - fallback route and its limitations;
 - owner action still required, if any.
 
-## 6. Current status snapshot (2026-11-26)
+## 6. Current status snapshot (2026-11-27)
 
 - Connected in this workspace: GitHub, PostHog, AppDeploy, MagicPath, ArmorCodex, OpenAI Developers.
-- Local verified workstation tools: `soup-cli v0.78.1` + `torch 2.14.1+cu126` (`RTX 4050 Laptop GPU 6 GB`, `BF16=yes`) — `soup doctor` passed for `jarvis-ru-3b-sft.yaml`, `jarvis-ru-8b-stream-6gb.yaml`, and `jarvis-ru-rag-raft.yaml`.
+- Local verified workstation tools:
+  - `soup-cli v0.78.1` + `torch 2.14.1+cu126` (`RTX 4050 Laptop GPU 6 GB`, `BF16=yes`) — `soup doctor` passed for all 4 configs, pilot `Qwen2.5-0.5B-Instruct` LoRA trained (`33/33` steps, `2.0/6.0 GB` VRAM) and exported to verified `jarvis-ru-0.5b-soup-f16.gguf` + `q8_0.gguf`.
+  - `Ollama v0.40.17` (`127.0.0.1:11434`) + `workers/local_ollama_worker/local_factory_worker.py` (`qwen3.5:4b`, `4/4` tests OK).
 - Not exposed as dedicated connectors: Android CLI, Google Developer Knowledge, Cloudflare, Chrome DevTools, Antigravity SDK.
 - Fallback routes are documented above; they must be implemented and verified per project before being reported as operational.
-- The Factory API provider-runner limitation remains a separate blocker until an actual provider is configured and an end-to-end task run is observed.
+- External cloud workers remain disabled/blocked under strict zero-cost policy; routine local review drafts run through loopback `local_factory_worker.py`.

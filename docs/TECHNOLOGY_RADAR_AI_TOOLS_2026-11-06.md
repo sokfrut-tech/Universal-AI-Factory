@@ -55,9 +55,14 @@ Source: https://github.com/MakazhanAlpamys/Soup (Apache-2.0, v0.78.1, Zenodo DOI
 Upstream provides declarative YAML-driven LLM post-training (`SFT`, `DPO`, `GRPO`, `RAFT`), **Exact Layer Streaming (`stream_layers: true`)** enabling 8B QLoRA fine-tuning on 4–6 GB laptop GPUs, data leakage & retention gates (`soup data leakage`, `soup eval retention`), `soup loop` feedback flywheel, GGUF export (`soup merge` / `soup export --format gguf --quant q4_k_m`), Web UI (`soup ui`), and a local MCP server.
 Adaptations in `training/soup/`:
 - Status: `PROTOTYPED` (external PC training pipeline integrated cleanly without embedding upstream Python code into the Android APK; Apache-2.0 attribution and Notice preserved).
-- Three RTX 4050 (6 GB VRAM) recipes in `training/soup/configs/`: `jarvis-ru-3b-sft.yaml`, `jarvis-ru-8b-stream-6gb.yaml` (`stream_layers: true`), and `jarvis-ru-rag-raft.yaml` (`data.format: raft` for Android `JarvisDocumentStore`).
-- Starter Russian SFT/RAFT datasets and `scripts/export_jarvis_memory_to_jsonl.py` enforcing fail-closed `SecretGuard` sanitization (verified by `training/soup/tests/test_export_memory.py`).
+- Three RTX 4050 (6 GB VRAM) recipes in `training/soup/configs/`: `jarvis-ru-3b-sft.yaml`, `jarvis-ru-8b-stream-6gb.yaml` (`stream_layers: true`), and `jarvis-ru-rag-raft.yaml` (`data.format: raft` for Android `JarvisDocumentStore`), plus verified fast pilot `jarvis-ru-0.5b-pilot-sft.yaml`.
+- Russian SFT (`90` samples) and RAFT (`24` samples) datasets + `scripts/export_jarvis_memory_to_jsonl.py` enforcing fail-closed `SecretGuard` sanitization (`test_export_memory.py` PASS); RTX 4050 pilot trained (`33/33` steps in `19.78s`, loss `2.85 -> 2.38`, `2.0/6.0 GB` VRAM) and exported to `f16`/`q8_0` `.gguf`.
 - Exported `.gguf` weights load directly into `Jarvis Ai` (`sokfrut-tech/Gemeni`) via `LocalLlmModelManager` custom `.gguf` import.
+
+### 6. Offline Russian Speech & Open Qwen3 Models (2026-11-27 Update)
+- **`Qwen3 0.6B` (`Q4_0`) & `Qwen3 4B` (`Q4_K_M`, Apache-2.0):** `PROTOTYPED` in `sokfrut-tech/Gemeni` PR `#152` (`LocalLlmModelManager.kt` with pinned Hugging Face revisions and SHA-256 checksums); hosted QwenCloud remains excluded (`FREE_ONLY_DECISION.md`).
+- **`tiny-voca-ru` / `Supertonic-3` / `CosyVoice3-MNN`:** `REVIEWED` in `coordination/gemini/outbox/REPORT_2026-11-22_OGAM_CHINESE_SPEECH_MODELS_REVIEW.md` and `coordination/claude/outbox/REPORT_2026-11-22_OGAM_JARVIS_TTS_KOTLIN_REVIEW.md`; blocked from OGAM release until HF ONNX SHA-256 lock, VoiceDesign speaker provenance resolution, Supertonic callback-stop C++ rebuild, and physical `PGEM10` benchmarks.
+- **Local Zero-Cost Loopback Worker (`workers/local_ollama_worker/local_factory_worker.py`):** `OPERATIONAL` against local `Ollama` (`127.0.0.1:11434`, `qwen3.5:4b`), strictly blocking non-loopback endpoints, empty ACKs, and secret leaks.
 
 ## Reusable design patterns to evaluate across applications
 
@@ -99,6 +104,6 @@ Never describe DISCOVERED/REVIEWED/PROTOTYPED as integrated. Do not copy code or
 - Sherpa-ONNX: https://github.com/k2-fsa/sherpa-onnx
 - Soup (`MakazhanAlpamys/Soup`, Apache-2.0): https://github.com/MakazhanAlpamys/Soup
 
-Last reviewed: 2026-11-26. Recheck upstream repositories and licenses before each actual adoption; this document is a research snapshot, not a permanent guarantee.
+Last reviewed: 2026-11-27. Recheck upstream repositories and licenses before each actual adoption; this document is a research snapshot, not a permanent guarantee.
 ## Jarvis is an AI agent — product-level requirement
 The owner explicitly clarified on 2026-11-06 that Jarvis is an artificial intelligence, not merely a voice assistant. The product architecture must provide reasoning/planning, persistent user-controlled memory, tool/skill use, device perception, voice, model routing, controlled learning, agent coordination and verified action execution. The full source inventory and current implementation gaps across all connected project repositories are documented in https://github.com/sokfrut-tech/Gemeni/blob/main/docs/REPOSITORY_WIDE_AI_AUDIT_2026-11-06.md.
